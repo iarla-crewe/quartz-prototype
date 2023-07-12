@@ -80,7 +80,7 @@ export default function HeroSection() {
             </Text>
           </Heading>
           <Text color={'gray.500'} fontSize="2xl">
-            with the world&apos;s first trust-less crypto debit card
+            The world&apos;s first trust-less crypto debit card
           </Text>
           <Stack
             direction={'column'}
