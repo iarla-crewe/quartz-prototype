@@ -30,7 +30,7 @@ export default function HeroSection() {
 
     try {
       const response = await axios.post(
-        'https://eoew0sz5qr4inhx.m.pipedream.net',
+        process.env.PIEPEDREAM,
         { email }
       );
 
