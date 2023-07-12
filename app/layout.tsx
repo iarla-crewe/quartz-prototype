@@ -11,6 +11,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        <title>Quartz</title>
+      </head>
       <body>
         <ChakraProvider>
           {children}
