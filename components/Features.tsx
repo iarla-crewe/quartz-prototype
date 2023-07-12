@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Container,
     Flex,
     Heading,
@@ -12,14 +11,8 @@ import {
   import { ReactElement } from 'react';
   import {
     FcAbout,
-    FcAssistant,
-    FcCollaboration,
-    FcDonate,
-    FcManager,
     FcLock,
     FcReadingEbook,
-    FcSimCardChip,
-    FcPhoneAndroid
   } from 'react-icons/fc';
   
   interface CardProps {

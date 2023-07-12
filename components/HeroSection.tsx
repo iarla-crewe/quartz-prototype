@@ -6,9 +6,7 @@ import {
   Text,
   Button,
   Stack,
-  Icon,
   useColorModeValue,
-  createIcon,
   FormControl,
   Input,
 } from '@chakra-ui/react';
