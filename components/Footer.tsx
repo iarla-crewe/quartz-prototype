@@ -7,7 +7,7 @@ import {
     useColorModeValue,
     VisuallyHidden,
   } from '@chakra-ui/react';
-  import { FaInstagram, FaLinkedin, FaTwitter, FaYoutube } from 'react-icons/fa';
+  import { FaLinkedin, FaTwitter } from 'react-icons/fa';
   import { ReactNode } from 'react';
   
   const SocialButton = ({
@@ -28,6 +28,7 @@ import {
         cursor={'pointer'}
         as={'a'}
         href={href}
+        target='_blank'
         display={'inline-flex'}
         alignItems={'center'}
         justifyContent={'center'}
@@ -56,10 +57,10 @@ import {
           align={{ base: 'center', md: 'center' }}>
           <Text>© 2023 Quartz. All rights reserved</Text>
           <Stack direction={'row'} spacing={6}>
-            <SocialButton label={'Twitter'} href={'#'}>
+            <SocialButton label={'Twitter'} href={'https://twitter.com/quartzpay'}>
               <FaTwitter />
             </SocialButton>
-            <SocialButton label={'LinkedIn'} href={'#'}>
+            <SocialButton label={'LinkedIn'} href={'https://www.linkedin.com/company/quartz-pay'}>
               <FaLinkedin />
             </SocialButton>
           </Stack>
