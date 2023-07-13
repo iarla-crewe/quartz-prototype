@@ -21,7 +21,7 @@ export default function HeroSection() {
   );
   const [error, setError] = useState(false);
 
-  
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(false);
@@ -29,7 +29,7 @@ export default function HeroSection() {
 
     try {
       const response = await axios.post(
-        `${process.env.PIPEDREAM}`,
+        `${process.env.NEXT_PUBLIC_PIPEDREAM}`,
         { email }
       );
 
