@@ -21,6 +21,7 @@ export default function HeroSection() {
   );
   const [error, setError] = useState(false);
 
+  
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError(false);
