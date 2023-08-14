@@ -10,6 +10,7 @@ pub struct CloseAccount<'info> {
         close = initializer
     )]
     pub wallet: Account<'info, Wallet>,
+    
     #[account(mut)]
     pub initializer: Signer<'info>
 }

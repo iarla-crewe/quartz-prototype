@@ -14,6 +14,7 @@ pub struct InitAccount<'info> {
 
     #[account(mut)]
     pub initializer: Signer<'info>,
+    
     pub system_program: Program<'info, System>
 }
 
