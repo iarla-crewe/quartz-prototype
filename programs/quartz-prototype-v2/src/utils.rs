@@ -1,5 +1,5 @@
 use anchor_lang::prelude::*;
-use crate::errors::WalletError;
+use crate::errors::VaultError;
 
 pub fn transfer_lamports_from_pda(
     amount_lamports: u64,
@@ -7,7 +7,7 @@ pub fn transfer_lamports_from_pda(
     receiver: AccountInfo
 ) -> Result<()> {
     if **sender.try_borrow_lamports()? < amount_lamports {
-        return err!(WalletError::InsufficientFundsForTransaction);
+        return err!(VaultError::InsufficientFundsForTransaction);
     }
 
     **sender.try_borrow_mut_lamports()? -= amount_lamports;
