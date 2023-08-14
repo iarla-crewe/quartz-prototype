@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use crate::{
-    state::Wallet,
+    state::Vault,
     utils::transfer_lamports_from_pda,
     QUARTZ_HOLDING_ADDRESS
 };
@@ -9,10 +9,10 @@ use crate::{
 pub struct SpendLamports<'info> {
     #[account(
         mut,
-        seeds = [b"wallet", initializer.key().as_ref()],
+        seeds = [b"vault", initializer.key().as_ref()],
         bump
     )]
-    pub sending_wallet: Account<'info, Wallet>,
+    pub sending_wallet: Account<'info, Vault>,
 
     #[account(
         mut,
@@ -30,12 +30,14 @@ pub fn spend_lamports_handler(
     ctx: Context<SpendLamports>, 
     amount_lamports: u64
 ) -> Result<()> {
+    msg!("Sending {} lamports to Quartz address ({}) for card transaction", amount_lamports, ctx.accounts.receiver.key());
+
     transfer_lamports_from_pda(
         amount_lamports, 
         ctx.accounts.sending_wallet.to_account_info(), 
         ctx.accounts.receiver.to_account_info()
     )?;
 
-    msg!("{} lamports spent using card", amount_lamports);
+    msg!("{} lamports spent", amount_lamports);
     Ok(())
 }

@@ -1,15 +1,15 @@
 use anchor_lang::prelude::*;
-use crate::state::Wallet;
+use crate::state::Vault;
 
 #[derive(Accounts)]
 pub struct CloseAccount<'info> {
     #[account(
         mut,
-        seeds = [b"wallet", initializer.key().as_ref()],
+        seeds = [b"vault", initializer.key().as_ref()],
         bump,
         close = initializer
     )]
-    pub wallet: Account<'info, Wallet>,
+    pub wallet: Account<'info, Vault>,
     
     #[account(mut)]
     pub initializer: Signer<'info>

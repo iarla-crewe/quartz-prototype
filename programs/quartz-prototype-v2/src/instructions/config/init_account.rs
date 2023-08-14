@@ -1,16 +1,16 @@
 use anchor_lang::prelude::*;
-use crate::state::Wallet;
+use crate::state::Vault;
 
 #[derive(Accounts)]
 pub struct InitAccount<'info> {
     #[account(
         init,
-        seeds = [b"wallet", initializer.key().as_ref()],
+        seeds = [b"vault", initializer.key().as_ref()],
         bump,
         payer = initializer,
-        space = Wallet::SPACE
+        space = Vault::SPACE
     )]
-    pub wallet: Account<'info, Wallet>,
+    pub wallet: Account<'info, Vault>,
 
     #[account(mut)]
     pub initializer: Signer<'info>,

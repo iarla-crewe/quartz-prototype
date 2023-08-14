@@ -1,11 +1,11 @@
 use anchor_lang::prelude::*;
 
 #[account]
-pub struct Wallet {
+pub struct Vault {
     pub initializer: Pubkey
 }
 
-impl Wallet {
+impl Vault {
     pub const SPACE: usize = 
         8           // anchor discriminator
         + 32;       // initializer

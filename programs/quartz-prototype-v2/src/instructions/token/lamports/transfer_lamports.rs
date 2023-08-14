@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use crate::{
-    state::Wallet,
+    state::Vault,
     utils::transfer_lamports_from_pda
 };
 
@@ -8,10 +8,10 @@ use crate::{
 pub struct TransferLamports<'info> {
     #[account(
         mut,
-        seeds = [b"wallet", initializer.key().as_ref()],
+        seeds = [b"vault", initializer.key().as_ref()],
         bump
     )]
-    pub sending_wallet: Account<'info, Wallet>,
+    pub sending_wallet: Account<'info, Vault>,
     
     /// CHECK: Receiving account does not need to be checked
     #[account(mut)]
