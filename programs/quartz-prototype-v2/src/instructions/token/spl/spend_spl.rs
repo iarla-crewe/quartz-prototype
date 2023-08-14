@@ -1,51 +1,56 @@
 use anchor_lang::prelude::*;
-use anchor_spl::token::{self, Token, TokenAccount};
-use crate::state::Vault;
-use solana_program::{pubkey};
-
-#[constant]
-pub const RECEIVER: Pubkey = pubkey!("PUBKEY-FOR-OUR-QUARTZ-WALLLET");
+use anchor_spl::token::{
+    self,
+    Token, 
+    TokenAccount
+};
+use crate::QUARTZ_HOLDING_ADDRESS;
 
 
 #[derive(Accounts)]
-pub struct SplSpend<'info> {
-    #[account(
-        seeds = [SEED_PROGRAM_CONFIG],
-        bump,
-    )]
-    pub program_config: Account<'info, Vault>,
-    #[account(
-        mut,
-        token::mint = USDC_MINT_PUBKEY
-    )]
-    pub sender_token_account: Account<'info, TokenAccount>,
-    //#[account(
-    //    mut,
-    //    token::mint = USDC_MINT_PUBKEY,
-    //)]
-    //pub receiver_token_account: Account<'info, TokenAccount>,
-    pub token_program: Program<'info, Token>,
+pub struct SpendSpl<'info> {
     #[account(mut)]
     pub sender: Signer<'info>,
+
+    #[account(
+        mut,
+        // token::mint = USDC_MINT_PUBKEY   // Shouldn't need - spl token used is irrelevant
+    )]
+    pub sender_ata: Account<'info, TokenAccount>,
+
+    #[account(
+        mut,
+        token::mint = sender_ata.mint,
+        address = QUARTZ_HOLDING_ADDRESS
+    )]
+    pub receiver_ata: Account<'info, TokenAccount>,
+
+    pub token_program: Program<'info, Token>
 }
 
-pub fn spl_transfer_handler(
-    ctx: Context<SplSpend>, 
+pub fn spend_spl_handler(
+    ctx: Context<SpendSpl>, 
     amount: u64
 ) -> Result<()> {
-    msg!("Amount: {}", amount);
+    msg!(
+        "Sending {} of token {}, to Quartz address ({}) for card transaction", 
+        amount,
+        ctx.accounts.token_program.key(),
+        ctx.accounts.receiver_ata.key()
+    );
 
     token::transfer(
         CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
             token::Transfer {
-                from: ctx.accounts.sender_token_account.to_account_info(),
+                from: ctx.accounts.sender_ata.to_account_info(),
                 authority: ctx.accounts.sender.to_account_info(),
-                to: RECEIVER
+                to: ctx.accounts.receiver_ata.to_account_info()
             }
         ),
         amount
     )?;
 
+    msg!("Token spent");
     Ok(())
 }

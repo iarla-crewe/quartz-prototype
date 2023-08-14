@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 use crate::errors::VaultError;
+use anchor_spl::token::{self, TokenAccount, Token};
 
 pub fn transfer_lamports_from_pda(
     amount_lamports: u64,
