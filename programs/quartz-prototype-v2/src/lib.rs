@@ -1,4 +1,5 @@
 use anchor_lang::prelude::*;
+use solana_program::pubkey;
 mod state;
 mod errors;
 mod utils;
@@ -6,6 +7,8 @@ mod instructions;
 use instructions::*;
 
 declare_id!("57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt");
+
+pub const QUARTZ_HOLDING_ADDRESS: Pubkey = pubkey!("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G");
 
 #[program]
 pub mod quartz_prototype_v2 {
