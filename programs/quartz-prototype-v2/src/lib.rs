@@ -1,4 +1,7 @@
 use anchor_lang::prelude::*;
+mod state;
+mod instructions;
+use instructions::*;
 
 declare_id!("57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt");
 
@@ -6,10 +9,5 @@ declare_id!("57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt");
 pub mod quartz_prototype_v2 {
     use super::*;
 
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        Ok(())
-    }
+    
 }
-
-#[derive(Accounts)]
-pub struct Initialize {}

@@ -1,5 +1,5 @@
 [features]
-seeds = false
+seeds = true
 skip-lint = false
 [programs.localnet]
 quartz_prototype_v2 = "57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt"
