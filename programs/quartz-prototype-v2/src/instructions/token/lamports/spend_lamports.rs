@@ -39,6 +39,6 @@ pub fn spend_lamports_handler(
         ctx.accounts.receiver.to_account_info()
     )?;
 
-    msg!("{} lamports spent", amount_lamports);
+    msg!("Lamports spent");
     Ok(())
 }

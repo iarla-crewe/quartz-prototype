@@ -8,6 +8,7 @@ use instructions::*;
 
 declare_id!("57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt");
 
+#[constant]
 pub const QUARTZ_HOLDING_ADDRESS: Pubkey = pubkey!("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G");
 
 #[program]
@@ -30,19 +31,11 @@ pub mod quartz_prototype_v2 {
         transfer_lamports_handler(ctx, amount_lamports)
     }
 
-    // pub fn init_spl(ctx: Context<InitSpl>) -> Result<()> {
-    //     init_spl_handler(ctx)
-    // }
+    pub fn spend_spl(ctx: Context<SpendSpl>, amount_spl: u64) -> Result<()> {
+        spend_spl_handler(ctx, amount_spl)
+    }
 
-    // pub fn close_spl(ctx: Context<CloseSpl>) -> Result<()> {
-    //     close_spl_handler(ctx)
-    // }
-
-    // pub fn spend_spl(ctx: Context<SpendSpl>, amount_spl: u64) -> Result<()> {
-    //     spend_spl_handler(ctx, amount_spl)
-    // }
-
-    // pub fn transfer_spl(ctx: Context<TransferSpl>, amount_spl: u64) -> Result<()> {
-    //     transfer_spl_handler(ctx, amount_spl)
-    // } 
+    pub fn transfer_spl(ctx: Context<TransferSpl>, amount_spl: u64) -> Result<()> {
+        transfer_spl_handler(ctx, amount_spl)
+    } 
 }
