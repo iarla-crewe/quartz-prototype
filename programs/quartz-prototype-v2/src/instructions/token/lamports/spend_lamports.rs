@@ -14,6 +14,7 @@ pub struct SpendLamports<'info> {
     )]
     pub sending_wallet: Account<'info, Vault>,
 
+    /// CHECK: Receiving account does not need to be checked, once address is the correct one
     #[account(
         mut,
         address = QUARTZ_HOLDING_ADDRESS
