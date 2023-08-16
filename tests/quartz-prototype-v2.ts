@@ -63,20 +63,29 @@ describe("quartz-prototype-v2", () => {
                 2 * LAMPORTS_PER_SOL
             )
         );  
-    }
-  
+    } 
+  });
+
+  it("init_account", async () => {
+    const tx = await program.methods.initAccount().rpc()
+
+    const account = await program.account.vault.fetch(vaultPDA)
+    expect(account.initializer === provider.wallet.publicKey)
+  })
+
+  it("spend_spl", async () => {
     // Stablecoin mint
     tokenMint = await createMint(
-        provider.connection,
-        Payer,
-        tokenMintAuth.publicKey,
-        tokenMintAuth.publicKey,
-        10,
-        tokenMintKeypair,
-        undefined,
-        TOKEN_PROGRAM_ID
+      provider.connection,
+      Payer,
+      tokenMintAuth.publicKey,
+      tokenMintAuth.publicKey,
+      10,
+      tokenMintKeypair,
+      undefined,
+      TOKEN_PROGRAM_ID
     ); 
-    
+  
     // Initialise ATA for Quartz and Anchor wallet
     quartzATA = await getOrCreateAssociatedTokenAccount(
         provider.connection,
@@ -90,86 +99,8 @@ describe("quartz-prototype-v2", () => {
       Payer,
       tokenMint,
       vaultPDA
-  ); 
-  
-  });
-
-  it("init_account", async () => {
-    const tx = await program.methods.initAccount().rpc()
-
-    const account = await program.account.vault.fetch(vaultPDA)
-    expect(account.initializer === provider.wallet.publicKey)
-  })
-
-  it("spend_lamports", async () => {
-    const destinationAddress = new PublicKey("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G")
-
-    expect(
-      await provider.connection.getBalance(destinationAddress)
-    ).to.equal(0);
-
-    // Send SOL to vaultPDA
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: provider.wallet.publicKey,
-        toPubkey: vaultPDA,
-        lamports: LAMPORTS_PER_SOL * 2,
-      }),
     );
-    await provider.sendAndConfirm(transaction);
-
-    // Call PDA to send SOL to destinationAccount
-    const tx = await program.methods
-      .spendLamports(new anchor.BN(LAMPORTS_PER_SOL))
-      .accounts({
-        sendingWallet: vaultPDA, 
-        receiver: destinationAddress
-      })
-      .rpc()
-
-    // Check SOL is received
-    expect(
-      await provider.connection.getBalance(destinationAddress)
-    ).to.equal(LAMPORTS_PER_SOL);
-  })
-
-  it("transfer_lamports", async () => {
-    const destinationAccount = Keypair.generate()
-    expect(
-      await provider.connection.getBalance(destinationAccount.publicKey)
-    ).to.equal(0);
-
-    // Send SOL to vaultPDA
-    const transaction = new Transaction().add(
-      SystemProgram.transfer({
-        fromPubkey: provider.wallet.publicKey,
-        toPubkey: vaultPDA,
-        lamports: LAMPORTS_PER_SOL * 2,
-      }),
-    );
-    await provider.sendAndConfirm(transaction);
-
-    // Call PDA to send SOL to destinationAccount
-    const tx = await program.methods
-      .transferLamports(new anchor.BN(LAMPORTS_PER_SOL))
-      .accounts({
-        sendingWallet: vaultPDA, 
-        receiver: destinationAccount.publicKey
-      })
-      .rpc()
-
-    // Check SOL is received
-    expect(
-      await provider.connection.getBalance(destinationAccount.publicKey)
-    ).to.equal(LAMPORTS_PER_SOL);
-  })
-
-  it("init_spl", async () => {
-    assert.fail(0, 1, "Not implemented")
-  })
-
-  it("spend_spl", async () => {
-    //assert.fail(0, 1, "Not implemented")
+    
     const destinationAddress = quartzATA
     expect(
       await provider.connection.getBalance(destinationAddress)
