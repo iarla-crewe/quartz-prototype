@@ -3,24 +3,17 @@ import { Program } from "@coral-xyz/anchor";
 import { QuartzPrototypeV2 } from "../target/types/quartz_prototype_v2";
 import { utf8 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
 import { assert, expect } from "chai";
-import { 
-  Keypair, 
+import {  
   LAMPORTS_PER_SOL,
-  Transaction,
-  SystemProgram,
   PublicKey,
-  BlockheightBasedTransactionConfirmationStrategy
+  Transaction,
+  SystemProgram
 } from "@solana/web3.js"
 import {
   createMint,
-  createAccount,
-  getAccount,
   getOrCreateAssociatedTokenAccount,
-  transfer,
   mintTo,
   TOKEN_PROGRAM_ID,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  Account,
 } from "@solana/spl-token";
 
 describe("quartz-prototype-v2", () => {
@@ -41,25 +34,29 @@ describe("quartz-prototype-v2", () => {
   const tokenMintAuth = anchor.web3.Keypair.generate()    
   const tokenMintKeypair = anchor.web3.Keypair.generate()        
   let tokenMint: PublicKey
-  let quartzAta: Account;
-  let vaultAta: Account;
+  let quartzAta: PublicKey
+  let vaultAta: PublicKey
 
   before(async () => {
     // SOL Top-ups for all accounts used
     { 
-      await provider.connection.confirmTransaction(
-        await provider.connection.requestAirdrop(
-            Payer.publicKey,
-            2 * LAMPORTS_PER_SOL
-        )
+      const txPayer = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: provider.wallet.publicKey,
+          toPubkey: Payer.publicKey,
+          lamports: LAMPORTS_PER_SOL * 1000,
+        })
       )
+      await provider.sendAndConfirm(txPayer)
 
-      await provider.connection.confirmTransaction(
-        await provider.connection.requestAirdrop(
-            tokenMintAuth.publicKey,
-            2 * LAMPORTS_PER_SOL
-        )
+      const txTokenMintAuth = new Transaction().add(
+        SystemProgram.transfer({
+          fromPubkey: provider.wallet.publicKey,
+          toPubkey: tokenMintAuth.publicKey,
+          lamports: LAMPORTS_PER_SOL * 1000,
+        })
       )
+      await provider.sendAndConfirm(txTokenMintAuth)
     } 
 
     // Create stablecoin mint
@@ -75,21 +72,30 @@ describe("quartz-prototype-v2", () => {
     ); 
   
     // Initialise ATA for Quartz wallet
-    quartzAta = await getOrCreateAssociatedTokenAccount(
+    quartzAta = (await getOrCreateAssociatedTokenAccount(
         provider.connection,
         Payer,
         tokenMint,
         quartzRecievingAddress
-    )
+    )).address
+    
 
     // Initialize ATA for Vault
-    vaultAta = await getOrCreateAssociatedTokenAccount(
-      provider.connection,
-      Payer,
-      tokenMint,
-      vaultPda,
-      true
-    );
+
+    // TODO - Tidy
+    const [tmp] = anchor.web3.PublicKey.findProgramAddressSync(
+      [vaultPda.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMint.toBuffer()],
+      program.programId
+    )
+    vaultAta = tmp
+
+    // vaultAta = await getOrCreateAssociatedTokenAccount(
+    //   provider.connection,
+    //   Payer,
+    //   tokenMint,
+    //   vaultPda,
+    //   true
+    // );
   });
 
   it("init_account", async () => {
@@ -100,34 +106,44 @@ describe("quartz-prototype-v2", () => {
   })
 
   it("spend_spl", async () => {
-    const initialBalance = await provider.connection.getBalance(quartzAta.address)
+    const initialBalance = await provider.connection.getBalance(quartzAta)
     const tokenCount = 100;
 
-    // Mint spl tokens into vaultAta
+    console.log("minting...")
+
     await mintTo(
       provider.connection,
       Payer,
       tokenMint,
-      vaultAta.address,
+      vaultAta,
       tokenMintAuth,
       tokenCount * 2,
       [],
       undefined,
       TOKEN_PROGRAM_ID
-    );
+    )
+
+    console.log("minted")
+    console.log("calling spendSpl...")
 
     // Call PDA to send spl tokens to quartzAta
     const tx = await program.methods
-      .transferSpl(new anchor.BN(tokenCount))
+      .spendSpl(new anchor.BN(tokenCount))
       .accounts({
-        sender: vaultPda,
-        senderAta: vaultAta.address,
-        receiverAta: quartzAta.address
+        vaultInitializer: provider.wallet.publicKey,
+        vaultAta: vaultAta,
+        vault: vaultPda,
+        receiverAta: quartzAta,
+        receiver: quartzRecievingAddress,
+        tokenMint: tokenMint,
+        tokenProgram: TOKEN_PROGRAM_ID
       })
       .rpc()
+    
+    console.log("transaction complete")
 
     // Check SOL is received
-    const newBalance = await provider.connection.getBalance(quartzAta.address)
+    const newBalance = await provider.connection.getBalance(quartzAta)
     expect(newBalance - initialBalance).to.equal(tokenCount);
   })
 
