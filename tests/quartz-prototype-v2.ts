@@ -1,5 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
-import { Program } from "@coral-xyz/anchor";
+import { Program, AnchorError } from "@coral-xyz/anchor";
 import { QuartzPrototypeV2 } from "../target/types/quartz_prototype_v2";
 import { utf8 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
 import { assert, expect } from "chai";
@@ -33,11 +33,15 @@ describe("quartz-prototype-v2", () => {
     assert.fail(0, 1, "Not implemented")
   })
 
+  it("spend_lamports incorrect receiver address", async () => {
+    assert.fail(0, 1, "Not implemented")
+  })
+
   it("transfer_lamports", async () => {
     const destinationAccount = Keypair.generate()
     expect(
       await provider.connection.getBalance(destinationAccount.publicKey)
-    ).to.equal(0);
+    ).to.equal(0)
 
     // Send SOL to vaultPDA
     const transaction = new Transaction().add(
@@ -45,8 +49,8 @@ describe("quartz-prototype-v2", () => {
         fromPubkey: provider.wallet.publicKey,
         toPubkey: vaultPDA,
         lamports: LAMPORTS_PER_SOL * 2,
-      }),
-    );
+      })
+    )
     await provider.sendAndConfirm(transaction);
 
     // Call PDA to send SOL to destinationAccount
@@ -61,14 +65,57 @@ describe("quartz-prototype-v2", () => {
     // Check SOL is received
     expect(
       await provider.connection.getBalance(destinationAccount.publicKey)
-    ).to.equal(LAMPORTS_PER_SOL);
+    ).to.equal(LAMPORTS_PER_SOL)
+  })
+
+  it("transfer_lamports insufficient funds", async () => {
+    const destinationAccount = Keypair.generate()
+    expect(
+      await provider.connection.getBalance(destinationAccount.publicKey)
+    ).to.equal(0)
+
+    // Send 1 SOL to vaultPDA
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: provider.wallet.publicKey,
+        toPubkey: vaultPDA,
+        lamports: LAMPORTS_PER_SOL,
+      }),
+    );
+    await provider.sendAndConfirm(transaction);
+
+    // Call PDA to send 2 SOL to destinationAccount (should not have enough)
+    try {
+      const tx = await program.methods
+        .transferLamprts(new anchor.BN(LAMPORTS_PER_SOL * 10))
+        .accounts({
+          sendingWallet: vaultPDA, 
+          receiver: destinationAccount.publicKey
+        })
+        .rpc()
+    } catch(err) {
+      expect(err).to.be.instanceOf(AnchorError)
+      expect((err as AnchorError).error.errorCode.number).to.equal(6000)
+
+      return
+    }
+
+    assert.fail(0, 1, "transferLamports instruction call should have failed")
   })
 
   it("spend_spl", async () => {
     assert.fail(0, 1, "Not implemented")
   })
 
+  it("spend_spl incorrect receiver address", async () => {
+    assert.fail(0, 1, "Not implemented")
+  })
+
   it("transfer_spl", async () => {
+    assert.fail(0, 1, "Not implemented")
+  })
+
+  it("transfer_spl insufficient funds", async () => {
     assert.fail(0, 1, "Not implemented")
   })
 
