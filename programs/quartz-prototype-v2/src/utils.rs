@@ -7,7 +7,7 @@ pub fn transfer_lamports_from_pda(
     receiver: AccountInfo
 ) -> Result<()> {
     if **sender.try_borrow_lamports()? < amount_lamports {
-        return err!(VaultError::InsufficientFundsForTransaction);
+        return err!(VaultError::InsufficientFunds);
     }
 
     **sender.try_borrow_mut_lamports()? -= amount_lamports;
