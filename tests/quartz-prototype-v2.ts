@@ -7,7 +7,9 @@ import {
   LAMPORTS_PER_SOL,
   PublicKey,
   Transaction,
-  SystemProgram
+  SystemProgram,
+  Signer,
+  Keypair
 } from "@solana/web3.js"
 import {
   createMint,
@@ -111,9 +113,18 @@ describe("quartz-prototype-v2", () => {
 
     console.log("minting...")
 
+    let secret = new Uint8Array([249,159,32,245,180,151,45,253,13,150,133,225,46,230,64,177,80,113,33,188,200,237,79,91,193,246,225,188,126,55,224,186,121,150,192,1,119,31,215,244,64,92,76,223,210,231,224,237,118,235,158,203,112,250,196,3,142,3,227,15,170,15,38,70])
+
+
+    let test: Signer = {
+      publicKey: provider.wallet.publicKey,
+      secretKey: Keypair.fromSecretKey(secret).secretKey
+    }
+
+
     await mintTo(
       provider.connection,
-      Payer,
+      test,
       tokenMint,
       vaultAta,
       tokenMintAuth,
