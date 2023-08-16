@@ -27,7 +27,7 @@ pub mod quartz_prototype_v2 {
         spend_lamports_handler(ctx, amount_lamports)
     }
 
-    pub fn transfer_lamprts(ctx: Context<TransferLamports>, amount_lamports: u64) -> Result<()> {
+    pub fn transfer_lamports(ctx: Context<TransferLamports>, amount_lamports: u64) -> Result<()> {
         transfer_lamports_handler(ctx, amount_lamports)
     }
 

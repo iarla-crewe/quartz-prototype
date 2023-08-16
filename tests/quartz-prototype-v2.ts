@@ -7,8 +7,19 @@ import {
   Keypair, 
   LAMPORTS_PER_SOL,
   Transaction,
-  SystemProgram
+  SystemProgram,
+  PublicKey
 } from "@solana/web3.js"
+import {
+  createMint,
+  createAccount,
+  getAccount,
+  getOrCreateAssociatedTokenAccount,
+  transfer,
+  mintTo,
+  TOKEN_PROGRAM_ID,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+} from "@solana/spl-token";
 
 describe("quartz-prototype-v2", () => {
   // Configure the client to use the local cluster.
@@ -22,6 +33,67 @@ describe("quartz-prototype-v2", () => {
     program.programId
   )
 
+  const quartzRecievingAddress = new PublicKey("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G")
+  const Payer = anchor.web3.Keypair.generate()
+  const tokenMintAuth = anchor.web3.Keypair.generate()    
+  const tokenMintKeypair = anchor.web3.Keypair.generate()        
+  let tokenMint: PublicKey
+  let quartzATA;
+  let vaultPdaAta;
+
+  before(async () => {
+    // SOL Top-ups for all accounts used
+    { 
+        await provider.connection.confirmTransaction(
+          await provider.connection.requestAirdrop(
+              Payer.publicKey,
+              2 * LAMPORTS_PER_SOL
+          )
+      );
+
+        await provider.connection.confirmTransaction(
+            await provider.connection.requestAirdrop(
+                tokenMintAuth.publicKey,
+                2 * LAMPORTS_PER_SOL
+            )
+        );
+        await provider.connection.confirmTransaction(
+            await provider.connection.requestAirdrop(
+                quartzRecievingAddress,
+                2 * LAMPORTS_PER_SOL
+            )
+        );  
+    }
+  
+    // Stablecoin mint
+    tokenMint = await createMint(
+        provider.connection,
+        Payer,
+        tokenMintAuth.publicKey,
+        tokenMintAuth.publicKey,
+        10,
+        tokenMintKeypair,
+        undefined,
+        TOKEN_PROGRAM_ID
+    ); 
+    
+    // Initialise ATA for Quartz and Anchor wallet
+    quartzATA = await getOrCreateAssociatedTokenAccount(
+        provider.connection,
+        Payer,
+        tokenMint,
+        quartzRecievingAddress
+    ); 
+
+    vaultPdaAta = await getOrCreateAssociatedTokenAccount(
+      provider.connection,
+      Payer,
+      tokenMint,
+      vaultPDA
+  ); 
+  
+  });
+
   it("init_account", async () => {
     const tx = await program.methods.initAccount().rpc()
 
@@ -30,7 +102,35 @@ describe("quartz-prototype-v2", () => {
   })
 
   it("spend_lamports", async () => {
-    assert.fail(0, 1, "Not implemented")
+    const destinationAddress = new PublicKey("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G")
+
+    expect(
+      await provider.connection.getBalance(destinationAddress)
+    ).to.equal(0);
+
+    // Send SOL to vaultPDA
+    const transaction = new Transaction().add(
+      SystemProgram.transfer({
+        fromPubkey: provider.wallet.publicKey,
+        toPubkey: vaultPDA,
+        lamports: LAMPORTS_PER_SOL * 2,
+      }),
+    );
+    await provider.sendAndConfirm(transaction);
+
+    // Call PDA to send SOL to destinationAccount
+    const tx = await program.methods
+      .spendLamports(new anchor.BN(LAMPORTS_PER_SOL))
+      .accounts({
+        sendingWallet: vaultPDA, 
+        receiver: destinationAddress
+      })
+      .rpc()
+
+    // Check SOL is received
+    expect(
+      await provider.connection.getBalance(destinationAddress)
+    ).to.equal(LAMPORTS_PER_SOL);
   })
 
   it("transfer_lamports", async () => {
@@ -51,7 +151,7 @@ describe("quartz-prototype-v2", () => {
 
     // Call PDA to send SOL to destinationAccount
     const tx = await program.methods
-      .transferLamprts(new anchor.BN(LAMPORTS_PER_SOL))
+      .transferLamports(new anchor.BN(LAMPORTS_PER_SOL))
       .accounts({
         sendingWallet: vaultPDA, 
         receiver: destinationAccount.publicKey
@@ -69,14 +169,43 @@ describe("quartz-prototype-v2", () => {
   })
 
   it("spend_spl", async () => {
-    assert.fail(0, 1, "Not implemented")
+    //assert.fail(0, 1, "Not implemented")
+    const destinationAddress = quartzATA
+    expect(
+      await provider.connection.getBalance(destinationAddress)
+    ).to.equal(0)
+
+    //mint spl tokens into vaultPDAata
+    await mintTo(
+      provider.connection,
+      Payer,
+      tokenMint,
+      vaultPdaAta,
+      tokenMintAuth,
+      100,
+      [],
+      undefined,
+      TOKEN_PROGRAM_ID
+  );
+
+    // Call PDA to send SOL to destinationAccount
+    const tx = await program.methods
+      .transferSpl(new anchor.BN(100))
+      .accounts({
+        sender: vaultPDA,
+        senderAta: vaultPdaAta,
+        receiverAta: destinationAddress,
+        tokenProgram: TOKEN_PROGRAM_ID
+      })
+      .rpc()
+
+    // Check SOL is received
+    expect(
+      await provider.connection.getBalance(destinationAddress)
+    ).to.equal(100);
   })
 
   it("transfer_spl", async () => {
-    assert.fail(0, 1, "Not implemented")
-  })
-
-  it("close_spl", async () => {
     assert.fail(0, 1, "Not implemented")
   })
 
@@ -84,3 +213,4 @@ describe("quartz-prototype-v2", () => {
     const tx = await program.methods.closeAccount().rpc()
   })
 });
+
