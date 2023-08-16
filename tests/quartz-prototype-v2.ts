@@ -64,19 +64,11 @@ describe("quartz-prototype-v2", () => {
     ).to.equal(LAMPORTS_PER_SOL);
   })
 
-  it("init_spl", async () => {
-    assert.fail(0, 1, "Not implemented")
-  })
-
   it("spend_spl", async () => {
     assert.fail(0, 1, "Not implemented")
   })
 
   it("transfer_spl", async () => {
-    assert.fail(0, 1, "Not implemented")
-  })
-
-  it("close_spl", async () => {
     assert.fail(0, 1, "Not implemented")
   })
 
