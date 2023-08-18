@@ -320,11 +320,48 @@ describe("quartz-prototype-v2 tests", () => {
     }
   })
 
+  it("spend_spl mismatched ata owner", async () => {
+    const desiredErrorCode = "ConstraintTokenOwner"
+    await mintUsdcToVault(100)
+
+    // Initialize a random ATA
+    const destinationAta = (await getOrCreateAssociatedTokenAccount(
+      connection,
+      wallet.payer,
+      usdcMint,
+      Keypair.generate().publicKey
+    )).address
+
+    // Call PDA to spend USDC, with correct owner but incorrect ATA
+    try {
+      const tx = await program.methods
+        .spendSpl(new anchor.BN(CENT_PER_USDC))
+        .accounts({
+          owner: wallet.publicKey,
+          vaultAtaUsdc: vaultAtaUsdc,
+          vault: vaultPda,
+          receiverAta: destinationAta,      // Incorrect receiverATA (instruction should fail)
+          receiver: quartzAddress,
+          tokenMint: usdcMint
+        })
+        .rpc()
+
+      assert.fail(0, 1, "spendSol instruction call should have failed")
+    } catch(err) {
+      expect(err).to.be.instanceOf(AnchorError)
+      expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
+    }
+  })
+
   // it("transfer_spl", async () => {
   //   assert.fail(0, 1, "Not implemented")
   // })
 
   // it("transfer_spl insufficient funds", async () => {
+  //   assert.fail(0, 1, "Not implemented")
+  // })
+
+  // it("transfer_spl mismatched ata owner", async () => {
   //   assert.fail(0, 1, "Not implemented")
   // })
 
