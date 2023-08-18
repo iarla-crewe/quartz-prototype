@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 use crate::{
     state::Vault,
-    utils::transfer_lamports_from_pda,
+    utils::transfer_lamports_from_vault,
     QUARTZ_HOLDING_ADDRESS
 };
 
@@ -33,7 +33,7 @@ pub fn spend_lamports_handler(
 ) -> Result<()> {
     msg!("Sending {} lamports to Quartz address ({}) for card transaction", amount_lamports, ctx.accounts.receiver.key());
 
-    transfer_lamports_from_pda(
+    transfer_lamports_from_vault(
         amount_lamports, 
         ctx.accounts.vault.to_account_info(), 
         ctx.accounts.receiver.to_account_info()

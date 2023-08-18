@@ -253,7 +253,7 @@ describe("quartz-prototype-v2 tests", () => {
   })
 
   it("spend_spl", async () => {
-    mintUsdcToVault()
+    await mintUsdcToVault()
     const initialBalance = Number(
       (await connection.getTokenAccountBalance(quartzAta)).value.amount
     )
@@ -279,7 +279,38 @@ describe("quartz-prototype-v2 tests", () => {
   })
 
   it("spend_spl insufficient funds", async () => {
-    assert.fail(0, 1, "Not implemented")
+    const desiredErrorCode = "InsufficientFunds"
+
+    const initialBalance = Number(
+      (await connection.getTokenAccountBalance(vaultAtaUsdc)).value.amount
+    )
+    console.log(initialBalance)
+
+    // Call PDA to send spl tokens to quartzAta
+    try {
+      const tx = await program.methods 
+        .spendSpl(new anchor.BN(splTokenAmount * 100000)) // Insufficient funds for transaction (instruction should fail)
+        .accounts({
+          owner: wallet.publicKey,
+          vaultAtaUsdc: vaultAtaUsdc,
+          vault: vaultPda,
+          receiverAta: quartzAta,
+          receiver: quartzAddress,
+          tokenMint: tokenMint
+        })
+        .rpc()
+    } catch (err) {
+      expect(err).to.be.instanceOf(AnchorError)
+      expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
+
+      return
+    }
+    const endBal = Number(
+      (await connection.getTokenAccountBalance(vaultAtaUsdc)).value.amount
+    )
+    console.log(endBal)
+
+    assert.fail(0, 1, "spendSpl instruction call should have failed")
   })
 
   it("spend_spl incorrect receiver address", async () => {

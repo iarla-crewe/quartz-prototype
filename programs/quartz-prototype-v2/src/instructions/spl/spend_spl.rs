@@ -7,6 +7,7 @@ use anchor_spl::token::{
 };
 use crate::{
     state::Vault,
+    utils::transfer_spl_from_vault,
     QUARTZ_HOLDING_ADDRESS,
     USDC_MINT_ADDRESS
 };
@@ -66,25 +67,14 @@ pub fn spend_spl_handler(
         ctx.accounts.receiver_ata.key()
     );
 
-    let owner = ctx.accounts.owner.key();
-    let bump = [*ctx.bumps.get("vault").expect("vault should always have a valid bump")];
-    let seeds = vec![
-        b"vault".as_ref(),
-        owner.as_ref(),
-        &bump
-    ];
-
-    token::transfer(
-        CpiContext::new_with_signer(
-            ctx.accounts.token_program.to_account_info(),
-            token::Transfer {
-                from: ctx.accounts.vault_ata_usdc.to_account_info(),
-                to: ctx.accounts.receiver_ata.to_account_info(),
-                authority: ctx.accounts.vault.to_account_info()
-            },
-            vec![seeds.as_slice()].as_slice()
-        ),
-        amount
+    transfer_spl_from_vault(
+        amount,
+        ctx.accounts.owner.key(),
+        [*ctx.bumps.get("vault").expect("vault should always have a valid bump")],
+        ctx.accounts.token_program.to_account_info(),
+        ctx.accounts.vault.to_account_info(),
+        ctx.accounts.vault_ata_usdc.to_account_info(),
+        ctx.accounts.receiver_ata.to_account_info()
     )?;
 
     msg!("Token spent");
