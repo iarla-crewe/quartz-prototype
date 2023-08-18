@@ -1,8 +1,10 @@
-import * as anchor from "@coral-xyz/anchor";
-import { Program, AnchorError } from "@coral-xyz/anchor";
-import { QuartzPrototypeV2 } from "../target/types/quartz_prototype_v2";
-import { utf8 } from "@coral-xyz/anchor/dist/cjs/utils/bytes";
-import { assert, expect } from "chai";
+import * as anchor from "@coral-xyz/anchor"
+import { Program, AnchorError } from "@coral-xyz/anchor"
+import { QuartzPrototypeV2 } from "../target/types/quartz_prototype_v2"
+import { utf8 } from "@coral-xyz/anchor/dist/cjs/utils/bytes"
+import { assert, expect } from "chai"
+const fs = require("fs")
+import path from "path"
 import {  
   LAMPORTS_PER_SOL,
   PublicKey,
@@ -16,7 +18,7 @@ import {
   getOrCreateAssociatedTokenAccount,
   mintTo,
   TOKEN_PROGRAM_ID,
-} from "@solana/spl-token";
+} from "@solana/spl-token"
 
 describe("quartz-prototype-v2 tests", () => {
   // Configure the client to use the local cluster.
@@ -38,13 +40,20 @@ describe("quartz-prototype-v2 tests", () => {
   
   const Payer = anchor.web3.Keypair.generate()
   const tokenMintAuth = anchor.web3.Keypair.generate()    
-  const tokenMintKeypair = anchor.web3.Keypair.generate()        
+  let tokenMintKeypair: Keypair    
   let tokenMint: PublicKey
   let quartzAta: PublicKey
   let vaultAta: PublicKey
   const splTokenAmount = 100
 
   before(async () => {
+    let data = fs.readFileSync(
+      path.resolve(__dirname, "./keys/envrJbV6GbhBTi8Pu6h9MwNViLuAmu3mFFRq7gE9Cp3.json")
+    )
+    tokenMintKeypair = Keypair.fromSecretKey(
+      new Uint8Array(JSON.parse(data))
+    )
+
     // SOL Top-ups for all accounts used
     const txPayer = new Transaction().add(
       SystemProgram.transfer({
@@ -74,7 +83,7 @@ describe("quartz-prototype-v2 tests", () => {
       tokenMintKeypair,
       undefined,
       TOKEN_PROGRAM_ID
-    ); 
+    )
   
     // Initialise ATA for Quartz wallet
     quartzAta = (await getOrCreateAssociatedTokenAccount(
@@ -105,7 +114,10 @@ describe("quartz-prototype-v2 tests", () => {
   })
 
   it("init_account", async () => {
-    const tx = await program.methods.initAccount().rpc()
+    const tx = await program.methods
+      .initAccount()
+      .accounts({ tokenMint: tokenMint })
+      .rpc()
 
     const account = await program.account.vault.fetch(vaultPda)
     expect(account.owner === wallet.publicKey)
@@ -251,8 +263,8 @@ describe("quartz-prototype-v2 tests", () => {
     const tx = await program.methods
       .spendSpl(new anchor.BN(splTokenAmount))
       .accounts({
-        vaultOwner: wallet.publicKey,
-        vaultAta: vaultAta,
+        owner: wallet.publicKey,
+        vaultAtaUsdc: vaultAta,
         vault: vaultPda,
         receiverAta: quartzAta,
         receiver: quartzRecievingAddress,

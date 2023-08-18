@@ -1,6 +1,8 @@
 use anchor_lang::prelude::*;
-use crate::state::Vault;
-use crate::USDC_MINT_ADDRESS;
+use crate::{
+    state::Vault,
+    USDC_MINT_ADDRESS
+};
 use anchor_spl::token::{
     Token,
     TokenAccount,
@@ -9,6 +11,9 @@ use anchor_spl::token::{
 
 #[derive(Accounts)]
 pub struct InitAccount<'info> {
+    #[account(mut)]
+    pub owner: Signer<'info>,
+
     #[account(
         init,
         seeds = [b"vault", owner.key().as_ref()],
@@ -21,24 +26,21 @@ pub struct InitAccount<'info> {
     #[account(
         init,
         payer = owner,
-        seeds=[b"ata", owner.key().as_ref(), token_mint.key().as_ref()],
+        seeds = [b"ata", owner.key().as_ref(), token_mint.key().as_ref()],
         bump,
         token::mint=token_mint,
         token::authority=vault,
     )]
-    pub vault_ata: Account<'info, TokenAccount>,
+    pub vault_ata_usdc: Account<'info, TokenAccount>,
 
     #[account(
         address = USDC_MINT_ADDRESS
     )]
     pub token_mint: Account<'info, Mint>,
-
-    #[account(mut)]
-    pub owner: Signer<'info>,
-
-    pub system_program: Program<'info, System>,
     
-    pub token_program: Program<'info, Token>
+    pub token_program: Program<'info, Token>,
+
+    pub system_program: Program<'info, System>
 }
 
 pub fn init_account_handler(ctx: Context<InitAccount>) -> Result<()> {

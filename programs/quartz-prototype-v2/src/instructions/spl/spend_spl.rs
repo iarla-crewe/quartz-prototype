@@ -7,28 +7,31 @@ use anchor_spl::token::{
 };
 use crate::{
     state::Vault,
-    QUARTZ_HOLDING_ADDRESS
+    QUARTZ_HOLDING_ADDRESS,
+    USDC_MINT_ADDRESS
 };
 
 
 #[derive(Accounts)]
 pub struct SpendSpl<'info> {
     #[account(mut)]
-    pub vault_owner: Signer<'info>,
+    pub owner: Signer<'info>,
 
     #[account(
         mut,
-        seeds=[b"vault", vault_owner.key().as_ref()],
+        seeds=[b"vault", owner.key().as_ref()],
         bump
     )]
     pub vault: Account<'info, Vault>,
 
     #[account(
         mut,
-        seeds=[vault.key().as_ref(), token_program.key().as_ref(), token_mint.key().as_ref()],
-        bump
+        seeds = [b"ata", owner.key().as_ref(), token_mint.key().as_ref()],
+        bump,
+        token::mint=token_mint,
+        token::authority=vault,
     )]
-    pub vault_ata: Account<'info, TokenAccount>,
+    pub vault_ata_usdc: Account<'info, TokenAccount>,
 
     /// CHECK: Receiving account does not need to be checked, once address is the correct one
     #[account(
@@ -44,8 +47,11 @@ pub struct SpendSpl<'info> {
     )]
     pub receiver_ata: Account<'info, TokenAccount>,
 
+    #[account(
+        address = USDC_MINT_ADDRESS
+    )]
     pub token_mint: Account<'info, Mint>,
-
+    
     pub token_program: Program<'info, Token>
 }
 
@@ -64,7 +70,7 @@ pub fn spend_spl_handler(
         CpiContext::new(
             ctx.accounts.token_program.to_account_info(),
             token::Transfer {
-                from: ctx.accounts.vault_ata.to_account_info(),
+                from: ctx.accounts.vault_ata_usdc.to_account_info(),
                 authority: ctx.accounts.vault.to_account_info(),
                 to: ctx.accounts.receiver_ata.to_account_info()
             }
