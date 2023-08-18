@@ -21,12 +21,13 @@ import {
 describe("quartz-prototype-v2", () => {
   // Configure the client to use the local cluster.
   let provider = anchor.AnchorProvider.env()
+  let wallet = provider.wallet
   anchor.setProvider(provider)
 
   const program = anchor.workspace.QuartzPrototypeV2 as Program<QuartzPrototypeV2>
 
   const [vaultPda] = anchor.web3.PublicKey.findProgramAddressSync(
-    [utf8.encode("vault"), provider.wallet.publicKey.toBuffer()],
+    [utf8.encode("vault"), wallet.publicKey.toBuffer()],
     program.programId
   )
 
@@ -44,7 +45,7 @@ describe("quartz-prototype-v2", () => {
     { 
       const txPayer = new Transaction().add(
         SystemProgram.transfer({
-          fromPubkey: provider.wallet.publicKey,
+          fromPubkey: wallet.publicKey,
           toPubkey: Payer.publicKey,
           lamports: LAMPORTS_PER_SOL * 1000,
         })
@@ -53,7 +54,7 @@ describe("quartz-prototype-v2", () => {
 
       const txTokenMintAuth = new Transaction().add(
         SystemProgram.transfer({
-          fromPubkey: provider.wallet.publicKey,
+          fromPubkey: wallet.publicKey,
           toPubkey: tokenMintAuth.publicKey,
           lamports: LAMPORTS_PER_SOL * 1000,
         })
@@ -90,37 +91,25 @@ describe("quartz-prototype-v2", () => {
       program.programId
     )
     vaultAta = tmp
-
-    // vaultAta = await getOrCreateAssociatedTokenAccount(
-    //   provider.connection,
-    //   Payer,
-    //   tokenMint,
-    //   vaultPda,
-    //   true
-    // );
   });
 
   it("init_account", async () => {
     const tx = await program.methods.initAccount().rpc()
 
     const account = await program.account.vault.fetch(vaultPda)
-    expect(account.initializer === provider.wallet.publicKey)
+    expect(account.initializer === wallet.publicKey)
   })
 
   it("spend_spl", async () => {
     const initialBalance = await provider.connection.getBalance(quartzAta)
     const tokenCount = 100;
 
-    console.log("minting...")
-
     let secret = new Uint8Array([249,159,32,245,180,151,45,253,13,150,133,225,46,230,64,177,80,113,33,188,200,237,79,91,193,246,225,188,126,55,224,186,121,150,192,1,119,31,215,244,64,92,76,223,210,231,224,237,118,235,158,203,112,250,196,3,142,3,227,15,170,15,38,70])
 
-
     let test: Signer = {
-      publicKey: provider.wallet.publicKey,
+      publicKey: wallet.publicKey,
       secretKey: Keypair.fromSecretKey(secret).secretKey
     }
-
 
     await mintTo(
       provider.connection,
@@ -134,14 +123,11 @@ describe("quartz-prototype-v2", () => {
       TOKEN_PROGRAM_ID
     )
 
-    console.log("minted")
-    console.log("calling spendSpl...")
-
     // Call PDA to send spl tokens to quartzAta
     const tx = await program.methods
       .spendSpl(new anchor.BN(tokenCount))
       .accounts({
-        vaultInitializer: provider.wallet.publicKey,
+        vaultInitializer: wallet.publicKey,
         vaultAta: vaultAta,
         vault: vaultPda,
         receiverAta: quartzAta,
@@ -150,8 +136,6 @@ describe("quartz-prototype-v2", () => {
         tokenProgram: TOKEN_PROGRAM_ID
       })
       .rpc()
-    
-    console.log("transaction complete")
 
     // Check SOL is received
     const newBalance = await provider.connection.getBalance(quartzAta)
