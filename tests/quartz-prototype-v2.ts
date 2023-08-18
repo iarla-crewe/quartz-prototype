@@ -254,22 +254,17 @@ describe("quartz-prototype-v2 tests", () => {
     // Call PDA to send spl tokens to quartzAta
     const initialBalance = await connection.getBalance(quartzAta)
 
-    try {
-      const tx = await program.methods
-        .spendSpl(new anchor.BN(splTokenAmount))
-        .accounts({
-          owner: wallet.publicKey,
-          vaultAtaUsdc: vaultAtaUsdc,
-          vault: vaultPda,
-          receiverAta: quartzAta,
-          receiver: quartzAddress,
-          tokenMint: tokenMint
-        })
-        .rpc()
-    } catch(err) {
-      console.log(err)
-      throw err
-    }
+    const tx = await program.methods
+      .spendSpl(new anchor.BN(splTokenAmount))
+      .accounts({
+        owner: wallet.publicKey,
+        vaultAtaUsdc: vaultAtaUsdc,
+        vault: vaultPda,
+        receiverAta: quartzAta,
+        receiver: quartzAddress,
+        tokenMint: tokenMint
+      })
+      .rpc()
 
     // Check SOL is received
     const newBalance = await connection.getBalance(quartzAta)
