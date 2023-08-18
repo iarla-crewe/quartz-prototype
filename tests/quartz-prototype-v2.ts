@@ -121,8 +121,7 @@ describe("quartz-prototype-v2 tests", () => {
         vault: vaultPda,
         receiverAta: quartzAta,
         receiver: quartzRecievingAddress,
-        tokenMint: tokenMint,
-        tokenProgram: TOKEN_PROGRAM_ID
+        tokenMint: tokenMint
       })
       .rpc()
 

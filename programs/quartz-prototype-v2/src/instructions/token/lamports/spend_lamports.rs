@@ -9,7 +9,7 @@ use crate::{
 pub struct SpendLamports<'info> {
     #[account(
         mut,
-        seeds = [b"vault", initializer.key().as_ref()],
+        seeds = [b"vault", owner.key().as_ref()],
         bump
     )]
     pub sending_wallet: Account<'info, Vault>,
@@ -22,7 +22,7 @@ pub struct SpendLamports<'info> {
     pub receiver: AccountInfo<'info>,
 
     #[account(mut)]
-    pub initializer: Signer<'info>,
+    pub owner: Signer<'info>,
 
     pub system_program: Program<'info, System>,
 }

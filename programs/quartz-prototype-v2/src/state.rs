@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 #[account]
 pub struct Vault {
-    pub initializer: Pubkey
+    pub owner: Pubkey
 }
 
 impl Vault {

@@ -14,7 +14,7 @@ use crate::{
 #[derive(Accounts)]
 pub struct SpendSpl<'info> {
     #[account(mut)]
-    pub vault_initializer: Signer<'info>,
+    pub vault_owner: Signer<'info>,
 
     #[account(
         mut,
@@ -25,7 +25,7 @@ pub struct SpendSpl<'info> {
 
     #[account(
         mut,
-        seeds=[b"vault", vault_initializer.key().as_ref()],
+        seeds=[b"vault", vault_owner.key().as_ref()],
         bump
     )]
     pub vault: Account<'info, Vault>,
