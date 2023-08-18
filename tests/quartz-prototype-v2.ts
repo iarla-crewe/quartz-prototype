@@ -273,14 +273,14 @@ describe("quartz-prototype-v2 tests", () => {
     // Call PDA to send spl tokens to quartzAta
     try {
       const tx = await program.methods 
-        .spendSpl(new anchor.BN(splTokenAmount * 100000)) // Insufficient funds for transaction (instruction should fail)
+        .spendSpl(new anchor.BN(CENT_PER_USDC * 100000)) // Insufficient funds for transaction (instruction should fail)
         .accounts({
           owner: wallet.publicKey,
           vaultAtaUsdc: vaultAtaUsdc,
           vault: vaultPda,
-          receiverAta: quartzAta,
+          receiverAta: quartzAtaUsdc,
           receiver: quartzAddress,
-          tokenMint: tokenMint
+          tokenMint: usdcMint
         })
         .rpc()
     } catch (err) {
