@@ -9,7 +9,7 @@ pub struct CloseAccount<'info> {
         bump,
         close = owner
     )]
-    pub wallet: Account<'info, Vault>,
+    pub vault: Account<'info, Vault>,
     
     #[account(mut)]
     pub owner: Signer<'info>

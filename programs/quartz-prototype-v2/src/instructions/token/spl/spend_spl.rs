@@ -18,13 +18,6 @@ pub struct SpendSpl<'info> {
 
     #[account(
         mut,
-        seeds=[vault.key().as_ref(), token_program.key().as_ref(), token_mint.key().as_ref()],
-        bump
-    )]
-    pub vault_ata: Account<'info, TokenAccount>,
-
-    #[account(
-        mut,
         seeds=[b"vault", vault_owner.key().as_ref()],
         bump
     )]
@@ -32,10 +25,10 @@ pub struct SpendSpl<'info> {
 
     #[account(
         mut,
-        associated_token::mint = token_mint,
-        associated_token::authority = receiver
+        seeds=[vault.key().as_ref(), token_program.key().as_ref(), token_mint.key().as_ref()],
+        bump
     )]
-    pub receiver_ata: Account<'info, TokenAccount>,
+    pub vault_ata: Account<'info, TokenAccount>,
 
     /// CHECK: Receiving account does not need to be checked, once address is the correct one
     #[account(
@@ -43,6 +36,13 @@ pub struct SpendSpl<'info> {
         address = QUARTZ_HOLDING_ADDRESS
     )]
     pub receiver: AccountInfo<'info>,
+
+    #[account(
+        mut,
+        associated_token::mint = token_mint,
+        associated_token::authority = receiver
+    )]
+    pub receiver_ata: Account<'info, TokenAccount>,
 
     pub token_mint: Account<'info, Mint>,
 

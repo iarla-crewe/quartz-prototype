@@ -10,7 +10,7 @@ pub struct InitAccount<'info> {
         payer = owner,
         space = Vault::SPACE
     )]
-    pub wallet: Account<'info, Vault>,
+    pub vault: Account<'info, Vault>,
 
     #[account(mut)]
     pub owner: Signer<'info>,
@@ -19,7 +19,7 @@ pub struct InitAccount<'info> {
 }
 
 pub fn init_account_handler(ctx: Context<InitAccount>) -> Result<()> {
-    ctx.accounts.wallet.owner = ctx.accounts.owner.key();
+    ctx.accounts.vault.owner = ctx.accounts.owner.key();
 
     msg!("Account created");
     Ok(())

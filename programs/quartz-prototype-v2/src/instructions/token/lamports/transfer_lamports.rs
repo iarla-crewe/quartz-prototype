@@ -11,7 +11,7 @@ pub struct TransferLamports<'info> {
         seeds = [b"vault", owner.key().as_ref()],
         bump
     )]
-    pub sending_wallet: Account<'info, Vault>,
+    pub vault: Account<'info, Vault>,
     
     /// CHECK: Receiving account does not need to be checked
     #[account(mut)]
@@ -31,7 +31,7 @@ pub fn transfer_lamports_handler(
         
     transfer_lamports_from_pda(
         amount_lamports, 
-        ctx.accounts.sending_wallet.to_account_info(), 
+        ctx.accounts.vault.to_account_info(), 
         ctx.accounts.receiver.to_account_info()
     )?;
 
