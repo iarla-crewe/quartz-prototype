@@ -18,7 +18,7 @@ import {
   TOKEN_PROGRAM_ID,
 } from "@solana/spl-token";
 
-describe("quartz-prototype-v2", () => {
+describe("quartz-prototype-v2 tests", () => {
   // Configure the client to use the local cluster.
   let provider = anchor.AnchorProvider.env()
   let wallet = provider.wallet
@@ -39,6 +39,7 @@ describe("quartz-prototype-v2", () => {
   let tokenMint: PublicKey
   let quartzAta: PublicKey
   let vaultAta: PublicKey
+  const splTokenAmount = 100
 
   before(async () => {
     // SOL Top-ups for all accounts used
@@ -82,15 +83,14 @@ describe("quartz-prototype-v2", () => {
         quartzRecievingAddress
     )).address
     
-
     // Initialize ATA for Vault
-
-    // TODO - Tidy
-    const [tmp] = anchor.web3.PublicKey.findProgramAddressSync(
+    vaultAta = anchor.web3.PublicKey.findProgramAddressSync(
       [vaultPda.toBuffer(), TOKEN_PROGRAM_ID.toBuffer(), tokenMint.toBuffer()],
       program.programId
-    )
-    vaultAta = tmp
+    )[0]
+
+    // Mint tokens to vault ATA
+    // TODO - Implement
   });
 
   it("init_account", async () => {
@@ -102,30 +102,10 @@ describe("quartz-prototype-v2", () => {
 
   it("spend_spl", async () => {
     const initialBalance = await provider.connection.getBalance(quartzAta)
-    const tokenCount = 100;
-
-    let secret = new Uint8Array([249,159,32,245,180,151,45,253,13,150,133,225,46,230,64,177,80,113,33,188,200,237,79,91,193,246,225,188,126,55,224,186,121,150,192,1,119,31,215,244,64,92,76,223,210,231,224,237,118,235,158,203,112,250,196,3,142,3,227,15,170,15,38,70])
-
-    let test: Signer = {
-      publicKey: wallet.publicKey,
-      secretKey: Keypair.fromSecretKey(secret).secretKey
-    }
-
-    await mintTo(
-      provider.connection,
-      test,
-      tokenMint,
-      vaultAta,
-      tokenMintAuth,
-      tokenCount * 2,
-      [],
-      undefined,
-      TOKEN_PROGRAM_ID
-    )
 
     // Call PDA to send spl tokens to quartzAta
     const tx = await program.methods
-      .spendSpl(new anchor.BN(tokenCount))
+      .spendSpl(new anchor.BN(splTokenAmount))
       .accounts({
         vaultInitializer: wallet.publicKey,
         vaultAta: vaultAta,
@@ -139,7 +119,7 @@ describe("quartz-prototype-v2", () => {
 
     // Check SOL is received
     const newBalance = await provider.connection.getBalance(quartzAta)
-    expect(newBalance - initialBalance).to.equal(tokenCount);
+    expect(newBalance - initialBalance).to.equal(splTokenAmount);
   })
 
   it("transfer_spl", async () => {
