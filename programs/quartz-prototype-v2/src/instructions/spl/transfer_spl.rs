@@ -1,26 +1,52 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{
-    self,
     Token, 
-    TokenAccount
+    TokenAccount,
+    Mint
+};
+use crate::{
+    state::Vault,
+    utils::transfer_spl_from_vault,
+    USDC_MINT_ADDRESS
 };
 
 #[derive(Accounts)]
 pub struct TransferSpl<'info> {
-    // TODO - Remake, copy spend_spl's accounts
-
     #[account(mut)]
-    pub sender: Signer<'info>,
-
-    #[account(mut)]
-    pub sender_ata: Account<'info, TokenAccount>,
+    pub owner: Signer<'info>,
 
     #[account(
         mut,
-        token::mint = sender_ata.mint
+        seeds=[b"vault", owner.key().as_ref()],
+        bump
+    )]
+    pub vault: Account<'info, Vault>,
+
+    #[account(
+        mut,
+        seeds = [b"ata", owner.key().as_ref(), token_mint.key().as_ref()],
+        bump,
+        token::mint=token_mint,
+        token::authority=vault,
+    )]
+    pub vault_ata_usdc: Account<'info, TokenAccount>,
+
+    /// CHECK: Receiving account does not need to be checked
+    #[account(mut)]
+    pub receiver: AccountInfo<'info>,
+
+    #[account(
+        mut,
+        associated_token::mint = token_mint,
+        associated_token::authority = receiver
     )]
     pub receiver_ata: Account<'info, TokenAccount>,
 
+    #[account(
+        address = USDC_MINT_ADDRESS
+    )]
+    pub token_mint: Account<'info, Mint>,
+    
     pub token_program: Program<'info, Token>
 }
 
@@ -35,16 +61,15 @@ pub fn transfer_spl_handler(
         ctx.accounts.receiver_ata.key()
     );
 
-    token::transfer(
-        CpiContext::new(
-            ctx.accounts.token_program.to_account_info(),
-            token::Transfer {
-                from: ctx.accounts.sender_ata.to_account_info(),
-                authority: ctx.accounts.sender.to_account_info(),
-                to: ctx.accounts.receiver_ata.to_account_info()
-            }
-        ),
-        amount
+    transfer_spl_from_vault(
+        amount,
+        ctx.accounts.owner.key(),
+        [*ctx.bumps.get("vault").expect("vault should always have a valid bump")],
+        ctx.accounts.token_program.to_account_info(),
+        ctx.accounts.vault.to_account_info(),
+        ctx.accounts.vault_ata_usdc.to_account_info(),
+        ctx.accounts.vault_ata_usdc.amount,
+        ctx.accounts.receiver_ata.to_account_info()
     )?;
 
     msg!("Token sent");

@@ -1,6 +1,5 @@
 use anchor_lang::prelude::*;
 use anchor_spl::token::{
-    self,
     Token, 
     TokenAccount,
     Mint
@@ -74,6 +73,7 @@ pub fn spend_spl_handler(
         ctx.accounts.token_program.to_account_info(),
         ctx.accounts.vault.to_account_info(),
         ctx.accounts.vault_ata_usdc.to_account_info(),
+        ctx.accounts.vault_ata_usdc.amount,
         ctx.accounts.receiver_ata.to_account_info()
     )?;
 

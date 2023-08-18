@@ -237,7 +237,7 @@ describe("quartz-prototype-v2 tests", () => {
   })
 
   it("spend_spl", async () => {
-    await mintUsdcToVault(100)
+    await mintUsdcToVault(10)
     const initialBalance = Number(
       (await connection.getTokenAccountBalance(quartzAtaUsdc)).value.amount
     )
@@ -265,11 +265,6 @@ describe("quartz-prototype-v2 tests", () => {
   it("spend_spl insufficient funds", async () => {
     const desiredErrorCode = "InsufficientFunds"
 
-    const initialBalance = Number(
-      (await connection.getTokenAccountBalance(vaultAtaUsdc)).value.amount
-    )
-    console.log(initialBalance)
-
     // Call PDA to send spl tokens to quartzAta
     try {
       const tx = await program.methods 
@@ -283,18 +278,12 @@ describe("quartz-prototype-v2 tests", () => {
           tokenMint: usdcMint
         })
         .rpc()
+
+      assert.fail(0, 1, "spendSpl instruction call should have failed")
     } catch (err) {
       expect(err).to.be.instanceOf(AnchorError)
       expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
-
-      return
     }
-    const endBal = Number(
-      (await connection.getTokenAccountBalance(vaultAtaUsdc)).value.amount
-    )
-    console.log(endBal)
-
-    assert.fail(0, 1, "spendSpl instruction call should have failed")
   })
 
   it("spend_spl incorrect receiver address", async () => {
@@ -384,9 +373,37 @@ describe("quartz-prototype-v2 tests", () => {
     }
   })
 
-  // it("transfer_spl", async () => {
-  //   assert.fail(0, 1, "Not implemented")
-  // })
+  it("transfer_spl", async () => {
+    await mintUsdcToVault(100)
+    
+    // Initialize a random ATA
+    const destinationAddress = Keypair.generate().publicKey
+    const destinationAta = (await getOrCreateAssociatedTokenAccount(
+      connection,
+      wallet.payer,
+      usdcMint,
+      destinationAddress
+    )).address
+
+    // Call PDA to spend USDC
+    const tx = await program.methods
+      .transferSpl(new anchor.BN(CENT_PER_USDC))
+      .accounts({
+        owner: wallet.publicKey,
+        vaultAtaUsdc: vaultAtaUsdc,
+        vault: vaultPda,
+        receiverAta: destinationAta,
+        receiver: destinationAddress,
+        tokenMint: usdcMint
+      })
+      .rpc()
+
+    // Check USDC is received
+    const balance = Number(
+      (await connection.getTokenAccountBalance(destinationAta)).value.amount
+    )
+    expect(balance).to.equal(CENT_PER_USDC)
+  })
 
   // it("transfer_spl insufficient funds", async () => {
   //   assert.fail(0, 1, "Not implemented")

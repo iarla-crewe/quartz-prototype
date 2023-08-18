@@ -1,8 +1,6 @@
 use anchor_lang::prelude::*;
 use crate::errors::VaultError;
-use anchor_spl::token::{
-    self,
-};
+use anchor_spl::token;
 
 
 pub fn transfer_lamports_from_vault(
@@ -20,16 +18,17 @@ pub fn transfer_lamports_from_vault(
     Ok(())
 }
 
-pub fn transfer_spl_from_vault<'a>(
+pub fn transfer_spl_from_vault<'info>(
     amount: u64,
     owner: Pubkey,
     bump: [u8; 1],
-    token_program: AccountInfo<'a>,
-    vault: AccountInfo<'a>,
-    vault_ata: AccountInfo<'a>,
-    receiver_ata: AccountInfo<'a>
+    token_program: AccountInfo<'info>,
+    vault: AccountInfo<'info>,
+    vault_ata: AccountInfo<'info>,
+    vault_ata_current_balance: u64,
+    receiver_ata: AccountInfo<'info>
 ) -> Result<()> {
-    if **vault_ata.try_borrow_lamports()? < amount {
+    if vault_ata_current_balance < amount {
         return err!(VaultError::InsufficientFunds);
     }
 
@@ -43,7 +42,7 @@ pub fn transfer_spl_from_vault<'a>(
         CpiContext::new_with_signer(
             token_program,
             token::Transfer {
-                from: vault_ata,
+                from: vault_ata.to_account_info(),
                 to: receiver_ata,
                 authority: vault
             },
