@@ -18,6 +18,7 @@ import {
   getOrCreateAssociatedTokenAccount,
   mintTo,
   TOKEN_PROGRAM_ID,
+  getAccount
 } from "@solana/spl-token"
 
 describe("quartz-prototype-v2 tests", () => {
@@ -43,6 +44,17 @@ describe("quartz-prototype-v2 tests", () => {
   let tokenMint: PublicKey
   let quartzAta: PublicKey
   const splTokenAmount = 100
+
+  async function mintUsdcToVault() {
+    await mintTo(
+      connection,
+      wallet.payer,
+      tokenMint,
+      vaultAtaUsdc,
+      tokenMintAuth,
+      splTokenAmount * 1000
+    )
+  }
 
   before(async () => {
     let data = fs.readFileSync(
@@ -82,7 +94,7 @@ describe("quartz-prototype-v2 tests", () => {
       Payer,
       tokenMintAuth.publicKey,
       tokenMintAuth.publicKey,
-      10,
+      2,
       tokenMintKeypair,
       undefined,
       TOKEN_PROGRAM_ID
@@ -95,16 +107,6 @@ describe("quartz-prototype-v2 tests", () => {
         tokenMint,
         quartzAddress
     )).address
-
-    // Mint tokens to vault ATA
-    // await mintTo(
-    //   connection,
-    //   Payer,
-    //   tokenMint,
-    //   vaultAtaUsdc,
-    //   tokenMintAuth,
-    //   splTokenAmount * 1000
-    // )
   })
 
   it("init_account", async () => {
@@ -251,9 +253,12 @@ describe("quartz-prototype-v2 tests", () => {
   })
 
   it("spend_spl", async () => {
-    // Call PDA to send spl tokens to quartzAta
-    const initialBalance = await connection.getBalance(quartzAta)
+    mintUsdcToVault()
+    const initialBalance = Number(
+      (await connection.getTokenAccountBalance(quartzAta)).value.amount
+    )
 
+    // Call PDA to send spl tokens to quartzAta
     const tx = await program.methods
       .spendSpl(new anchor.BN(splTokenAmount))
       .accounts({
@@ -266,8 +271,10 @@ describe("quartz-prototype-v2 tests", () => {
       })
       .rpc()
 
-    // Check SOL is received
-    const newBalance = await connection.getBalance(quartzAta)
+    // Check SPL is received
+    const newBalance = Number(
+      (await connection.getTokenAccountBalance(quartzAta)).value.amount
+    )
     expect(newBalance - initialBalance).to.equal(splTokenAmount)
   })
 
@@ -290,4 +297,3 @@ describe("quartz-prototype-v2 tests", () => {
     const tx = await program.methods.closeAccount().rpc()
   })
 })
-
