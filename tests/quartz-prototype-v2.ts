@@ -374,7 +374,7 @@ describe("quartz-prototype-v2 tests", () => {
   })
 
   it("transfer_spl", async () => {
-    await mintUsdcToVault(100)
+    await mintUsdcToVault(10)
     
     // Initialize a random ATA
     const destinationAddress = Keypair.generate().publicKey
@@ -405,13 +405,72 @@ describe("quartz-prototype-v2 tests", () => {
     expect(balance).to.equal(CENT_PER_USDC)
   })
 
-  // it("transfer_spl insufficient funds", async () => {
-  //   assert.fail(0, 1, "Not implemented")
-  // })
+  it("transfer_spl insufficient funds", async () => {
+    const desiredErrorCode = "InsufficientFunds"
 
-  // it("transfer_spl mismatched ata owner", async () => {
-  //   assert.fail(0, 1, "Not implemented")
-  // })
+    // Initialize a random ATA
+    const destinationAddress = Keypair.generate().publicKey
+    const destinationAta = (await getOrCreateAssociatedTokenAccount(
+      connection,
+      wallet.payer,
+      usdcMint,
+      destinationAddress
+    )).address
+
+    // Call PDA to spend USDC without required funds
+    try {
+      const tx = await program.methods
+        .transferSpl(new anchor.BN(CENT_PER_USDC * 10000))  // Insufficient funds for transaction (instruction should fail)
+        .accounts({
+          owner: wallet.publicKey,
+          vaultAtaUsdc: vaultAtaUsdc,
+          vault: vaultPda,
+          receiverAta: destinationAta,
+          receiver: destinationAddress,
+          tokenMint: usdcMint
+        })
+        .rpc()
+
+      assert.fail(0, 1, "transferLamports instruction call should have failed")
+    } catch (err) {
+      expect(err).to.be.instanceOf(AnchorError)
+      expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
+    }
+  })
+
+  it("transfer_spl mismatched ata owner", async () => {
+    const desiredErrorCode = "ConstraintTokenOwner"
+    await mintUsdcToVault(10)
+    
+    // Initialize a random ATA
+    const destinationAddress = Keypair.generate().publicKey
+    const incorrectAta = (await getOrCreateAssociatedTokenAccount(
+      connection,
+      wallet.payer,
+      usdcMint,
+      Keypair.generate().publicKey
+    )).address
+
+    // Call PDA to spend USDC
+    try {
+      const tx = await program.methods
+        .transferSpl(new anchor.BN(CENT_PER_USDC))
+        .accounts({
+          owner: wallet.publicKey,
+          vaultAtaUsdc: vaultAtaUsdc,
+          vault: vaultPda,
+          receiverAta: incorrectAta,
+          receiver: destinationAddress,
+          tokenMint: usdcMint
+        })
+        .rpc()
+    
+        assert.fail(0, 1, "transferLamports instruction call should have failed")
+      } catch (err) {
+        expect(err).to.be.instanceOf(AnchorError)
+        expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
+      }
+  })
 
   it("close_account", async () => {
     const tx = await program.methods.closeAccount().rpc()
