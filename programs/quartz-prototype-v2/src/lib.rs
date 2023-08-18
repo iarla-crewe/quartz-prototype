@@ -11,9 +11,13 @@ declare_id!("57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt");
 #[constant]
 pub const QUARTZ_HOLDING_ADDRESS: Pubkey = pubkey!("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G");
 
-//TODO - Add main net USDC address
+#[cfg(feature = "local-testing")]
 #[constant]
 pub const USDC_MINT_ADDRESS: Pubkey = pubkey!("envrJbV6GbhBTi8Pu6h9MwNViLuAmu3mFFRq7gE9Cp3");
+
+#[cfg(not(feature = "local-testing"))]
+#[constant]
+pub const USDC_MINT_ADDRESS: Pubkey = pubkey!("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");
 
 #[program]
 pub mod quartz_prototype_v2 {
