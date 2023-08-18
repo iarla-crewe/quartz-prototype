@@ -64,12 +64,13 @@ describe("quartz-prototype-v2 tests", () => {
       )
     )
 
+    // Get Vault USDC ATA
     vaultAtaUsdc = anchor.web3.PublicKey.findProgramAddressSync(
       [utf8.encode("ata"), wallet.publicKey.toBuffer(), usdcKeypair.publicKey.toBuffer()],
       program.programId
     )[0]
 
-    // Top-up SOL for all accounts used
+    // Top-up SOL for USDC mint authority
     const tx = new Transaction().add(
       SystemProgram.transfer({
         fromPubkey: wallet.publicKey,
@@ -79,7 +80,7 @@ describe("quartz-prototype-v2 tests", () => {
     )
     await provider.sendAndConfirm(tx)
 
-    // Create stablecoin mint
+    // Create USDC mint
     usdcMint = await createMint(
       connection,
       wallet.payer,
@@ -89,7 +90,7 @@ describe("quartz-prototype-v2 tests", () => {
       usdcKeypair
     )
   
-    // Initialise ATA for Quartz wallet
+    // Initialise USDC ATA for Quartz wallet
     quartzAtaUsdc = (await getOrCreateAssociatedTokenAccount(
         connection,
         wallet.payer,
@@ -146,14 +147,12 @@ describe("quartz-prototype-v2 tests", () => {
           receiver: quartzAddress
         })
         .rpc()
+
+      assert.fail(0, 1, "transferLamports instruction call should have failed")
     } catch(err) {
       expect(err).to.be.instanceOf(AnchorError)
       expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
-
-      return
     }
-
-    assert.fail(0, 1, "transferLamports instruction call should have failed")
   })
 
   it("spend_lamports incorrect receiver address", async () => {
@@ -178,14 +177,12 @@ describe("quartz-prototype-v2 tests", () => {
           receiver: Keypair.generate().publicKey  // Incorrect receiver address (instruction should fail)
         })
         .rpc()
+
+      assert.fail(0, 1, "spendLamports instruction call should have failed")
     } catch(err) {
       expect(err).to.be.instanceOf(AnchorError)
       expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
-
-      return
     }
-
-    assert.fail(0, 1, "spendLamports instruction call should have failed")
   })
 
   it("transfer_lamports", async () => {
@@ -231,14 +228,12 @@ describe("quartz-prototype-v2 tests", () => {
           receiver: destinationAccount.publicKey
         })
         .rpc()
+
+      assert.fail(0, 1, "transferLamports instruction call should have failed")
     } catch(err) {
       expect(err).to.be.instanceOf(AnchorError)
       expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
-
-      return
     }
-
-    assert.fail(0, 1, "transferLamports instruction call should have failed")
   })
 
   it("spend_spl", async () => {
@@ -247,7 +242,7 @@ describe("quartz-prototype-v2 tests", () => {
       (await connection.getTokenAccountBalance(quartzAtaUsdc)).value.amount
     )
 
-    // Call PDA to send spl tokens to quartzAta
+    // Call PDA to spend USDC
     const tx = await program.methods
       .spendSpl(new anchor.BN(CENT_PER_USDC))
       .accounts({
@@ -260,7 +255,7 @@ describe("quartz-prototype-v2 tests", () => {
       })
       .rpc()
 
-    // Check SPL is received
+    // Check USDC is received
     const newBalance = Number(
       (await connection.getTokenAccountBalance(quartzAtaUsdc)).value.amount
     )
@@ -271,9 +266,59 @@ describe("quartz-prototype-v2 tests", () => {
   //   assert.fail(0, 1, "Not implemented")
   // })
 
-  // it("spend_spl incorrect receiver address", async () => {
-  //   assert.fail(0, 1, "Not implemented")
-  // })
+  it("spend_spl incorrect receiver address", async () => {
+    const desiredErrorCode = "ConstraintAddress"
+    await mintUsdcToVault(100)
+
+    // Initialize a random ATA
+    const destinationAddress = Keypair.generate().publicKey
+    const destinationAta = (await getOrCreateAssociatedTokenAccount(
+      connection,
+      wallet.payer,
+      usdcMint,
+      destinationAddress
+    )).address
+
+    // Call PDA to spend USDC, with incorrect receiver address 
+    try {
+      const tx = await program.methods
+        .spendSpl(new anchor.BN(CENT_PER_USDC))
+        .accounts({
+          owner: wallet.publicKey,
+          vaultAtaUsdc: vaultAtaUsdc,
+          vault: vaultPda,
+          receiverAta: destinationAta,      // Incorrect receiverATA (instruction should fail)
+          receiver: destinationAddress,     // Incorrect receiver (instruction should fail)
+          tokenMint: usdcMint
+        })
+        .rpc()
+
+      assert.fail(0, 1, "spendSol instruction call should have failed")
+    } catch(err) {
+      expect(err).to.be.instanceOf(AnchorError)
+      expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
+    }
+
+    // Call PDA to spend USDC, with correct ATA but incorrect owner
+    try {
+      const tx = await program.methods
+        .spendSpl(new anchor.BN(CENT_PER_USDC))
+        .accounts({
+          owner: wallet.publicKey,
+          vaultAtaUsdc: vaultAtaUsdc,
+          vault: vaultPda,
+          receiverAta: quartzAtaUsdc,      
+          receiver: destinationAddress,     // Incorrect receiver (instruction should fail)
+          tokenMint: usdcMint
+        })
+        .rpc()
+
+      assert.fail(0, 1, "spendSol instruction call should have failed")
+    } catch(err) {
+      expect(err).to.be.instanceOf(AnchorError)
+      expect((err as AnchorError).error.errorCode.code).to.equal(desiredErrorCode)
+    }
+  })
 
   // it("transfer_spl", async () => {
   //   assert.fail(0, 1, "Not implemented")
