@@ -108,7 +108,7 @@ describe("quartz-prototype-v2 tests", () => {
     const tx = await program.methods.initAccount().rpc()
 
     const account = await program.account.vault.fetch(vaultPda)
-    expect(account.initializer === wallet.publicKey)
+    expect(account.owner === wallet.publicKey)
   })
 
   it("spend_lamports", async () => {
@@ -128,7 +128,7 @@ describe("quartz-prototype-v2 tests", () => {
     const tx = await program.methods
       .spendLamports(new anchor.BN(LAMPORTS_PER_SOL))
       .accounts({
-        sendingWallet: vaultPda, 
+        vault: vaultPda, 
         receiver: quartzAddress
       })
       .rpc()
@@ -145,7 +145,7 @@ describe("quartz-prototype-v2 tests", () => {
       const tx = await program.methods
         .spendLamports(new anchor.BN(LAMPORTS_PER_SOL * 100)) // Insufficient funds for transaction (instruction should fail)
         .accounts({
-          sendingWallet: vaultPda, 
+          vault: vaultPda, 
           receiver: quartzAddress
         })
         .rpc()
@@ -177,7 +177,7 @@ describe("quartz-prototype-v2 tests", () => {
       const tx = await program.methods
         .spendLamports(new anchor.BN(LAMPORTS_PER_SOL))
         .accounts({
-          sendingWallet: vaultPda, 
+          vault: vaultPda, 
           receiver: Keypair.generate().publicKey  // Incorrect receiver address (instruction should fail)
         })
         .rpc()
@@ -211,7 +211,7 @@ describe("quartz-prototype-v2 tests", () => {
     const tx = await program.methods
       .transferLamports(new anchor.BN(LAMPORTS_PER_SOL))
       .accounts({
-        sendingWallet: vaultPda, 
+        vault: vaultPda, 
         receiver: destinationAccount
       })
       .rpc()
@@ -230,7 +230,7 @@ describe("quartz-prototype-v2 tests", () => {
       const tx = await program.methods
         .transferLamports(new anchor.BN(LAMPORTS_PER_SOL * 1000)) // Insufficient funds for transaction (instruction should fail)
         .accounts({
-          sendingWallet: vaultPda, 
+          vault: vaultPda, 
           receiver: destinationAccount.publicKey
         })
         .rpc()
@@ -251,7 +251,7 @@ describe("quartz-prototype-v2 tests", () => {
     const tx = await program.methods
       .spendSpl(new anchor.BN(splTokenAmount))
       .accounts({
-        vaultInitializer: wallet.publicKey,
+        vaultOwner: wallet.publicKey,
         vaultAta: vaultAta,
         vault: vaultPda,
         receiverAta: quartzAta,
