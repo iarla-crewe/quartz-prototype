@@ -5,14 +5,14 @@ use crate::state::Vault;
 pub struct CloseAccount<'info> {
     #[account(
         mut,
-        seeds = [b"vault", initializer.key().as_ref()],
+        seeds = [b"vault", owner.key().as_ref()],
         bump,
-        close = initializer
+        close = owner
     )]
-    pub wallet: Account<'info, Vault>,
+    pub vault: Account<'info, Vault>,
     
     #[account(mut)]
-    pub initializer: Signer<'info>
+    pub owner: Signer<'info>
 }
 
 pub fn close_account_handler(_ctx: Context<CloseAccount>) -> Result<()> {

@@ -9,10 +9,10 @@ use crate::{
 pub struct SpendLamports<'info> {
     #[account(
         mut,
-        seeds = [b"vault", initializer.key().as_ref()],
+        seeds = [b"vault", owner.key().as_ref()],
         bump
     )]
-    pub sending_wallet: Account<'info, Vault>,
+    pub vault: Account<'info, Vault>,
 
     /// CHECK: Receiving account does not need to be checked, once address is the correct one
     #[account(
@@ -22,7 +22,7 @@ pub struct SpendLamports<'info> {
     pub receiver: AccountInfo<'info>,
 
     #[account(mut)]
-    pub initializer: Signer<'info>,
+    pub owner: Signer<'info>,
 
     pub system_program: Program<'info, System>,
 }
@@ -35,7 +35,7 @@ pub fn spend_lamports_handler(
 
     transfer_lamports_from_pda(
         amount_lamports, 
-        ctx.accounts.sending_wallet.to_account_info(), 
+        ctx.accounts.vault.to_account_info(), 
         ctx.accounts.receiver.to_account_info()
     )?;
 

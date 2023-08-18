@@ -5,21 +5,21 @@ use crate::state::Vault;
 pub struct InitAccount<'info> {
     #[account(
         init,
-        seeds = [b"vault", initializer.key().as_ref()],
+        seeds = [b"vault", owner.key().as_ref()],
         bump,
-        payer = initializer,
+        payer = owner,
         space = Vault::SPACE
     )]
-    pub wallet: Account<'info, Vault>,
+    pub vault: Account<'info, Vault>,
 
     #[account(mut)]
-    pub initializer: Signer<'info>,
+    pub owner: Signer<'info>,
     
     pub system_program: Program<'info, System>
 }
 
 pub fn init_account_handler(ctx: Context<InitAccount>) -> Result<()> {
-    ctx.accounts.wallet.initializer = ctx.accounts.initializer.key();
+    ctx.accounts.vault.owner = ctx.accounts.owner.key();
 
     msg!("Account created");
     Ok(())

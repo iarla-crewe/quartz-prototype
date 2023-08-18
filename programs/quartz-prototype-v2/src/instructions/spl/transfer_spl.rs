@@ -7,13 +7,12 @@ use anchor_spl::token::{
 
 #[derive(Accounts)]
 pub struct TransferSpl<'info> {
+    // TODO - Remake, copy spend_spl's accounts
+
     #[account(mut)]
     pub sender: Signer<'info>,
 
-    #[account(
-        mut,
-        // token::mint = USDC_MINT_PUBKEY  // Shouldn't need - spl token used is irrelevant
-    )]
+    #[account(mut)]
     pub sender_ata: Account<'info, TokenAccount>,
 
     #[account(
