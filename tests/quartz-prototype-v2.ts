@@ -35,15 +35,13 @@ describe("quartz-prototype-v2 tests", () => {
     [utf8.encode("vault"), wallet.publicKey.toBuffer()],
     program.programId
   )
-
-  const quartzRecievingAddress = new PublicKey("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G")
   
+  let vaultAtaUsdc: PublicKey
   const Payer = anchor.web3.Keypair.generate()
   const tokenMintAuth = anchor.web3.Keypair.generate()    
   let tokenMintKeypair: Keypair    
   let tokenMint: PublicKey
   let quartzAta: PublicKey
-  let vaultAta: PublicKey
   const splTokenAmount = 100
 
   before(async () => {
@@ -53,6 +51,11 @@ describe("quartz-prototype-v2 tests", () => {
     tokenMintKeypair = Keypair.fromSecretKey(
       new Uint8Array(JSON.parse(data))
     )
+
+    vaultAtaUsdc = anchor.web3.PublicKey.findProgramAddressSync(
+      [utf8.encode("ata"), wallet.publicKey.toBuffer(), tokenMintKeypair.publicKey.toBuffer()],
+      program.programId
+    )[0]
 
     // SOL Top-ups for all accounts used
     const txPayer = new Transaction().add(
@@ -90,27 +93,18 @@ describe("quartz-prototype-v2 tests", () => {
         connection,
         Payer,
         tokenMint,
-        quartzRecievingAddress
-    )).address
-    
-    // Initialize ATA for Vault
-    vaultAta = (await getOrCreateAssociatedTokenAccount(
-      connection,
-      Payer,
-      tokenMint,
-      vaultPda,
-      true
+        quartzAddress
     )).address
 
     // Mint tokens to vault ATA
-    await mintTo(
-      connection,
-      Payer,
-      tokenMint,
-      vaultAta,
-      tokenMintAuth,
-      splTokenAmount * 1000
-    )
+    // await mintTo(
+    //   connection,
+    //   Payer,
+    //   tokenMint,
+    //   vaultAtaUsdc,
+    //   tokenMintAuth,
+    //   splTokenAmount * 1000
+    // )
   })
 
   it("init_account", async () => {
@@ -260,17 +254,22 @@ describe("quartz-prototype-v2 tests", () => {
     // Call PDA to send spl tokens to quartzAta
     const initialBalance = await connection.getBalance(quartzAta)
 
-    const tx = await program.methods
-      .spendSpl(new anchor.BN(splTokenAmount))
-      .accounts({
-        owner: wallet.publicKey,
-        vaultAtaUsdc: vaultAta,
-        vault: vaultPda,
-        receiverAta: quartzAta,
-        receiver: quartzRecievingAddress,
-        tokenMint: tokenMint
-      })
-      .rpc()
+    try {
+      const tx = await program.methods
+        .spendSpl(new anchor.BN(splTokenAmount))
+        .accounts({
+          owner: wallet.publicKey,
+          vaultAtaUsdc: vaultAtaUsdc,
+          vault: vaultPda,
+          receiverAta: quartzAta,
+          receiver: quartzAddress,
+          tokenMint: tokenMint
+        })
+        .rpc()
+    } catch(err) {
+      console.log(err)
+      throw err
+    }
 
     // Check SOL is received
     const newBalance = await connection.getBalance(quartzAta)
