@@ -10,6 +10,7 @@
     "test": "jest"
   },
   "dependencies": {
+    "@solana/spl-token": "^0.3.8",
     "@solana/web3.js": "^1.78.4",
     "add": "^2.0.6",
     "buffer": "^6.0.3",
