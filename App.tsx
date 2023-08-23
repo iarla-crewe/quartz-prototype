@@ -1,14 +1,19 @@
+import HomeScreen from './screens/HomeScreen';
 import React from 'react';
 import {
-  SafeAreaView
+  SafeAreaView, StyleSheet
 } from 'react-native';
 
-function App(): JSX.Element {
+export default function App(): JSX.Element {
   return (
-    <SafeAreaView>
-
+    <SafeAreaView style={styles.container}>
+      <HomeScreen />
     </SafeAreaView>
   );
 }
 
-export default App;
+const styles = StyleSheet.create({
+  container: {
+    height: "100%"
+  }
+});
