@@ -1,9 +1,12 @@
-import { View, Text } from "react-native";
+import { View } from "react-native";
+import { TokenType } from "../App";
 
-export default function TransferScreen() {
+export default function TransferScreen( { route, navigation } : {route: any, navigation: any} ) {
+    const { tokenType: TokenType } = route.params;
+    
     return (
         <View>
-            <Text>Transfer</Text>
+            
         </View>
-    )
+    );
 }

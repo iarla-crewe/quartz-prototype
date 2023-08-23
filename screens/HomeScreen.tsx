@@ -1,11 +1,16 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 
-export default function HomeScreen({ navigation } : {navigation: any} ) {
+export default function HomeScreen( { navigation } : {navigation: any} ) {
     const solBalance = 12.3;
     const usdcBalance = 40;
+    const address = "6vVSxgh3Zw3yqeLwqXwV11QgcEcUQ8AM1XwhStBj3MGr";
 
     return (
         <View>
+            <View style={{padding: 16}}>
+                <Text style={{fontSize: 24}}>{address}</Text>
+            </View>
+
             <View style={styles.tokenBalance}>
                 <Text style={styles.largeText}>SOL: {solBalance.toString()}</Text>
             </View>
@@ -24,7 +29,7 @@ export default function HomeScreen({ navigation } : {navigation: any} ) {
                     padding: 16
                 }}
                 onPress={
-                    () => navigation.navigate('Transfer')
+                    () => navigation.navigate('TransferSelect')
                 }
             >
                 <Text style={{color:'black'}}>Transfer</Text>
