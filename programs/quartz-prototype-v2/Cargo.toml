@@ -15,6 +15,7 @@ no-log-ix-name = []
 cpi = ["no-entrypoint"]
 default = []
 local-testing = []
+devnet = []
 
 [dependencies]
 anchor-lang = "0.28.0"
