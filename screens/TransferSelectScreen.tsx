@@ -16,7 +16,7 @@ export default function TransferSelectScreen( { navigation } : {navigation: any}
                 onPress={
                     () => navigation.navigate(
                         'Transfer', 
-                        { tokenType: TokenType.SOL }
+                        { token: TokenType.SOL }
                     )
                 }
             >
@@ -35,7 +35,7 @@ export default function TransferSelectScreen( { navigation } : {navigation: any}
                 onPress={
                     () => navigation.navigate(
                         'Transfer', 
-                        { tokenType: TokenType.USDC }
+                        { token: TokenType.USDC }
                     )
                 }
             >

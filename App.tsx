@@ -7,6 +7,7 @@ import React from 'react';
 import {
   SafeAreaView, StyleSheet
 } from 'react-native';
+import TransactionConfirmedScreen from './screens/TransactionConfirmedScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -23,6 +24,7 @@ export default function App(): JSX.Element {
           <Stack.Screen name='Home' component={HomeScreen} />
           <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
           <Stack.Screen name='Transfer' component={TransferScreen} />
+          <Stack.Screen name='TransactionConfirmed' component={TransactionConfirmedScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

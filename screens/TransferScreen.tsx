@@ -3,14 +3,14 @@ import { TokenType } from "../App";
 import React from "react";
 
 export default function TransferScreen( { route, navigation } : {route: any, navigation: any} ) {
-    const { tokenType } = route.params;
+    const { token } = route.params;
     const [ address, setAddress ] = React.useState('');
     const [ amount, setAmount ] = React.useState('');
     
     return (
         <View>
             <View style={styles.viewPadding}>
-                <Text style={styles.largeText}>{tokenType}</Text>
+                <Text style={styles.largeText}>{token}</Text>
             </View>
 
             <View style={styles.viewPadding}>
@@ -41,7 +41,10 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                     padding: 16
                 }}
                 onPress={
-                    () => {}
+                    () => navigation.navigate(
+                        'TransactionConfirmed',
+                        { token: token, address: address, amount: amount }
+                    )
                 }
             >
                 <Text style={{color:'black'}}>Transfer</Text>
