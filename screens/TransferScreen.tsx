@@ -1,8 +1,11 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { TokenType } from "../App";
+import React from "react";
 
 export default function TransferScreen( { route, navigation } : {route: any, navigation: any} ) {
     const { tokenType } = route.params;
+    const [ address, setAddress ] = React.useState('');
+    const [ amount, setAmount ] = React.useState('');
     
     return (
         <View>
@@ -13,7 +16,8 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
             <View style={styles.viewPadding}>
                 <TextInput
                     style={styles.textInput}
-                    value=""
+                    value={address}
+                    onChangeText={text => setAddress(text)}
                     placeholder="Recipient's Solana Address"
                 />
             </View>
@@ -21,7 +25,8 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
             <View style={styles.viewPadding}>
                 <TextInput
                     style={styles.textInput}
-                    value=""
+                    value={amount}
+                    onChangeText={text => setAmount(text)}
                     placeholder="Amount"
                 />
             </View>
@@ -56,6 +61,6 @@ const styles = StyleSheet.create({
     textInput: {
         width: "100%",
         paddingHorizontal: 8,
-        backgroundColor: "gray"
+        backgroundColor: "white"
     }
 });
