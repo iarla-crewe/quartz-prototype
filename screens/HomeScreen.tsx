@@ -34,6 +34,22 @@ export default function HomeScreen( { navigation } : {navigation: any} ) {
             >
                 <Text style={{color:'black'}}>Transfer</Text>
             </TouchableOpacity>
+
+            <TouchableOpacity 
+                style = {{
+                    backgroundColor: 'lightgray',
+                    borderRadius: 10,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    margin: 16,
+                    padding: 16
+                }}
+                onPress={
+                    () => navigation.navigate('Spend')
+                }
+            >
+                <Text style={{color:'black'}}>Fake a Card Spend</Text>
+            </TouchableOpacity>
         </View>
     );
 }

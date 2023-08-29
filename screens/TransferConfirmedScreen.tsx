@@ -1,7 +1,7 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
 import { TokenType } from '../App'
 
-export default function TransactionConfirmedScreen( { route, navigation } : {route: any, navigation: any} ) {
+export default function TransferConfirmedScreen( { route, navigation } : {route: any, navigation: any} ) {
     const { token, address, amount } = route.params;
 
     return (

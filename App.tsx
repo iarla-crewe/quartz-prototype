@@ -4,10 +4,11 @@ import HomeScreen from './screens/HomeScreen';
 import TransferScreen from './screens/TransferScreen';
 import TransferSelectScreen from './screens/TransferSelectScreen';
 import React from 'react';
-import {
-  SafeAreaView, StyleSheet
-} from 'react-native';
-import TransactionConfirmedScreen from './screens/TransactionConfirmedScreen';
+import { SafeAreaView } from 'react-native';
+import TransferConfirmedScreen from './screens/TransferConfirmedScreen';
+import SpendAcceptedScreen from './screens/SpendAcceptedScreen';
+import SpendScreen from './screens/SpendScreen';
+import SpendDeclinedScreen from './screens/SpendDeclinedScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -24,7 +25,10 @@ export default function App(): JSX.Element {
           <Stack.Screen name='Home' component={HomeScreen} />
           <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
           <Stack.Screen name='Transfer' component={TransferScreen} />
-          <Stack.Screen name='TransactionConfirmed' component={TransactionConfirmedScreen} />
+          <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
+          <Stack.Screen name='Spend' component={SpendScreen} />
+          <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
+          <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>
