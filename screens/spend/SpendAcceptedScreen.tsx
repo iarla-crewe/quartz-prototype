@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { TokenType } from '../App'
 
 export default function SpendAcceptedScreen( { navigation } : {navigation: any} ) {
     return (

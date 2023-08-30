@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { TokenType } from "../App";
+import { TokenType } from "../../data/Tokens";
 import React from "react";
 
 export default function TransferScreen( { route, navigation } : {route: any, navigation: any} ) {
@@ -10,7 +10,7 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
     return (
         <View>
             <View style={styles.viewPadding}>
-                <Text style={styles.largeText}>{token}</Text>
+                <Text style={styles.largeText}>{token.name}</Text>
             </View>
 
             <View style={styles.viewPadding}>
@@ -42,7 +42,7 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                 }}
                 onPress={
                     () => navigation.navigate(
-                        'TransactionConfirmed',
+                        'TransferConfirmed',
                         { token: token, address: address, amount: amount }
                     )
                 }

@@ -1,5 +1,4 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { TokenType } from '../App'
 
 export default function SpendDeclinedScreen( { navigation } : {navigation: any} ) {
     return (

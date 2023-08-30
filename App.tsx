@@ -1,20 +1,39 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import HomeScreen from './screens/HomeScreen';
-import TransferScreen from './screens/TransferScreen';
-import TransferSelectScreen from './screens/TransferSelectScreen';
+import TransferScreen from './screens/transfer/TransferScreen';
+import TransferSelectScreen from './screens/transfer/TransferSelectScreen';
 import React from 'react';
 import { SafeAreaView } from 'react-native';
-import TransferConfirmedScreen from './screens/TransferConfirmedScreen';
-import SpendAcceptedScreen from './screens/SpendAcceptedScreen';
-import SpendScreen from './screens/SpendScreen';
-import SpendDeclinedScreen from './screens/SpendDeclinedScreen';
+import TransferConfirmedScreen from './screens/transfer/TransferConfirmedScreen';
+import SpendAcceptedScreen from './screens/spend/SpendAcceptedScreen';
+import SpendScreen from './screens/spend/SpendScreen';
+import SpendDeclinedScreen from './screens/spend/SpendDeclinedScreen';
+import { TokenType } from './data/Tokens';
 
 const Stack = createNativeStackNavigator();
 
-export enum TokenType {
-  SOL = "SOL",
-  USDC = "USDC"
+export class CardTransactionData {
+  amountFiat: number;
+  fiatCurrency: string;
+  amountToken: number;
+  tokenType: TokenType;
+  timestamp: Date;
+  vendor: string;
+  location?: string;
+
+  constructor(
+    { amountFiat, fiatCurrency, amountToken, tokenType, timestamp, vendor, location } :
+    { amountFiat: number, fiatCurrency: string, amountToken: number, tokenType: TokenType, timestamp: Date, vendor: string, location: string | undefined }
+  ) {
+    this.amountFiat = amountFiat;
+    this.fiatCurrency = fiatCurrency;
+    this.amountToken = amountToken;
+    this.tokenType = tokenType; 
+    this.timestamp = timestamp; 
+    this.vendor = vendor;
+    this.location = location; 
+  }
 }
 
 export default function App(): JSX.Element {

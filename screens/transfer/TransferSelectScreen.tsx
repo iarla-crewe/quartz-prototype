@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { TokenType } from '../App'
+import { SOL, USDC } from '../../data/Tokens'
 
 export default function TransferSelectScreen( { navigation } : {navigation: any} ) {
     return (
@@ -16,7 +16,7 @@ export default function TransferSelectScreen( { navigation } : {navigation: any}
                 onPress={
                     () => navigation.navigate(
                         'Transfer', 
-                        { token: TokenType.SOL }
+                        { token: new SOL() }
                     )
                 }
             >
@@ -35,7 +35,7 @@ export default function TransferSelectScreen( { navigation } : {navigation: any}
                 onPress={
                     () => navigation.navigate(
                         'Transfer', 
-                        { token: TokenType.USDC }
+                        { token: new USDC() }
                     )
                 }
             >

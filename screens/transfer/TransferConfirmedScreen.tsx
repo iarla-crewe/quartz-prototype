@@ -1,5 +1,5 @@
 import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { TokenType } from '../App'
+import { TokenType } from '../../data/Tokens'
 
 export default function TransferConfirmedScreen( { route, navigation } : {route: any, navigation: any} ) {
     const { token, address, amount } = route.params;
@@ -12,7 +12,7 @@ export default function TransferConfirmedScreen( { route, navigation } : {route:
 
             <View style={{padding: 16, flexDirection: 'row'}}>
                 <Text style={styles.mediumBoldText}>
-                    {amount} {token}
+                    {amount} {token.name}
                 </Text>
                 <Text style={styles.mediumText}>
                       sent to  
