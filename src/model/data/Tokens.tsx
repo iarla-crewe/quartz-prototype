@@ -3,12 +3,12 @@ export interface TokenType {
     decimals: number
 } 
   
-export class SOL implements TokenType {
-    name = 'SOL';
-    decimals = 9;
+export const SOL: TokenType = {
+    name: 'SOL',
+    decimals: 9
 }
 
-export class USDC implements TokenType {
-    name = 'USDC';
-    decimals = 2;
+export const USDC: TokenType = {
+    name: 'USDC',
+    decimals: 2
 }

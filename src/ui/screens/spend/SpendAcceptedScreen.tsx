@@ -1,56 +1,31 @@
-import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { currencyToString } from "../../../model/utils";
+import { View, Text } from "react-native";
 import DisplayCardTransaction from "../../components/DisplayCardTransaction";
+import HomeButton from "../../components/HomeButton";
+import { CardTransactionData } from "../../../model/data/CardTransaction";
+import { USDC } from "../../../model/data/Tokens";
+import { theme } from "../Styles";
 
-export default function SpendAcceptedScreen( { route, navigation } : {route: any, navigation: any} ) {
-    const { transactionData } = route.params;
-
-    const fiatDisplay = currencyToString(transactionData.amountFiat, 2);
-    const tokenDisplay = currencyToString(transactionData.amountToken, transactionData.tokenType.decimals);
+export default function SpendAcceptedScreen( { navigation } : { navigation: any} ) {
+    // TODO - Remove dummy data
+    const transactionData = new CardTransactionData({
+        amountFiat: 1050,
+        fiatCurrency: 'EUR',
+        amountToken: 1147,
+        tokenType: USDC,
+        timestamp: new Date(),
+        vendor: 'Old Oak',
+        location: 'Oliver Plunket Street'
+    });
 
     return (
         <View>
-            <View style={styles.standardPadding}>
-                <Text style={styles.header}>Transaction Approved</Text>
+            <View style={theme.standardPadding}>
+                <Text style={theme.h1}>Transaction Approved</Text>
             </View>
 
             <DisplayCardTransaction data={transactionData} />
 
-            <TouchableOpacity 
-                style = {{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 16,
-                    padding: 16
-                }}
-                onPress={
-                    () => navigation.reset({
-                        index: 0,
-                        routes: [{name: 'Home'}],
-                    })          
-                }
-            >
-                <Text style={{color:'black'}}>Back to Home</Text>
-            </TouchableOpacity>
+            <HomeButton data={navigation} />
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    header: {
-        fontSize: 32,
-        color: 'black'
-    },
-    largeText: {
-        fontSize: 28,
-        color: 'black'
-    },
-    mediumText: {
-        fontSize: 24
-    },
-    standardPadding: {
-        padding: 16
-    }
-})

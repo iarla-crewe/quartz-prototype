@@ -2,13 +2,15 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CardTransactionData } from '../../../model/data/CardTransaction'
 import { USDC } from "../../../model/data/Tokens";
 import DisplayCardTransaction from "../../components/DisplayCardTransaction";
+import { theme } from "../Styles";
 
 export default function SpendScreen( { navigation } : {navigation: any} ) {
+    // TODO - Remove dummy data
     const transactionData = new CardTransactionData({
         amountFiat: 1050,
         fiatCurrency: 'EUR',
         amountToken: 1147,
-        tokenType: new USDC(),
+        tokenType: USDC,
         timestamp: new Date(),
         vendor: 'Old Oak',
         location: 'Oliver Plunket Street'
@@ -16,45 +18,26 @@ export default function SpendScreen( { navigation } : {navigation: any} ) {
 
     return (
         <View>
-            <View style={styles.standardPadding}>
-                <Text style={styles.header}>Accept transaction?</Text>
+            <View style={theme.standardPadding}>
+                <Text style={theme.h1}>Accept transaction?</Text>
             </View>
 
             <DisplayCardTransaction data={transactionData} />
             
             <TouchableOpacity 
-                style = {{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 16,
-                    padding: 16
-                }}
+                style = {theme.button}
                 onPress={
                     () => navigation.reset({
                         index: 0,
-                        actions: [
-                            navigation.navigate(
-                                'SpendAccepted',
-                                { transactionData: transactionData }
-                            )
-                        ],
+                        routes: [{name: 'SpendAccepted'}],
                     })          
                 }
             >
-                <Text style={{color:'black'}}>Accept</Text>
+                <Text style={theme.buttonText}>Accept</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-                style = {{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 16,
-                    padding: 16
-                }}
+                style = {theme.button}
                 onPress={
                     () => navigation.reset({
                         index: 0,
@@ -62,19 +45,8 @@ export default function SpendScreen( { navigation } : {navigation: any} ) {
                     })          
                 }
             >
-                <Text style={{color:'black'}}>Decline</Text>
+                <Text style={theme.buttonText}>Decline</Text>
             </TouchableOpacity>
         </View>
     )
 }
-
-
-const styles = StyleSheet.create({
-    header: {
-        fontSize: 32,
-        color: 'black'
-    },
-    standardPadding: {
-        padding: 16
-    }
-})

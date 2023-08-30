@@ -1,63 +1,36 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import { SOL, USDC } from '../../../model/data/Tokens'
+import { theme } from "../Styles";
+import BackButton from "../../components/BackButton";
 
 export default function TransferSelectScreen( { navigation } : {navigation: any} ) {
     return (
         <View>
             <TouchableOpacity 
-                style = {{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 16,
-                    padding: 16
-                }}
+                style = {theme.button}
                 onPress={
                     () => navigation.navigate(
                         'Transfer', 
-                        { token: new SOL() }
+                        { tokenName: SOL.name }
                     )
                 }
             >
-                <Text style={{color:'black'}}>SOL</Text>
+                <Text style={theme.buttonText}>SOL</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
-                style = {{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 16,
-                    padding: 16
-                }}
+                style = {theme.button}
                 onPress={
                     () => navigation.navigate(
                         'Transfer', 
-                        { token: new USDC() }
+                        { tokenName: USDC.name }
                     )
                 }
             >
-                <Text style={{color:'black'}}>USDC</Text>
+                <Text style={theme.buttonText}>USDC</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity 
-                style = {{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginTop: 32,
-                    margin: 16,
-                    padding: 16
-                }}
-                onPress={
-                    () => navigation.goBack()
-                }
-            >
-                <Text style={{color:'black'}}>Back</Text>
-            </TouchableOpacity>
+            <BackButton data={navigation} />
         </View>
     )
 }

@@ -16,7 +16,7 @@ export default function App(): JSX.Element {
   return (
     <SafeAreaView style={{height: "100%"}}>
       <NavigationContainer>
-        <Stack.Navigator>
+        <Stack.Navigator initialRouteName='Home'>
           <Stack.Screen name='Home' component={HomeScreen} />
           <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
           <Stack.Screen name='Transfer' component={TransferScreen} />

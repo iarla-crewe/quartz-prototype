@@ -1,30 +1,32 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { TokenType } from "../../../model/data/Tokens";
 import React from "react";
+import { theme } from "../Styles";
+import BackButton from "../../components/BackButton";
 
 export default function TransferScreen( { route, navigation } : {route: any, navigation: any} ) {
-    const { token } = route.params;
+    const { tokenName } = route.params;
     const [ address, setAddress ] = React.useState('');
     const [ amount, setAmount ] = React.useState('');
     
     return (
         <View>
-            <View style={styles.viewPadding}>
-                <Text style={styles.largeText}>{token.name}</Text>
+            <View style={theme.standardPadding}>
+                <Text style={theme.h1}>{tokenName}</Text>
             </View>
 
-            <View style={styles.viewPadding}>
+            <View style={theme.standardPadding}>
                 <TextInput
-                    style={styles.textInput}
+                    style={theme.textInput}
                     value={address}
                     onChangeText={text => setAddress(text)}
                     placeholder="Recipient's Solana Address"
                 />
             </View>
 
-            <View style={styles.viewPadding}>
+            <View style={theme.standardPadding}>
                 <TextInput
-                    style={styles.textInput}
+                    style={theme.textInput}
                     value={amount}
                     onChangeText={text => setAmount(text)}
                     placeholder="Amount"
@@ -32,38 +34,18 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
             </View>
 
             <TouchableOpacity 
-                style = {{
-                    backgroundColor: 'lightgray',
-                    borderRadius: 10,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    margin: 16,
-                    padding: 16
-                }}
+                style = {theme.button}
                 onPress={
                     () => navigation.navigate(
                         'TransferConfirmed',
-                        { token: token, address: address, amount: amount }
+                        { token: tokenName, address: address, amount: amount }
                     )
                 }
             >
-                <Text style={{color:'black'}}>Transfer</Text>
+                <Text style={theme.buttonText}>Transfer</Text>
             </TouchableOpacity>
+
+            <BackButton data={navigation} />
         </View>
     );
 }
-
-const styles = StyleSheet.create({
-    largeText: {
-        fontSize: 32,
-        color: 'black'
-    },
-    viewPadding: {
-        padding: 16
-    },
-    textInput: {
-        width: "100%",
-        paddingHorizontal: 8,
-        backgroundColor: "white"
-    }
-});

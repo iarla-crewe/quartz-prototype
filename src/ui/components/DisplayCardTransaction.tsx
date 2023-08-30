@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from "react-native";
 import { CardTransactionData } from "../../model/data/CardTransaction";
-import { currencyToString } from "../../model/utils";
+import { currencyToString } from "../../utils";
 
 
 const DisplayCardTransaction = (props: any) => {
