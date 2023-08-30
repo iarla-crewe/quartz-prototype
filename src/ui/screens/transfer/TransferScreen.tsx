@@ -1,5 +1,5 @@
 import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
-import { TokenType } from "../../data/Tokens";
+import { TokenType } from "../../../model/data/Tokens";
 import React from "react";
 
 export default function TransferScreen( { route, navigation } : {route: any, navigation: any} ) {

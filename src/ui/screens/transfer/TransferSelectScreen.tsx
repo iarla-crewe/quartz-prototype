@@ -1,5 +1,5 @@
 import { View, Text, TouchableOpacity } from "react-native";
-import { SOL, USDC } from '../../data/Tokens'
+import { SOL, USDC } from '../../../model/data/Tokens'
 
 export default function TransferSelectScreen( { navigation } : {navigation: any} ) {
     return (

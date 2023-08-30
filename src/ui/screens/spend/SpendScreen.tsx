@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
-import { CardTransactionData } from '../../App'
-import { USDC } from "../../data/Tokens";
-import { currencyToString } from "../../utils";
+import { CardTransactionData } from '../../../model/data/CardTransaction'
+import { USDC } from "../../../model/data/Tokens";
+import DisplayCardTransaction from "../../components/DisplayCardTransaction";
 
 export default function SpendScreen( { navigation } : {navigation: any} ) {
     const transactionData = new CardTransactionData({
@@ -14,29 +14,13 @@ export default function SpendScreen( { navigation } : {navigation: any} ) {
         location: 'Oliver Plunket Street'
     });
 
-    const fiatDisplay = currencyToString(transactionData.amountFiat, 2);
-    const tokenDisplay = currencyToString(transactionData.amountToken, transactionData.tokenType.decimals);
-
     return (
         <View>
             <View style={styles.standardPadding}>
                 <Text style={styles.header}>Accept transaction?</Text>
             </View>
 
-            <View style={styles.standardPadding}>
-                <Text style={styles.largeText}>
-                    {tokenDisplay} {transactionData.tokenType.name} {'('}{fiatDisplay} {transactionData.fiatCurrency}{')'}
-                </Text>
-                <Text style={styles.mediumText}>
-                    {transactionData.vendor}, {transactionData.location}
-                </Text>
-            </View>
-
-            <View style={styles.standardPadding}>
-                <Text>
-                    {transactionData.timestamp.toString()}
-                </Text>
-            </View>
+            <DisplayCardTransaction data={transactionData} />
             
             <TouchableOpacity 
                 style = {{
@@ -50,7 +34,12 @@ export default function SpendScreen( { navigation } : {navigation: any} ) {
                 onPress={
                     () => navigation.reset({
                         index: 0,
-                        routes: [{name: 'SpendAccepted'}],
+                        actions: [
+                            navigation.navigate(
+                                'SpendAccepted',
+                                { transactionData: transactionData }
+                            )
+                        ],
                     })          
                 }
             >
@@ -79,17 +68,11 @@ export default function SpendScreen( { navigation } : {navigation: any} ) {
     )
 }
 
+
 const styles = StyleSheet.create({
     header: {
         fontSize: 32,
         color: 'black'
-    },
-    largeText: {
-        fontSize: 28,
-        color: 'black'
-    },
-    mediumText: {
-        fontSize: 24
     },
     standardPadding: {
         padding: 16

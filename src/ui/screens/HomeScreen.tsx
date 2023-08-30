@@ -1,5 +1,4 @@
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
-import { currencyToString } from "../utils";
 
 export default function HomeScreen( { navigation } : {navigation: any} ) {
     const solBalance = 12.3;

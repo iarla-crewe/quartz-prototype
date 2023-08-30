@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity } from "react-native";
 
-export default function SpendAcceptedScreen( { navigation } : {navigation: any} ) {
+export default function SpendDeclinedScreen( { navigation } : {navigation: any} ) {
     return (
         <View>
             <View style={{padding: 16}}>
-                <Text>Transaction Approved</Text>
+                <Text style={{fontSize: 32, color: 'black'}}>Transaction Declined</Text>
             </View>
 
             <TouchableOpacity 
