@@ -35,7 +35,10 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
             <TouchableOpacity 
                 style = {theme.button}
                 onPress={
-                    () => navigation.navigate('Spend')
+                    () => navigation.navigate(
+                        'Spend',
+                        { date: (new Date()).toString() } // TODO - Replace dummy data
+                    )
                 }
             >
                 <Text style={theme.buttonText}>Fake a Card Spend</Text>
