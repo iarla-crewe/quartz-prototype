@@ -5,22 +5,20 @@ import DisplayCardTransaction from "../../components/DisplayCardTransaction";
 import { theme } from "../Styles";
 import { useState, useRef, useEffect } from "react";
  
-export default function SpendScreen( { route, navigation } : { route: any, navigation: any } ) {
+export default function SpendScreen( { navigation } : { navigation: any } ) {
     // TODO - Remove dummy data
     const remainingTime = 15000;
-    const { date } = route.params;
     const transactionData = new CardTransactionData({
         amountFiat: 1050,
         fiatCurrency: 'EUR',
         amountToken: 1147,
         tokenType: USDC,
-        timestamp: date,
+        timestamp: new Date(),
         vendor: 'Old Oak',
         location: 'Oliver Plunket Street'
     });
 
     const [timer, setTimer] = useState(remainingTime / 1000);
-
     const decreaseTimer = () => setTimer((prev) => prev - 1);
     useEffect(() => {
         const interval = setInterval(decreaseTimer, 1000);
