@@ -11,9 +11,9 @@ import {
 const VAULT_SEED = "vault"
 const VAULT_ATA_SEED = "ata"
 
-// TODO - Add real data
-const QUARTZ_PROGRAM_ID = Keypair.generate().publicKey;
-const USDC_ADDRESS = Keypair.generate().publicKey;
+const QUARTZ_PROGRAM_ID = new PublicKey("57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt");       // Devnet Quartz address
+const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");       // Devnet USDC address
+// const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");       // Mainnet USDC address
 
 const createConnection = () => {
   return new Connection(clusterApiUrl('devnet'));
@@ -33,8 +33,7 @@ const getVaultAta = (userPubkey: PublicKey, tokenAddress: PublicKey) => {
   )[0];
 }
 
-const getVaultBalance = async (userPubkey: PublicKey) => {
-  const connection = createConnection();
+const getVaultBalance = async (connection: Connection, userPubkey: PublicKey) => {
   const vault = getVault(userPubkey);
 
   try {
@@ -46,8 +45,7 @@ const getVaultBalance = async (userPubkey: PublicKey) => {
   }
 };
 
-const getVaultAtaBalance = async (userPubkey: PublicKey, tokenAddress: PublicKey) => {
-  const connection = createConnection();
+const getVaultAtaBalance = async (connection: Connection, userPubkey: PublicKey, tokenAddress: PublicKey) => {
   const vaultAta = getVaultAta(userPubkey, tokenAddress);
 
   try {
@@ -61,33 +59,11 @@ const getVaultAtaBalance = async (userPubkey: PublicKey, tokenAddress: PublicKey
   }
 }
 
-const getVaultUsdcBalance =async (userPubkey: PublicKey) => getVaultAtaBalance(userPubkey, USDC_ADDRESS);
+const getVaultUsdcBalance = async (connection: Connection, userPubkey: PublicKey) => getVaultAtaBalance(connection, userPubkey, USDC_MINT_ADDRESS);
 
 
 export {
+  createConnection,
   getVaultBalance,
   getVaultUsdcBalance
 };
-
-
-// const transaction = async (from: any, to: any, amount: any) => {
-//   console.log('Executing transaction...');
-//   console.log(amount);
-
-//   const transaction = new solanaWeb3.Transaction().add(
-//     solanaWeb3.SystemProgram.transfer({
-//       fromPubkey: publicKeyFromString(from.keyPair.publicKey.toString()),
-//       toPubkey: publicKeyFromString(to),
-//       lamports: amount * LAMPORTS_PER_SOL,
-//     }),
-//   );
-
-//   // Sign transaction, broadcast, and confirm
-//   const connection = createConnection();
-//   const signature = await solanaWeb3.sendAndConfirmTransaction(
-//     connection,
-//     transaction,
-//     [from.keyPair],
-//   );
-//   console.log('SIGNATURE', signature);
-// };
