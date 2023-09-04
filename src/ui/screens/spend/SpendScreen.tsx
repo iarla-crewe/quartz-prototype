@@ -48,7 +48,11 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
             <TouchableOpacity 
                 style = {theme.button}
                 onPress={
-                    () => navigation.navigate('SpendAccepted')          
+                    () => {
+                        // TODO - Implement
+
+                        navigation.navigate('SpendAccepted');
+                    }       
                 }
             >
                 <Text style={theme.buttonText}>Accept</Text>

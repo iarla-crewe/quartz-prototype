@@ -9,15 +9,32 @@ import TransferConfirmedScreen from './src/ui/screens/transfer/TransferConfirmed
 import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
 import SpendScreen from './src/ui/screens/spend/SpendScreen';
 import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
+import { 
+  createConnection,
+  getTestWallet,
+  getProvider,
+  getProgram
+ } from './src/program/utils';
 
 const Stack = createNativeStackNavigator();
+
+const connection = createConnection();
+const wallet = getTestWallet();
 
 export default function App(): JSX.Element {
   return (
     <SafeAreaView style={{height: "100%"}}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen name='Home' component={HomeScreen} />
+          <Stack.Screen 
+            name='Home' 
+            component={HomeScreen} 
+            initialParams={{
+              connection: connection,
+              wallet: wallet
+            }}
+          />
+          
           <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
           <Stack.Screen name='Transfer' component={TransferScreen} />
           <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
