@@ -2,23 +2,25 @@ import { Text, TouchableOpacity, View } from "react-native";
 import { theme } from "./Styles";
 import { 
     USDC_MINT_ADDRESS,
+    createConnection,
     getProgram, 
     getProvider, 
+    getTestWallet, 
     getVault, 
     getVaultBalance, 
     getVaultUsdcBalance 
-} from "../../program/utils";
+} from "../../program/program";
 import { useState } from 'react';
 
 export default function HomeScreen( { route, navigation } : { route: any, navigation: any } ) {
-    const { connection, wallet } = route.params;
+    const connection = createConnection();
+    const wallet = getTestWallet();
+    const provider = getProvider(connection, wallet);
+    const program = getProgram(provider); 
 
     const [solBalance, setSolBalance] = useState(getVaultBalance(connection, wallet.publicKey));
     const [usdcBalance, setUsdcBalance] = useState(getVaultUsdcBalance(connection, wallet.publicKey));
     const [address, setAddress] = useState("00000000000000000000000000000000");
-
-    const provider = getProvider(connection, wallet);
-    const program = getProgram(provider); 
 
     return (
         <View>

@@ -14,27 +14,16 @@ import {
   getTestWallet,
   getProvider,
   getProgram
- } from './src/program/utils';
+ } from './src/program/program';
 
 const Stack = createNativeStackNavigator();
-
-const connection = createConnection();
-const wallet = getTestWallet();
 
 export default function App(): JSX.Element {
   return (
     <SafeAreaView style={{height: "100%"}}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen 
-            name='Home' 
-            component={HomeScreen} 
-            initialParams={{
-              connection: connection,
-              wallet: wallet
-            }}
-          />
-          
+          <Stack.Screen name='Home' component={HomeScreen}/>
           <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
           <Stack.Screen name='Transfer' component={TransferScreen} />
           <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />

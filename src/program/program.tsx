@@ -11,11 +11,12 @@ import {
   LAMPORTS_PER_SOL,
   Connection,
   clusterApiUrl,
-  ConfirmOptions
+  ConfirmOptions,
+  Transaction,
+  Signer
 } from '@solana/web3.js';
 import { IDL, QuartzPrototypeV2 as QuartzPrototypeV2Program } from './quartz_prototype_v2';
-import path from "path";
-const fs = require("fs");
+import { Web3MobileWallet } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 
 const VAULT_SEED = "vault"
 const VAULT_ATA_SEED = "ata"
@@ -32,12 +33,27 @@ const createConnection = () => {
 const getTestWallet = () => {
   const keypair = Keypair.fromSecretKey(
     new Uint8Array(
-        JSON.parse(
-            fs.readFileSync(path.resolve(__dirname, "../../test_keypair.json"))
-        )
+      [180,140,40,191,248,9,2,79,179,86,217,85,183,177,221,249,196,165,50,46,55,229,19,7,163,52,88,202,191,169,6,143,147,104,174,219,9,211,255,127,190,232,70,218,71,62,13,126,91,39,237,219,179,45,234,39,37,87,49,249,209,171,183,132]
     )
   )
-  return new Wallet(keypair);
+  
+  return {
+    signTransaction: async (transaction: Transaction) => {
+      await transaction.sign(keypair as Signer)
+      return transaction;
+    },
+
+    signAllTransactions: async (transactions: Transaction[]) => {
+      return transactions.map(async (tx) => {
+        await tx.sign(keypair as Signer)
+        return tx;
+      })
+    },
+    
+    get publicKey() {
+      return keypair.publicKey;
+    },
+  } as Wallet;
 }
 
 const getProvider = (connection: Connection, wallet: Wallet) => {
