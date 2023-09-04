@@ -39,17 +39,21 @@ const getTestWallet = () => {
   
   return {
     signTransaction: async (transaction: Transaction) => {
-      await transaction.sign(keypair as Signer)
+      const tx = await transaction.sign(keypair as Signer);
+      console.log(tx);
+
       return transaction;
     },
 
     signAllTransactions: async (transactions: Transaction[]) => {
       return transactions.map(async (tx) => {
-        await tx.sign(keypair as Signer)
+        const hash = await tx.sign(keypair as Signer)
+        console.log(hash)
+
         return tx;
       })
     },
-    
+
     get publicKey() {
       return keypair.publicKey;
     },
@@ -102,10 +106,8 @@ const getVaultAtaBalance = async (connection: Connection, userPubkey: PublicKey,
   const vaultAta = getVaultAta(userPubkey, tokenAddress);
 
   try {
-    const balance = await connection.getTokenAccountBalance(vaultAta).catch(err => {
-      console.error(`Error: ${err}`);
-    })
-    return balance;
+    const balance = (await connection.getTokenAccountBalance(vaultAta)).value.amount;
+    return Number(balance);
 
   } catch (e) {
     return 0;

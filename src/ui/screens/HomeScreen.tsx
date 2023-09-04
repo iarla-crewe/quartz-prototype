@@ -10,16 +10,16 @@ import {
     getVaultBalance, 
     getVaultUsdcBalance 
 } from "../../program/program";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
-export default function HomeScreen( { route, navigation } : { route: any, navigation: any } ) {
+export default function HomeScreen( { navigation } : { navigation: any } ) {
     const connection = createConnection();
     const wallet = getTestWallet();
     const provider = getProvider(connection, wallet);
     const program = getProgram(provider); 
 
-    const [solBalance, setSolBalance] = useState(getVaultBalance(connection, wallet.publicKey));
-    const [usdcBalance, setUsdcBalance] = useState(getVaultUsdcBalance(connection, wallet.publicKey));
+    const [solBalance, setSolBalance] = useState(0);
+    const [usdcBalance, setUsdcBalance] = useState(0);
     const [address, setAddress] = useState("00000000000000000000000000000000");
 
     return (
@@ -88,8 +88,8 @@ export default function HomeScreen( { route, navigation } : { route: any, naviga
                         const vaultInstance = await program.account.vault.fetch(getVault(wallet.publicKey))
 
                         setAddress(vaultInstance.owner.toString());
-                        setSolBalance(getVaultBalance(connection, wallet.publicKey));
-                        setUsdcBalance(getVaultUsdcBalance(connection, wallet.publicKey));
+                        setSolBalance(await getVaultBalance(connection, wallet.publicKey));
+                        setUsdcBalance(await getVaultUsdcBalance(connection, wallet.publicKey));
                     }
                 }
             >

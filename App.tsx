@@ -9,12 +9,6 @@ import TransferConfirmedScreen from './src/ui/screens/transfer/TransferConfirmed
 import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
 import SpendScreen from './src/ui/screens/spend/SpendScreen';
 import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
-import { 
-  createConnection,
-  getTestWallet,
-  getProvider,
-  getProgram
- } from './src/program/program';
 
 const Stack = createNativeStackNavigator();
 
