@@ -10,8 +10,9 @@ import {
     getVaultAta, 
     getVaultBalance, 
     getVaultUsdcBalance 
-} from "../../program/program";
+} from "../../program/program_utils";
 import { useState, useEffect } from 'react';
+import { airdropSol, initAccount } from "../../program/instructions";
 
 export default function HomeScreen( { navigation } : { navigation: any } ) {
     const connection = createConnection();
@@ -65,17 +66,7 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
             <TouchableOpacity 
                 style = {theme.button}
                 onPress={
-                    async () => {
-                        try {
-                            const tx = await program.methods
-                                .initAccount()
-                                .accounts({ tokenMint: USDC_MINT_ADDRESS })
-                                .rpc();
-                            console.log(tx);
-                        } catch (err) {
-                            console.log(err);
-                        }
-                    }
+                    async () => { initAccount(program) }
                 }
             >
                 <Text style={theme.buttonText}>DEBUG: init account</Text>
@@ -84,14 +75,7 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
             <TouchableOpacity 
                 style = {theme.button}
                 onPress={
-                    async () => {
-                        try {
-                            const tx = await connection.requestAirdrop(getVault(wallet.publicKey), 4e9);
-                            console.log(tx);
-                        } catch (err) {
-                            console.log(err);
-                        }
-                    }
+                    async () => { airdropSol(connection, wallet.publicKey) }
                 }
             >
                 <Text style={theme.buttonText}>DEBUG: airdrop sol</Text>
