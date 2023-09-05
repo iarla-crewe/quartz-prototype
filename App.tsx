@@ -15,6 +15,13 @@ import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import { notification, requestUserPermission, getToken } from './src/utils';
 
+global.Buffer = require('buffer').Buffer;
+const TextEncodingPolyfill = require('text-encoding');
+Object.assign(global, {
+  TextEncoder: TextEncodingPolyfill.TextEncoder,
+  TextDecoder: TextEncodingPolyfill.TextDecoder
+});
+
 const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
@@ -36,7 +43,7 @@ export default function App(): JSX.Element {
     <SafeAreaView style={{height: "100%"}}>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen name='Home' component={HomeScreen} />
+          <Stack.Screen name='Home' component={HomeScreen}/>
           <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
           <Stack.Screen name='Transfer' component={TransferScreen} />
           <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />

@@ -36,10 +36,14 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
             <TouchableOpacity 
                 style = {theme.button}
                 onPress={
-                    () => navigation.navigate(
-                        'TransferConfirmed',
-                        { token: tokenName, address: address, amount: amount }
-                    )
+                    () => {
+                        // TODO - Implement
+
+                        navigation.navigate(
+                            'TransferConfirmed',
+                            { token: tokenName, address: address, amount: amount }
+                        )
+                    }
                 }
             >
                 <Text style={theme.buttonText}>Transfer</Text>
