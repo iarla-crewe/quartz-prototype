@@ -65,11 +65,13 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                             return;
                         }
 
-                        // TODO - Only navigate on success
-                        navigation.navigate(
-                            'TransferConfirmed',
-                            { token: token.name, address: address, amount: amount }
-                        )
+                        console.log(connection.getSignatureStatus(tx ? tx : "null"));
+                        if (tx) {
+                            navigation.navigate(
+                                'TransferConfirmed',
+                                { token: token.name, address: address, amount: amount }
+                            )
+                        }
                     }
                 }
             >

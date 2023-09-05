@@ -40,8 +40,10 @@ const transferSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey
             })
             .rpc()  
         console.log(tx);
+        return tx;
     } catch (err) {
         console.log(err);
+        return null;
     }
 }
 
@@ -85,9 +87,11 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
                 receiverAta: receiverAta
             })
             .rpc()  
-        console.log(tx);
+        console.log(tx);    
+        return tx;
     } catch (err) {
         console.log(`instruction error: ${err}`);
+        return null;
     }
 }
 
