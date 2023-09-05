@@ -7,6 +7,7 @@ import {
     getProvider, 
     getTestWallet, 
     getVault, 
+    getVaultAta, 
     getVaultBalance, 
     getVaultUsdcBalance 
 } from "../../program/program";
@@ -20,7 +21,7 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
 
     const [solBalance, setSolBalance] = useState(0);
     const [usdcBalance, setUsdcBalance] = useState(0);
-    const [address, setAddress] = useState("00000000000000000000000000000000");
+    const address = getVault(wallet.publicKey).toString();
 
     return (
         <View>
@@ -60,10 +61,15 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
                 style = {theme.button}
                 onPress={
                     async () => {
-                        await program.methods
-                            .initAccount()
-                            .accounts({ tokenMint: USDC_MINT_ADDRESS })
-                            .rpc()
+                        try {
+                            const tx = await program.methods
+                                .initAccount()
+                                .accounts({ tokenMint: USDC_MINT_ADDRESS })
+                                .rpc();
+                            console.log(tx);
+                        } catch (err) {
+                            console.log(err);
+                        }
                     }
                 }
             >
@@ -74,7 +80,12 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
                 style = {theme.button}
                 onPress={
                     async () => {
-                        await connection.requestAirdrop(getVault(wallet.publicKey), 4e9);
+                        try {
+                            const tx = await connection.requestAirdrop(getVault(wallet.publicKey), 4e9);
+                            console.log(tx);
+                        } catch (err) {
+                            console.log(err);
+                        }
                     }
                 }
             >
@@ -85,11 +96,14 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
                 style = {theme.button}
                 onPress={
                     async () => {
-                        const vaultInstance = await program.account.vault.fetch(getVault(wallet.publicKey))
-
-                        setAddress(vaultInstance.owner.toString());
-                        setSolBalance(await getVaultBalance(connection, wallet.publicKey));
-                        setUsdcBalance(await getVaultUsdcBalance(connection, wallet.publicKey));
+                        try {
+                            setSolBalance(await getVaultBalance(connection, wallet.publicKey));
+                            setUsdcBalance(await getVaultUsdcBalance(connection, wallet.publicKey));
+                            console.log(getVaultAta(wallet.publicKey, USDC_MINT_ADDRESS));
+                            console.log(address);
+                        } catch (err) {
+                            console.log(err);
+                        }   
                     }
                 }
             >

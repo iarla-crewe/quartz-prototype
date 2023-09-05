@@ -10,6 +10,13 @@ import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
 import SpendScreen from './src/ui/screens/spend/SpendScreen';
 import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
 
+global.Buffer = require('buffer').Buffer;
+const TextEncodingPolyfill = require('text-encoding');
+Object.assign(global, {
+  TextEncoder: TextEncodingPolyfill.TextEncoder,
+  TextDecoder: TextEncodingPolyfill.TextDecoder
+});
+
 const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {

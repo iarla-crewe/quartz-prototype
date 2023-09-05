@@ -22,9 +22,9 @@ const VAULT_SEED = "vault"
 const VAULT_ATA_SEED = "ata"
 const RPC_ENDPOINT = 'devnet'
 
-const QUARTZ_PROGRAM_ID = new PublicKey("57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt");       // Devnet Quartz address
+const QUARTZ_PROGRAM_ID = new PublicKey("5Dxjir2yDi1aZAzgcnkEGmnLVop49DpNoru3c8DNAtcc");       // Devnet Quartz address
 const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");       // Devnet USDC address
-// const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");       // Mainnet USDC address
+// const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");       // Mainnet USDC address
 
 const createConnection = () => {
   return new Connection(clusterApiUrl(RPC_ENDPOINT));
@@ -124,6 +124,7 @@ export {
   getProvider,
   getProgram,
   getVault,
+  getVaultAta,
   getVaultBalance,
   getVaultUsdcBalance
 };
