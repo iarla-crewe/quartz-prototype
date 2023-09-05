@@ -6,7 +6,7 @@ mod utils;
 mod instructions;
 use instructions::*;
 
-declare_id!("57U6PNi6ymKcsTTsoFRC18iA4Nuaw6KdTz52NHqo3ENt");
+declare_id!("5Dxjir2yDi1aZAzgcnkEGmnLVop49DpNoru3c8DNAtcc");
 
 #[constant]
 pub const QUARTZ_HOLDING_ADDRESS: Pubkey = pubkey!("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G");
