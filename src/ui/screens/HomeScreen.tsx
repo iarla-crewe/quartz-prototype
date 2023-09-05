@@ -27,7 +27,12 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
         <View>
             <View>
                 <View style={theme.standardPadding}>
-                    <Text style={theme.p}>{address}</Text>
+                    <Text 
+                        selectable={true} 
+                        style={theme.p}
+                    >
+                        {address}
+                    </Text>
                 </View>
 
                 <View style={theme.standardPadding}>
@@ -35,7 +40,7 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
                 </View>
 
                 <View style={theme.standardPadding}>
-                    <Text style={theme.h1}>USDC: {usdcBalance.toString()}</Text>
+                    <Text style={theme.h1}>USDC: {usdcBalance.toFixed(2)}</Text>
                 </View>
             </View>
 
@@ -99,8 +104,6 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
                         try {
                             setSolBalance(await getVaultBalance(connection, wallet.publicKey));
                             setUsdcBalance(await getVaultUsdcBalance(connection, wallet.publicKey));
-                            console.log(getVaultAta(wallet.publicKey, USDC_MINT_ADDRESS));
-                            console.log(address);
                         } catch (err) {
                             console.log(err);
                         }   

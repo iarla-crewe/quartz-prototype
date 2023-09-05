@@ -114,8 +114,10 @@ const getVaultAtaBalance = async (connection: Connection, userPubkey: PublicKey,
   }
 }
 
-const getVaultUsdcBalance = async (connection: Connection, userPubkey: PublicKey) => getVaultAtaBalance(connection, userPubkey, USDC_MINT_ADDRESS);
-
+const getVaultUsdcBalance = async (connection: Connection, userPubkey: PublicKey) => {
+  const rawBalance = await getVaultAtaBalance(connection, userPubkey, USDC_MINT_ADDRESS);
+  return rawBalance / 10 ** 6;
+}
 
 export {
   USDC_MINT_ADDRESS,
