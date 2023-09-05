@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "358799151835",
+    "project_id": "quartz-prototype-v2",
+    "storage_bucket": "quartz-prototype-v2.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:358799151835:android:e217c82417eb8d4fbbb2fe",
+        "android_client_info": {
+          "package_name": "com.quartzprototypev2mobileapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "358799151835-mukp56g38t78ufh8ujeba2otsosodjmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.quartzprototypev2mobileapp",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "358799151835-p4600vmba55i7lb2e2hbpuvhr7lpm7fn.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzTrNyMrq9-m7_pwwH2QizuVN7ZUDaspY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "358799151835-p4600vmba55i7lb2e2hbpuvhr7lpm7fn.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
