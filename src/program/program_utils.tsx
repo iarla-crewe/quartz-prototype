@@ -16,7 +16,6 @@ import {
   Signer
 } from '@solana/web3.js';
 import { IDL, QuartzPrototypeV2 as QuartzPrototypeV2Program } from './quartz_prototype_v2';
-import { Web3MobileWallet } from "@solana-mobile/mobile-wallet-adapter-protocol-web3js";
 
 const VAULT_SEED = "vault"
 const VAULT_ATA_SEED = "ata"
@@ -57,6 +56,10 @@ const getTestWallet = () => {
     get publicKey() {
       return keypair.publicKey;
     },
+
+    get payer() {
+      return keypair as Signer;
+    }
   } as Wallet;
 }
 

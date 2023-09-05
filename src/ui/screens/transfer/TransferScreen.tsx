@@ -46,7 +46,6 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                 onPress={
                     async () => {
                         let tx;
-                        const vault = getVault(wallet.publicKey);
                         const receiver = new PublicKey(address);
 
                         let amountNum;
@@ -58,9 +57,9 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                         }
 
                         if (token === SOL) {
-                            tx = await transferSol(program, vault, receiver, amountNum);
+                            tx = await transferSol(program, wallet.publicKey, receiver, amountNum);
                         } else if (token === USDC) {
-                            tx = await transferUsdc(program, vault, receiver, amountNum);
+                            tx = await transferUsdc(connection, program, wallet, receiver, amountNum);
                         } else {
                             console.log("Invalid token provided");
                             return;
