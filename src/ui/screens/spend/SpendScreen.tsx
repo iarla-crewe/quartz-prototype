@@ -11,10 +11,10 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
     // TODO - Remove dummy data
     const remainingTime = 15000;
     const transactionData = new CardTransactionData({
-        amountFiat: 1050,
+        amountFiat: 19,
         fiatCurrency: 'EUR',
-        amountToken: 1000000000,
-        tokenType: SOL,
+        amountToken: 20,
+        tokenType: USDC,
         timestamp: new Date(),
         vendor: 'Old Oak',
         location: 'Oliver Plunket Street'
@@ -34,6 +34,7 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
     const program = getProgram(provider); 
 
     if (timer <= 0) {
+        clearInterval(timer);
         navigation.navigate(
             'SpendDeclined',
             { reason: "Approval timed out" } // TODO - Remove hard coding of reason

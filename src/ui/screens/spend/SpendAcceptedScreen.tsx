@@ -8,10 +8,10 @@ import { theme } from "../Styles";
 export default function SpendAcceptedScreen( { navigation } : { navigation: any} ) {
     // TODO - Remove dummy data
     const transactionData = new CardTransactionData({
-        amountFiat: 1050,
+        amountFiat: 19,
         fiatCurrency: 'EUR',
-        amountToken: 1000000000,
-        tokenType: SOL,
+        amountToken: 20,
+        tokenType: USDC,
         timestamp: new Date(),
         vendor: 'Old Oak',
         location: 'Oliver Plunket Street'
