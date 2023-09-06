@@ -4,7 +4,7 @@ import HomeButton from "../../components/HomeButton";
 import { theme } from "../Styles";
 
 export default function TransferConfirmedScreen( { route, navigation } : {route: any, navigation: any} ) {
-    const { tokenName, address, amount } = route.params;
+    const { tokenName, address, amount, transactionHash } = route.params;
 
     return (
         <View>
@@ -28,6 +28,12 @@ export default function TransferConfirmedScreen( { route, navigation } : {route:
 
                 <Text style={theme.h2b}>
                     {address}
+                </Text>
+            </View>
+
+            <View style={theme.standardPadding}>
+                <Text style={theme.p}>
+                    Signature: {transactionHash}
                 </Text>
             </View>
 

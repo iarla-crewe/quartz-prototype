@@ -5,7 +5,7 @@ import { theme } from "../Styles";
 import BackButton from "../../components/BackButton";
 import { transferSol, transferUsdc } from "../../../program/instructions";
 import { createConnection, getProgram, getProvider, getTestWallet, getVault } from "../../../program/program_utils";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, TransactionConfirmationStatus } from "@solana/web3.js";
 
 export default function TransferScreen( { route, navigation } : {route: any, navigation: any} ) {
     const { token } = route.params;
@@ -65,12 +65,20 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                             return;
                         }
 
-                        console.log(connection.getSignatureStatus(tx ? tx : "null"));
-                        if (tx) {
+                        const status = tx ? (await connection.getSignatureStatus(tx)).value?.confirmationStatus : null;
+
+                        if (tx && status === 'confirmed') {
                             navigation.navigate(
                                 'TransferConfirmed',
-                                { token: token.name, address: address, amount: amount }
+                                { 
+                                    token: token.name, 
+                                    address: address, 
+                                    amount: amount,
+                                    transactionHash: tx
+                                }
                             )
+                        } else {
+                            // TODO - Implement transaction failed popup
                         }
                     }
                 }
