@@ -1,7 +1,7 @@
-import { StyleSheet, View, Text, TouchableOpacity } from "react-native";
-import { TokenType } from '../../../model/data/Tokens'
+import { StyleSheet, View, Text } from "react-native";
 import HomeButton from "../../components/HomeButton";
 import { theme } from "../Styles";
+import ConfirmationSignature from "../../components/ConfirmationSignature";
 
 export default function TransferConfirmedScreen( { route, navigation } : {route: any, navigation: any} ) {
     const { tokenName, address, amount, transactionHash } = route.params;
@@ -32,9 +32,7 @@ export default function TransferConfirmedScreen( { route, navigation } : {route:
             </View>
 
             <View style={theme.standardPadding}>
-                <Text style={theme.p} selectable={true} >
-                    Signature: {transactionHash}
-                </Text>
+                <ConfirmationSignature data={transactionHash} />
             </View>
 
             <HomeButton data={navigation} />

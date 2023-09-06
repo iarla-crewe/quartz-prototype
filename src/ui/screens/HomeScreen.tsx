@@ -50,10 +50,7 @@ export default function HomeScreen( { navigation } : { navigation: any } ) {
         <View>
             <View>
                 <View style={theme.standardPadding}>
-                    <Text 
-                        selectable={true} 
-                        style={theme.p}
-                    >
+                    <Text selectable={true} style={theme.p}>
                         {address}
                     </Text>
                 </View>

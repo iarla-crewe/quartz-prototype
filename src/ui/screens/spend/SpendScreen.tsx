@@ -28,8 +28,9 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
         return () => clearInterval(interval);
     }, []);
 
-    if (timer <= 0) {
-        clearInterval(timer);
+    const [isTimerEnd, setIsTimerEnd] = useState(false);
+
+    if (timer <= 0 && !isTimerEnd) {
         navigation.navigate(
             'SpendDeclined',
             { reason: "Approval timed out" } // TODO - Remove hard coding of reason
@@ -53,6 +54,8 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
                 onPress={
                     () => {
                         clearInterval(timer);
+                        setIsTimerEnd(true);
+
                         navigation.navigate(
                             'SpendAccepted',
                             {
@@ -71,6 +74,8 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
                 onPress={
                     () => {
                         clearInterval(timer);
+                        setIsTimerEnd(true);
+
                         navigation.navigate(
                             'SpendDeclined',
                             { reason: "You have declined the transaction" } // TODO - Remove hard coding of reason

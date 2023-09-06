@@ -5,6 +5,7 @@ import { CardTransactionData } from "../../../model/data/CardTransaction";
 import { SOL, USDC } from "../../../model/data/Tokens";
 import { theme } from "../Styles";
 import { useEffect } from "react";
+import ConfirmationSignature from "../../components/ConfirmationSignature";
 
 export default function SpendConfirmedScreen( { route, navigation } : { route: any, navigation: any} ) {
     // TODO - Remove dummy data
@@ -29,9 +30,7 @@ export default function SpendConfirmedScreen( { route, navigation } : { route: a
             <DisplayCardTransaction data={transactionData} />
 
             <View style={theme.standardPadding}>
-                <Text style={theme.p} selectable={true} >
-                    Signature: {transactionHash}
-                </Text>
+                <ConfirmationSignature data={transactionHash} />
             </View>
 
             <HomeButton data={navigation} />
