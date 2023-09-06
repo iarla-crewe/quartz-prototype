@@ -33,7 +33,7 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
     if (timer <= 0 && !isTimerEnd) {
         navigation.navigate(
             'SpendDeclined',
-            { reason: "Approval timed out" } // TODO - Remove hard coding of reason
+            { reason: "Approval timed out" }
         )   
     }
 
@@ -78,7 +78,7 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
 
                         navigation.navigate(
                             'SpendDeclined',
-                            { reason: "You have declined the transaction" } // TODO - Remove hard coding of reason
+                            { reason: "You have declined the transaction" }
                         )     
                     }   
                 }

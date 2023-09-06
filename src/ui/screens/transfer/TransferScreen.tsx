@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from "react-native";
+import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SOL, TokenType, USDC } from "../../../model/data/Tokens";
 import React from "react";
 import { theme } from "../Styles";
@@ -11,35 +11,44 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
     const { token } = route.params;
     const [ address, setAddress ] = React.useState('');
     const [ amount, setAmount ] = React.useState('');
+    
+    const [ isModalVisible, setIsModalVisible ] = React.useState(false);
+    const [ modalText, setModalText ] = React.useState("");
 
     const connection = createConnection();
     const wallet = getTestWallet();
     const provider = getProvider(connection, wallet);
     const program = getProgram(provider); 
 
+    const POPUP_DISPLAY_TIME = 2500;
+    const displayPopup = (message: string) => {
+        setModalText(message);
+        setIsModalVisible(true);
+        const timer = setTimeout(() => {
+            setIsModalVisible(false);
+        }, POPUP_DISPLAY_TIME);
+        return () => clearTimeout(timer);
+    };
+
     const isInputValid = async () => {
         if (address == '') {
-            // TODO - Display error popup
-            console.log("Address is empty");
+            displayPopup("Address is empty");
             return false;
         }
 
         try { new PublicKey(address) }
         catch (err) {
-            // TODO - Display error popup
-            console.log("Address is not a valid public key");
+            displayPopup("Address is not a valid public key");
             return false;
         }
 
         if (amount == '') {
-            // TODO - Display error popup
-            console.log("Amount is empty");
+            displayPopup("Amount is empty");
             return false;
         }
 
         if (isNaN(Number(amount))) {
-            // TODO - Display error popup
-            console.log("Amount is not a valid number");
+            displayPopup("Amount is not a valid number");
             return false;
         }
 
@@ -49,13 +58,12 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
         } else if ( token === USDC ) {
             balance = await getVaultUsdcBalance(createConnection(), wallet.publicKey);
         } else {
-            console.log("Invalid token provided")
+            displayPopup("Error: Invalid token selected");
             return false;
         }
 
         if (Number(amount) > balance) {
-            // TODO - Display error popup
-            console.log("Insufficient balance");
+            displayPopup("Insufficient balance");
             return false;
         }
 
@@ -64,6 +72,17 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
     
     return (
         <View>
+            <Modal
+                transparent={true}         
+                visible={isModalVisible}
+            >
+                <View style = {theme.centeredView}>
+                    <View style = {theme.modalView}>
+                        <Text style = {theme.p}> {modalText} </Text>
+                    </View>
+                </View>
+            </Modal>
+
             <View style={theme.standardPadding}>
                 <Text style={theme.h1}>{token.name}</Text>
             </View>
