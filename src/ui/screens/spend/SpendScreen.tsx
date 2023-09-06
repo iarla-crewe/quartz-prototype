@@ -1,9 +1,11 @@
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CardTransactionData } from '../../../model/data/CardTransaction'
-import { USDC } from "../../../model/data/Tokens";
+import { SOL, USDC } from "../../../model/data/Tokens";
 import DisplayCardTransaction from "../../components/DisplayCardTransaction";
 import { theme } from "../Styles";
 import { useState, useRef, useEffect } from "react";
+import { createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
+import { spendSol, spendUsdc } from "../../../program/instructions";
  
 export default function SpendScreen( { navigation } : { navigation: any } ) {
     // TODO - Remove dummy data
@@ -11,8 +13,8 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
     const transactionData = new CardTransactionData({
         amountFiat: 1050,
         fiatCurrency: 'EUR',
-        amountToken: 1147,
-        tokenType: USDC,
+        amountToken: 1000000000,
+        tokenType: SOL,
         timestamp: new Date(),
         vendor: 'Old Oak',
         location: 'Oliver Plunket Street'
@@ -25,6 +27,11 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
 
         return () => clearInterval(interval);
     }, []);
+
+    const connection = createConnection();
+    const wallet = getTestWallet();
+    const provider = getProvider(connection, wallet);
+    const program = getProgram(provider); 
 
     if (timer <= 0) {
         navigation.navigate(
@@ -48,10 +55,26 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
             <TouchableOpacity 
                 style = {theme.button}
                 onPress={
-                    () => {
-                        // TODO - Implement
+                    async () => {
+                        let tx;
+                        if (transactionData.tokenType === SOL) {
+                            tx = await spendSol(program, wallet.publicKey, transactionData.amountToken);
+                        } else if (transactionData.tokenType === USDC) {
+                            tx = await spendUsdc(connection, program, wallet, transactionData.amountToken);
+                        } else {
+                            console.log("Invalid token provided");
+                            return;
+                        }
 
-                        navigation.navigate('SpendAccepted');
+                        const status = tx ? (await connection.getSignatureStatus(tx)).value?.confirmationStatus : null;
+
+                        if (tx && status === 'confirmed') {
+                            clearInterval(timer);
+                            navigation.navigate('SpendAccepted');
+                        } else {
+                            // TODO - Implement transaction failed popup
+                        }
+                        
                     }       
                 }
             >
@@ -61,10 +84,13 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
             <TouchableOpacity 
                 style = {theme.button}
                 onPress={
-                    () => navigation.navigate(
-                        'SpendDeclined',
-                        { reason: "You have declined the transaction" } // TODO - Remove hard coding of reason
-                    )        
+                    () => {
+                        clearInterval(timer);
+                        navigation.navigate(
+                            'SpendDeclined',
+                            { reason: "You have declined the transaction" } // TODO - Remove hard coding of reason
+                        )     
+                    }   
                 }
             >
                 <Text style={theme.buttonText}>Decline</Text>

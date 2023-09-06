@@ -95,8 +95,7 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
     }
 }
 
-const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, amount: number) => {
-    const lamports = amount * LAMPORTS_PER_SOL;
+const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, lamports: number) => {
     const vault = getVault(owner);
 
     try {
@@ -115,14 +114,14 @@ const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, a
     }
 }
 
-const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, receiver: PublicKey, amount: number) => {
+const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, amount: number) => {
     const usdc = amount * (10 ** 6);
     const vault = getVault(owner.publicKey);
     const vaultAta = getVaultAta(owner.publicKey, USDC_MINT_ADDRESS);
 
     let quartzAta = await getAssociatedTokenAddress(
         USDC_MINT_ADDRESS,
-        receiver,
+        QUARTZ_SPEND_ADDRESS,
         true
     );
 
@@ -134,7 +133,7 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
                 connection,
                 owner.payer,
                 USDC_MINT_ADDRESS,
-                receiver
+                QUARTZ_SPEND_ADDRESS
             )
             console.log(tx);
         }

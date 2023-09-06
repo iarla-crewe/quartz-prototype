@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import DisplayCardTransaction from "../../components/DisplayCardTransaction";
 import HomeButton from "../../components/HomeButton";
 import { CardTransactionData } from "../../../model/data/CardTransaction";
-import { USDC } from "../../../model/data/Tokens";
+import { SOL, USDC } from "../../../model/data/Tokens";
 import { theme } from "../Styles";
 
 export default function SpendAcceptedScreen( { navigation } : { navigation: any} ) {
@@ -10,8 +10,8 @@ export default function SpendAcceptedScreen( { navigation } : { navigation: any}
     const transactionData = new CardTransactionData({
         amountFiat: 1050,
         fiatCurrency: 'EUR',
-        amountToken: 1147,
-        tokenType: USDC,
+        amountToken: 1000000000,
+        tokenType: SOL,
         timestamp: new Date(),
         vendor: 'Old Oak',
         location: 'Oliver Plunket Street'
