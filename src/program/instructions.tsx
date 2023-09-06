@@ -1,7 +1,7 @@
 import { Program, BN, Wallet, web3 } from "@coral-xyz/anchor";
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { QuartzPrototypeV2 } from "./quartz_prototype_v2";
-import { USDC_MINT_ADDRESS, getVault, getVaultAta } from "./program_utils";
+import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, getVault, getVaultAta } from "./program_utils";
 import { getAssociatedTokenAddress, createAssociatedTokenAccount } from "@solana/spl-token";
 
 const initAccount = async (program: Program<QuartzPrototypeV2>) => {
@@ -95,12 +95,72 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
     }
 }
 
-const spendSol = async () => {
-    // TODO - Implement
+const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, amount: number) => {
+    const lamports = amount * LAMPORTS_PER_SOL;
+    const vault = getVault(owner);
+
+    try {
+        const tx = await program.methods
+            .spendLamports(new BN(lamports))
+            .accounts({
+                vault: vault,
+                receiver: QUARTZ_SPEND_ADDRESS
+            })
+            .rpc()  
+        console.log(tx);
+        return tx;
+    } catch (err) {
+        console.log(err);
+        return null;
+    }
 }
 
-const spendUsdc = async () => {
-    // TODO - Implement
+const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, receiver: PublicKey, amount: number) => {
+    const usdc = amount * (10 ** 6);
+    const vault = getVault(owner.publicKey);
+    const vaultAta = getVaultAta(owner.publicKey, USDC_MINT_ADDRESS);
+
+    let quartzAta = await getAssociatedTokenAddress(
+        USDC_MINT_ADDRESS,
+        receiver,
+        true
+    );
+
+    try {
+        const quartzAtaAccount = await connection.getAccountInfo(quartzAta); 
+        
+        if (quartzAtaAccount === null) {
+            const tx = await createAssociatedTokenAccount(
+                connection,
+                owner.payer,
+                USDC_MINT_ADDRESS,
+                receiver
+            )
+            console.log(tx);
+        }
+        
+    } catch (err) {
+        console.log(`getATA error: ${err}`);
+        return;
+    }
+
+    try {
+        const tx = await program.methods
+            .spendSpl(new BN(usdc))
+            .accounts({
+                vault: vault,
+                vaultAtaUsdc: vaultAta,
+                tokenMint: USDC_MINT_ADDRESS,
+                receiver: QUARTZ_SPEND_ADDRESS,
+                receiverAta: quartzAta 
+            })
+            .rpc()  
+        console.log(tx);
+        return tx;
+    } catch (err) {
+        console.log(`instruction error: ${err}`);
+        return null;
+    }
 }
 
 export {

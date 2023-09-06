@@ -21,6 +21,7 @@ const VAULT_SEED = "vault"
 const VAULT_ATA_SEED = "ata"
 const RPC_ENDPOINT = 'devnet'
 
+const QUARTZ_SPEND_ADDRESS = new PublicKey("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G");
 const QUARTZ_PROGRAM_ID = new PublicKey("5Dxjir2yDi1aZAzgcnkEGmnLVop49DpNoru3c8DNAtcc");       // Devnet Quartz address
 const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");       // Devnet USDC address
 // const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");       // Mainnet USDC address
@@ -123,6 +124,7 @@ const getVaultUsdcBalance = async (connection: Connection, userPubkey: PublicKey
 }
 
 export {
+  QUARTZ_SPEND_ADDRESS,
   USDC_MINT_ADDRESS,
   createConnection,
   getTestWallet,
