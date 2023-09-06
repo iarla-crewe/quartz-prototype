@@ -4,6 +4,18 @@ export function currencyToString(rawAmount: number, decimals: number) {
   return (rawAmount / 10 ** decimals).toFixed(decimals);
 }
 
+export function handleError(error: unknown, message?: string) {
+    console.log(`${message ? message : ""} ${error}`);
+    
+    if (typeof error === "string") {
+        return new Error(error);
+    } else if (error instanceof Error) {
+        return error;
+    } else {
+        return new Error("unknown error");
+    }
+}
+
 export async function requestUserPermission() {
   const authStatus = await messaging().requestPermission();
   const enabled =

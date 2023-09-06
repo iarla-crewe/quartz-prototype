@@ -104,9 +104,17 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                             return;
                         }
 
-                        const status = tx ? (await connection.getSignatureStatus(tx)).value?.confirmationStatus : null;
+                        if (tx instanceof Error) {
+                            navigation.navigate(
+                                'TransactionFailed',
+                                { error: tx.message }
+                            )
+                            return;
+                        }
+            
+                        const status = (await connection.getSignatureStatus(tx)).value?.confirmationStatus
 
-                        if (tx && status === 'confirmed') {
+                        if (status === 'confirmed') {
                             navigation.navigate(
                                 'TransferConfirmed',
                                 { 
@@ -117,7 +125,10 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                                 }
                             )
                         } else {
-                            // TODO - Implement transaction failed popup
+                            navigation.navigate(
+                                'TransactionFailed',
+                                { error: "transaction was sent but not confirmed" }
+                            )
                         }
                     }
                 }

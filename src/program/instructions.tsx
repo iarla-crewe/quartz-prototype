@@ -3,6 +3,7 @@ import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { QuartzPrototypeV2 } from "./quartz_prototype_v2";
 import { DEVNET_USDC_DECIMALS, QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, getVault, getVaultAta } from "./program_utils";
 import { getAssociatedTokenAddress, createAssociatedTokenAccount } from "@solana/spl-token";
+import { handleError } from "../utils";
 
 const initAccount = async (program: Program<QuartzPrototypeV2>) => {
     try {
@@ -11,8 +12,9 @@ const initAccount = async (program: Program<QuartzPrototypeV2>) => {
             .accounts({ tokenMint: USDC_MINT_ADDRESS })
             .rpc();
         console.log(tx);
-    } catch (err) {
-        console.log(err);
+        return tx;
+    } catch (err: unknown) {
+        return handleError(err);
     }
 }
 
@@ -22,8 +24,9 @@ const airdropSol = async (connection: Connection, owner: PublicKey) => {
     try {
         const tx = await connection.requestAirdrop(vaultAddress, 4e9);
         console.log(tx);
-    } catch (err) {
-        console.log(err);
+        return tx;
+    } catch (err: unknown) {
+        return handleError(err);
     }
 }
 
@@ -41,9 +44,8 @@ const transferSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey
             .rpc()  
         console.log(tx);
         return tx;
-    } catch (err) {
-        console.log(err);
-        return null;
+    } catch (err: unknown) {
+        return handleError(err);
     }
 }
 
@@ -71,9 +73,8 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
             console.log(tx);
         }
         
-    } catch (err) {
-        console.log(`getATA error: ${err}`);
-        return;
+    } catch (err: unknown) {
+        return handleError(err, "getATA error: ");
     }
 
     try {
@@ -89,9 +90,8 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
             .rpc()  
         console.log(tx);    
         return tx;
-    } catch (err) {
-        console.log(`instruction error: ${err}`);
-        return null;
+    } catch (err: unknown) {
+        return handleError(err, "instruction error: ");
     }
 }
 
@@ -108,9 +108,8 @@ const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, l
             .rpc()  
         console.log(tx);
         return tx;
-    } catch (err) {
-        console.log(err);
-        return null;
+    } catch (err: unknown) {
+        return handleError(err);
     }
 }
 
@@ -138,9 +137,8 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
             console.log(tx);
         }
         
-    } catch (err) {
-        console.log(`getATA error: ${err}`);
-        return;
+    } catch (err: unknown) {
+        return handleError(err, "getATA error: ");
     }
 
     try {
@@ -156,9 +154,8 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
             .rpc()  
         console.log(tx);
         return tx;
-    } catch (err) {
-        console.log(`instruction error: ${err}`);
-        return null;
+    } catch (err: unknown) {
+        return handleError(err, "instruction error: ");
     }
 }
 

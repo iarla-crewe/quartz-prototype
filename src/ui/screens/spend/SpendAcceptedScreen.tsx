@@ -28,17 +28,27 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
                 return;
             }
 
-            const status = tx ? (await connection.getSignatureStatus(tx)).value?.confirmationStatus : null;
+            if (tx instanceof Error) {
+                navigation.navigate(
+                    'TransactionFailed',
+                    { error: tx.message }
+                )
+                return;
+            }
 
-            if (tx && status === 'confirmed') {
+            const status = (await connection.getSignatureStatus(tx)).value?.confirmationStatus
+
+            if (status === 'confirmed') {
                 navigation.navigate(
                     'SpendConfirmed',
                     { transactionHash: tx }
                 );
             } else {
-                // TODO - Implement transaction failed screen
+                navigation.navigate(
+                    'TransactionFailed',
+                    { error: "transaction was sent but not confirmed" }
+                )
             }
-
         })();
         return () => {}
     }, []);

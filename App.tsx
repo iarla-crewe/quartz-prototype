@@ -15,6 +15,7 @@ import SpendConfirmedScreen from './src/ui/screens/spend/SpendConfirmedScreen';
 import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
 import { notification, requestUserPermission, getToken } from './src/utils';
+import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
 
 global.Buffer = require('buffer').Buffer;
 const TextEncodingPolyfill = require('text-encoding');
@@ -52,6 +53,7 @@ export default function App(): JSX.Element {
           <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
           <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
           <Stack.Screen name='SpendConfirmed' component={SpendConfirmedScreen} />
+          <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

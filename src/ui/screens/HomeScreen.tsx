@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 import { airdropSol, initAccount } from "../../program/instructions";
 
 export default function HomeScreen( { navigation } : { navigation: any } ) {
+
     const connection = createConnection();
     const wallet = getTestWallet();
     const provider = getProvider(connection, wallet);
