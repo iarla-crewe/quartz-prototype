@@ -28,11 +28,6 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
         return () => clearInterval(interval);
     }, []);
 
-    const connection = createConnection();
-    const wallet = getTestWallet();
-    const provider = getProvider(connection, wallet);
-    const program = getProgram(provider); 
-
     if (timer <= 0) {
         clearInterval(timer);
         navigation.navigate(
@@ -56,26 +51,15 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
             <TouchableOpacity 
                 style = {theme.button}
                 onPress={
-                    async () => {
-                        let tx;
-                        if (transactionData.tokenType === SOL) {
-                            tx = await spendSol(program, wallet.publicKey, transactionData.amountToken);
-                        } else if (transactionData.tokenType === USDC) {
-                            tx = await spendUsdc(connection, program, wallet, transactionData.amountToken);
-                        } else {
-                            console.log("Invalid token provided");
-                            return;
-                        }
-
-                        const status = tx ? (await connection.getSignatureStatus(tx)).value?.confirmationStatus : null;
-
-                        if (tx && status === 'confirmed') {
-                            clearInterval(timer);
-                            navigation.navigate('SpendAccepted');
-                        } else {
-                            // TODO - Implement transaction failed popup
-                        }
-                        
+                    () => {
+                        clearInterval(timer);
+                        navigation.navigate(
+                            'SpendAccepted',
+                            {
+                                token: transactionData.tokenType,
+                                amount: transactionData.amountToken
+                            }
+                        );
                     }       
                 }
             >

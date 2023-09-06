@@ -10,6 +10,7 @@ import TransferConfirmedScreen from './src/ui/screens/transfer/TransferConfirmed
 import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
 import SpendScreen from './src/ui/screens/spend/SpendScreen';
 import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
+import SpendConfirmedScreen from './src/ui/screens/spend/SpendConfirmedScreen';
 
 import { Alert } from 'react-native';
 import messaging from '@react-native-firebase/messaging';
@@ -50,6 +51,7 @@ export default function App(): JSX.Element {
           <Stack.Screen name='Spend' component={SpendScreen} />
           <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
           <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
+          <Stack.Screen name='SpendConfirmed' component={SpendConfirmedScreen} />
         </Stack.Navigator>
       </NavigationContainer>
     </SafeAreaView>

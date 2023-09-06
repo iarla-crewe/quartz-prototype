@@ -32,7 +32,7 @@ export default function TransferConfirmedScreen( { route, navigation } : {route:
             </View>
 
             <View style={theme.standardPadding}>
-                <Text style={theme.p}>
+                <Text style={theme.p} selectable={true} >
                     Signature: {transactionHash}
                 </Text>
             </View>
