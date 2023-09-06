@@ -26,6 +26,8 @@ const QUARTZ_PROGRAM_ID = new PublicKey("5Dxjir2yDi1aZAzgcnkEGmnLVop49DpNoru3c8D
 const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU");       // Devnet USDC address
 // const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");       // Mainnet USDC address
 
+const DEVNET_USDC_DECIMALS = 6;
+
 const createConnection = () => {
   return new Connection(clusterApiUrl(RPC_ENDPOINT));
 };
@@ -40,7 +42,6 @@ const getTestWallet = () => {
   return {
     signTransaction: async (transaction: Transaction) => {
       const tx = await transaction.sign(keypair as Signer);
-      console.log(tx);
 
       return transaction;
     },
@@ -48,7 +49,6 @@ const getTestWallet = () => {
     signAllTransactions: async (transactions: Transaction[]) => {
       return transactions.map(async (tx) => {
         const hash = await tx.sign(keypair as Signer)
-        console.log(hash)
 
         return tx;
       })
@@ -120,12 +120,13 @@ const getVaultAtaBalance = async (connection: Connection, userPubkey: PublicKey,
 
 const getVaultUsdcBalance = async (connection: Connection, userPubkey: PublicKey) => {
   const rawBalance = await getVaultAtaBalance(connection, userPubkey, USDC_MINT_ADDRESS);
-  return rawBalance / 10 ** 6;
+  return rawBalance / 10 ** DEVNET_USDC_DECIMALS;
 }
 
 export {
   QUARTZ_SPEND_ADDRESS,
   USDC_MINT_ADDRESS,
+  DEVNET_USDC_DECIMALS,
   createConnection,
   getTestWallet,
   getProvider,

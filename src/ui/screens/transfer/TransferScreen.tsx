@@ -4,7 +4,7 @@ import React from "react";
 import { theme } from "../Styles";
 import BackButton from "../../components/BackButton";
 import { transferSol, transferUsdc } from "../../../program/instructions";
-import { createConnection, getProgram, getProvider, getTestWallet, getVault } from "../../../program/program_utils";
+import { createConnection, getProgram, getProvider, getTestWallet, getVault, getVaultBalance, getVaultUsdcBalance } from "../../../program/program_utils";
 import { PublicKey, TransactionConfirmationStatus } from "@solana/web3.js";
 
 export default function TransferScreen( { route, navigation } : {route: any, navigation: any} ) {
@@ -16,6 +16,51 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
     const wallet = getTestWallet();
     const provider = getProvider(connection, wallet);
     const program = getProgram(provider); 
+
+    const isInputValid = async () => {
+        if (address == '') {
+            // TODO - Display error popup
+            console.log("Address is empty");
+            return false;
+        }
+
+        try { new PublicKey(address) }
+        catch (err) {
+            // TODO - Display error popup
+            console.log("Address is not a valid public key");
+            return false;
+        }
+
+        if (amount == '') {
+            // TODO - Display error popup
+            console.log("Amount is empty");
+            return false;
+        }
+
+        if (isNaN(Number(amount))) {
+            // TODO - Display error popup
+            console.log("Amount is not a valid number");
+            return false;
+        }
+
+        let balance;
+        if ( token === SOL ) {
+            balance = await getVaultBalance(createConnection(), wallet.publicKey);
+        } else if ( token === USDC ) {
+            balance = await getVaultUsdcBalance(createConnection(), wallet.publicKey);
+        } else {
+            console.log("Invalid token provided")
+            return false;
+        }
+
+        if (Number(amount) > balance) {
+            // TODO - Display error popup
+            console.log("Insufficient balance");
+            return false;
+        }
+
+        return true;
+    }
     
     return (
         <View>
@@ -45,21 +90,15 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                 style = {theme.button}
                 onPress={
                     async () => {
-                        let tx;
-                        const receiver = new PublicKey(address);
+                        if (!(await isInputValid())) return;
 
-                        let amountNum;
-                        try {
-                            amountNum = Number(amount);
-                        } catch (err) {
-                            console.log(err)
-                            return;
-                        }
+                        const receiver = new PublicKey(address);
+                        let tx;
 
                         if (token === SOL) {
-                            tx = await transferSol(program, wallet.publicKey, receiver, amountNum);
+                            tx = await transferSol(program, wallet.publicKey, receiver, Number(amount));
                         } else if (token === USDC) {
-                            tx = await transferUsdc(connection, program, wallet, receiver, amountNum);
+                            tx = await transferUsdc(connection, program, wallet, receiver, Number(amount));
                         } else {
                             console.log("Invalid token provided");
                             return;

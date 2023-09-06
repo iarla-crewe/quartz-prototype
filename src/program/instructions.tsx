@@ -1,7 +1,7 @@
 import { Program, BN, Wallet, web3 } from "@coral-xyz/anchor";
 import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
 import { QuartzPrototypeV2 } from "./quartz_prototype_v2";
-import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, getVault, getVaultAta } from "./program_utils";
+import { DEVNET_USDC_DECIMALS, QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, getVault, getVaultAta } from "./program_utils";
 import { getAssociatedTokenAddress, createAssociatedTokenAccount } from "@solana/spl-token";
 
 const initAccount = async (program: Program<QuartzPrototypeV2>) => {
@@ -48,7 +48,7 @@ const transferSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey
 }
 
 const transferUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, receiver: PublicKey, amount: number) => {
-    const usdc = amount * (10 ** 6);
+    const usdc = amount * (10 ** DEVNET_USDC_DECIMALS);
 
     const vault = getVault(owner.publicKey);
     const vaultAta = getVaultAta(owner.publicKey, USDC_MINT_ADDRESS);
@@ -115,7 +115,7 @@ const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, l
 }
 
 const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, amount: number) => {
-    const usdc = amount * (10 ** 4);
+    const usdc = amount * (10 ** (DEVNET_USDC_DECIMALS - 2));
     const vault = getVault(owner.publicKey);
     const vaultAta = getVaultAta(owner.publicKey, USDC_MINT_ADDRESS);
 
