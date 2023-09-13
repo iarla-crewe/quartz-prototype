@@ -6,11 +6,7 @@ const app: Express = express();
 
 app.use(express.json());
 
-app.listen(4000, () => {
-    console.log(`[server] Serving running on PORT ${PORT}`)
-});
-
-app.post('/', (req: Request, res: Response) => {
+app.post('/api/demo', (req: Request, res: Response) => {
     const { destination } = req.body;
 
     if (!destination) {
