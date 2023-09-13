@@ -1,18 +1,41 @@
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, Button } from 'react-native';
 import { Image } from 'expo-image';
+import { Audio } from 'expo-av';
+import { useEffect, useState } from 'react';
 
 export default function App() {
   // TODO - Implement server call code
 
-  // TODO - Implement beep sound effect
+  const [sound, setSound] = useState();
+
+  async function playSound() {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync( require('./assets/beep.wav')
+    );
+    setSound(sound);
+
+    console.log('Playing Sound');
+    await sound.playAsync();
+  }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
+
 
   return (
     <View style={styles.container}>
       <Image
         style={styles.image}
-        source="https://assets-global.website-files.com/60157e38af986c4fb2b69244/60f0ed18a47298cb2d9d8ab8_Eo_circle_green_checkmark.svg.webp"
+        source={require('./assets/green_checkmark.webp')}
         contentFit="contain"
       />
+      <Button title="Play Sound" onPress={playSound} />
     </View>
   );
 }
