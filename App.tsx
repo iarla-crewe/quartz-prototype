@@ -4,7 +4,6 @@ import { PermissionsAndroid, Platform, StyleSheet, View } from 'react-native';
 
 import { Alert } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
-import { Route } from './src/navigation/Route';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from './src/ui/screens/HomeScreen';
