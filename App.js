@@ -6,27 +6,14 @@ import { useEffect, useState } from 'react';
 export default function App() {
   // TODO - Implement server call code
 
-  const [sound, setSound] = useState();
-
-  async function playSound() {
-    console.log('Loading Sound');
-    const { sound } = await Audio.Sound.createAsync( require('./assets/beep.wav')
-    );
-    setSound(sound);
-
-    console.log('Playing Sound');
-    await sound.playAsync();
-  }
-
   useEffect(() => {
-    return sound
-      ? () => {
-          console.log('Unloading Sound');
-          sound.unloadAsync();
-        }
-      : undefined;
-  }, [sound]);
-
+    async function playBeep() {
+      const { sound } = await Audio.Sound.createAsync( require('./assets/beep.wav'));
+      await sound.playAsync();
+      sound.unloadAsync();
+    }
+    playBeep();
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -35,7 +22,6 @@ export default function App() {
         source={require('./assets/green_checkmark.webp')}
         contentFit="contain"
       />
-      <Button title="Play Sound" onPress={playSound} />
     </View>
   );
 }
