@@ -1,8 +1,7 @@
 import { runDemo } from '../server/server';
 import express, { Express, Request, Response } from 'express';
-import dotenv from 'dotenv';
 
-dotenv.config();
+const PORT = 4000;
 const app: Express = express();
 
 app.use(express.json());
@@ -19,6 +18,10 @@ app.post('/api-demo', (req: Request, res: Response) => {
     res.send({
         status: 'success'
     });
+});
+
+app.listen(4000, () => {
+    console.log(`[server] Serving running on PORT ${PORT}`)
 });
 
 export default app;
