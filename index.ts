@@ -19,6 +19,12 @@ app.post('/api-demo', (req: Request, res: Response) => {
     })
 });
 
+app.get('/', (reg: Request, res: Response) => {
+    res.send({
+        status: 'online'
+    })
+});
+
 app.listen(PORT, () => {
     console.log(`API listening on PORT ${PORT} `)
   })
