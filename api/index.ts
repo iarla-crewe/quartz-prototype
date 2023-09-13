@@ -1,4 +1,4 @@
-import { sendNotification } from '../server';
+import { runDemo } from '../server/server';
 import express, { Express, Request, Response } from 'express';
 import dotenv from 'dotenv';
 
@@ -14,10 +14,11 @@ app.post('/api-demo', (req: Request, res: Response) => {
         res.status(400).send({message: "destination is required"});
     }
 
-    sendNotification(destination);
+    runDemo(destination);
+
     res.send({
         status: 'success'
-    })
+    });
 });
 
 export default app;
