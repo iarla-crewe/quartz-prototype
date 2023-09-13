@@ -13,27 +13,21 @@ export default function App() {
   }
 
   const callAPI = async () => {
-    try {
-      const response = await fetch('https://quartzpay.io/api-demo', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json'
-        },
-        body: JSON.stringify({
-          firstParam: 'yourValue',
-          secondParam: 'yourOtherValue',
-        }),
-      });
-
-      // TODO - Handle response
-      console.log(`Response: ${response}`);
-
-      setShowConfirm(true);
-      playBeep();
-
-    } catch (err) {
-      console.log(`Error: ${err}`);
-    }
+    const options = {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'User-Agent': 'insomnia/2023.5.8'},
+      body: '{"destination":"cqvN9x0JSGqqwhRYja_tKj:APA91bGKAPCNurJkHcojn3BdxmeBLqzHmSUizI0ldpwtQBip7zx0alQroW5KwtC8nm0T5_-7KlK0AcC-Cwv6aYefAzauTyL-UQCfKq2qilMfEZcFg4uFxeBPbunnnhmeKBptlX7clN-R"}'
+    };
+    
+    fetch('https://quartz-prototype-v2-server-vercel.vercel.app/api-demo', options)
+      .then(response => {
+        console.log(response.status);
+        if (response.ok) {
+          setShowConfirm(true);
+          playBeep();
+        }
+      })
+      .catch(err => console.error(err));
   }
 
   useEffect(() => {
