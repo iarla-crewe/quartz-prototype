@@ -1,19 +1,21 @@
+/* eslint-disable prettier/prettier */
 import messaging from '@react-native-firebase/messaging';
+import NavigationService from './navigation/NavigationService';
 
 export function currencyToString(rawAmount: number, decimals: number) {
   return (rawAmount / 10 ** decimals).toFixed(decimals);
 }
 
 export function handleError(error: unknown, message?: string) {
-    console.log(`${message ? message : ""} ${error}`);
-    
-    if (typeof error === "string") {
-        return new Error(error);
-    } else if (error instanceof Error) {
-        return error;
-    } else {
-        return new Error("unknown error");
-    }
+  console.log(`${message ? message : ""} ${error}`);
+
+  if (typeof error === "string") {
+    return new Error(error);
+  } else if (error instanceof Error) {
+    return error;
+  } else {
+    return new Error("unknown error");
+  }
 }
 
 export async function requestUserPermission() {
@@ -24,10 +26,15 @@ export async function requestUserPermission() {
 
   if (enabled) {
     console.log('Authorization status:', authStatus);
+    getToken();
   }
 }
 
-export const notification = async () => {
+export const notificationListeners = async () => {
+  const unsubscribe = messaging().onMessage(async remoteMessage => {
+    console.log('A new FCM message arrived!', remoteMessage);
+    NavigationService.navigate(remoteMessage.data!.screenToOpen);
+  });
   // Assume a message-notification contains a "type" property in the data payload of the screen to open
 
   messaging().onNotificationOpenedApp(remoteMessage => {
@@ -35,6 +42,7 @@ export const notification = async () => {
       'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
+    NavigationService.navigate(remoteMessage.data!.screenToOpen);
   });
 
   // Check whether an initial notification is available
@@ -46,8 +54,11 @@ export const notification = async () => {
           'Notification caused app to open from quit state:',
           remoteMessage.notification,
         );
+        NavigationService.navigate(remoteMessage.data!.screenToOpen);
       }
     });
+
+  return unsubscribe;
 };
 
 export const getToken = async () => {

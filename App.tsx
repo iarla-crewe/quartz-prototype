@@ -1,21 +1,21 @@
 /* eslint-disable prettier/prettier */
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import HomeScreen from './src/ui/screens/HomeScreen';
-import TransferScreen from './src/ui/screens/transfer/TransferScreen';
-import TransferSelectScreen from './src/ui/screens/transfer/TransferSelectScreen';
 import React, { useEffect } from 'react';
-import { SafeAreaView } from 'react-native';
-import TransferConfirmedScreen from './src/ui/screens/transfer/TransferConfirmedScreen';
-import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
-import SpendScreen from './src/ui/screens/spend/SpendScreen';
-import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
-import SpendConfirmedScreen from './src/ui/screens/spend/SpendConfirmedScreen';
+import { PermissionsAndroid, Platform, StyleSheet, View } from 'react-native';
 
 import { Alert } from 'react-native';
-import messaging from '@react-native-firebase/messaging';
-import { notification, requestUserPermission, getToken } from './src/utils';
-import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
+import { notificationListeners, requestUserPermission } from './src/utils';
+import { Route } from './src/navigation/Route';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import HomeScreen from './src/ui/screens/HomeScreen';
+import TransferSelectScreen from './src/ui/screens/transfer/TransferSelectScreen';
+import TransferScreen from './src/ui/screens/transfer/TransferScreen';
+import TransferConfirmedScreen from './src/ui/screens/transfer/TransferConfirmedScreen';
+import SpendScreen from './src/ui/screens/spend/SpendScreen';
+import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
+import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
+import NavigationService from './src/navigation/NavigationService';
+
 
 global.Buffer = require('buffer').Buffer;
 const TextEncodingPolyfill = require('text-encoding');
@@ -28,34 +28,40 @@ const Stack = createNativeStackNavigator();
 
 export default function App(): JSX.Element {
   useEffect(() => {
-    const unsubscribe = messaging().onMessage(async remoteMessage => {
-      Alert.alert('A new FCM message arrived!', JSON.stringify(remoteMessage));
-    });
+    if (Platform.OS == "android") {
+      PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then((res) => {
+        console.log("res +++++++", res);
+        if (!!res && res === 'granted') {
+          requestUserPermission();
+          notificationListeners();
+        }
+      }).catch(error => {
+        Alert.alert("Something went wrong: ", error);
+      })
+    } else {
 
-    return unsubscribe;
-  }, []);
-
-  useEffect(() => {
-    requestUserPermission();
-    notification();
-    getToken();
-  }, []);
+    }
+  })
 
   return (
-    <SafeAreaView style={{height: "100%"}}>
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName='Home'>
-          <Stack.Screen name='Home' component={HomeScreen}/>
-          <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
-          <Stack.Screen name='Transfer' component={TransferScreen} />
-          <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
-          <Stack.Screen name='Spend' component={SpendScreen} />
-          <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
-          <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
-          <Stack.Screen name='SpendConfirmed' component={SpendConfirmedScreen} />
-          <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />
-        </Stack.Navigator>
-      </NavigationContainer>
-    </SafeAreaView>
+    <View style = {styles.container}>
+        <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
+            <Stack.Navigator>
+                <Stack.Screen name='Home' component={HomeScreen} />
+                <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
+                <Stack.Screen name='Transfer' component={TransferScreen} />
+                <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
+                <Stack.Screen name='Spend' component={SpendScreen} />
+                <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
+                <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    </View>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  }
+})

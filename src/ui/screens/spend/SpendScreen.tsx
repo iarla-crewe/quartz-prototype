@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CardTransactionData } from '../../../model/data/CardTransaction'
 import { SOL, USDC } from "../../../model/data/Tokens";
