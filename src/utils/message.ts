@@ -14,14 +14,14 @@ export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: s
             title: 'Payment Authentication Needed',
             body: 'Please accept or decline this transaction',
         },
-    
         data: {
             screenToOpen: 'Spend',
             title: 'Payment Authentication',
-            body: JSON.stringify({
-                name: 'SolanaPay url',
-                url: solanaPayUrl
-            }),
+            url: solanaPayUrl
+            // body: JSON.stringify({
+            //     name: 'SolanaPay url',
+            //     url: solanaPayUrl
+            // }),
         }
     };
 

@@ -5,7 +5,7 @@ import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./utils/message";
 
 var FCM = require('fcm-node');
-var serverKey = require('/Users/Diego/workspaces/Quartz/Prototype/backend/quartz-prototype-v2-server-vercel/quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
+var serverKey = require('../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
 var fcm = new FCM(serverKey);
 
 
@@ -40,8 +40,8 @@ let sendMessage = async (appToken: string) => {
     //sends notification with transaction to user to accept a payment
     fcm.send(fcmMessage, function (err: any, response: any) {
         if (err) {
-            console.log("Something has gone wrong!" + err);
-            console.log("Respponse:! " + response);
+            console.log("Something has gone wrong! " + err);
+            console.log("Response: " + response);
         } else {
             // showToast("Successfully sent with response");
             console.log("Successfully sent with response: ", response);

@@ -27,10 +27,10 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
         data: {
             screenToOpen: 'Spend',
             title: 'Payment Authentication',
-            body: JSON.stringify({
-                name: 'SolanaPay url',
-                url: solanaPayUrl
-            }),
+            // body: JSON.stringify({
+            //     name: 'SolanaPay url',
+            //     url: solanaPayUrl
+            // }),
         }
     };
     return fcmMessage;

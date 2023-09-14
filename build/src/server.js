@@ -46,8 +46,8 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     //sends notification with transaction to user to accept a payment
     fcm.send(fcmMessage, function (err, response) {
         if (err) {
-            console.log("Something has gone wrong!" + err);
-            console.log("Respponse:! " + response);
+            console.log("Something has gone wrong! " + err);
+            console.log("Response: " + response);
         }
         else {
             // showToast("Successfully sent with response");
