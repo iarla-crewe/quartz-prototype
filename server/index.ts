@@ -1,4 +1,4 @@
-import express, { Express, Request, Response } from 'express';
+import express, { Request, Response } from 'express';
 import { runDemo } from './src/server';
 
 const PORT = 4000
