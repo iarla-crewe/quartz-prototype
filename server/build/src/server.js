@@ -19,7 +19,7 @@ const pay_1 = require("@solana/pay");
 const bignumber_js_1 = __importDefault(require("bignumber.js"));
 const message_1 = require("./utils/message");
 var FCM = require('fcm-node');
-var serverKey = require('/Users/Diego/workspaces/Quartz/Prototype/backend/quartz-prototype-v2-server-vercel/quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
+var serverKey = require('/Users/Diego/workspaces/Quartz/quartz-prototype/server/quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
 var fcm = new FCM(serverKey);
 let connection = new web3_js_1.Connection((0, web3_js_1.clusterApiUrl)('devnet'), 'confirmed');
 let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
@@ -41,10 +41,12 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     const message = `Impala - €${transactionAmount}`;
     const splToken = balance_1.USDC_MINT_ADDRESS;
     const url = (0, pay_1.encodeURL)({ recipient, amount, splToken, reference, label, message });
+    console.log("Solana pay url: ", url);
     //creates the fcm message
-    let fcmMessage = (0, message_1.getFcmMessage)(url, userId, appToken);
+    let fcmMessage = yield (0, message_1.getFcmMessage)(url, userId, appToken);
+    console.log("fcm message", fcmMessage);
     //sends notification with transaction to user to accept a payment
-    fcm.send(fcmMessage, function (err, response) {
+    yield fcm.send(fcmMessage, function (err, response) {
         if (err) {
             console.log("Something has gone wrong! " + err);
             console.log("Response: " + response);

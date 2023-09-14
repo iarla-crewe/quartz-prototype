@@ -5,9 +5,8 @@ import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./utils/message";
 
 var FCM = require('fcm-node');
-var serverKey = require('../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
+var serverKey = require('/Users/Diego/workspaces/Quartz/quartz-prototype/server/quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
 var fcm = new FCM(serverKey);
-
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
@@ -33,12 +32,12 @@ let sendMessage = async (appToken: string) => {
     const message = `Impala - €${transactionAmount}`;
     const splToken = USDC_MINT_ADDRESS;
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
-
+    console.log("Solana pay url: ", url);
     //creates the fcm message
-    let fcmMessage = getFcmMessage(url, userId, appToken);
-
+    let fcmMessage = await getFcmMessage(url, userId, appToken);
+    console.log("fcm message", fcmMessage);
     //sends notification with transaction to user to accept a payment
-    fcm.send(fcmMessage, function (err: any, response: any) {
+    await fcm.send(fcmMessage, function (err: any, response: any) {
         if (err) {
             console.log("Something has gone wrong! " + err);
             console.log("Response: " + response);

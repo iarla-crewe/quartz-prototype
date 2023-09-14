@@ -10,6 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFcmMessage = void 0;
+const pay_1 = require("@solana/pay");
 let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     //TODO
     //Get the app token for the corresponding userId from our database
@@ -18,8 +19,9 @@ let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
 let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0, void 0, function* () {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
+    const { recipient, amount, splToken, reference, label, message } = (0, pay_1.parseURL)(solanaPayUrl);
     let fcmMessage = {
-        to: appToken,
+        to: "flJ2SP6tTayIEyF6tupNjh:APA91bGvO9e_QsWrxt5YQw6xNwHZEENioSnRJWxcNn-fQnZ2STUdM1zZvu6HfcPjjBPUtK5fbgZ0__ZAz_ZU1P2kz2fIASR6JaiwFMnOsCAT-uOhfNHdCk9p1pGFRW2tGGmh31hCpU6P",
         notification: {
             title: 'Payment Authentication Needed',
             body: 'Please accept or decline this transaction',
@@ -27,12 +29,10 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
         data: {
             screenToOpen: 'Spend',
             title: 'Payment Authentication',
-            // body: JSON.stringify({
-            //     name: 'SolanaPay url',
-            //     url: solanaPayUrl
-            // }),
+            url: JSON.stringify(solanaPayUrl)
         }
     };
+    console.log(fcmMessage);
     return fcmMessage;
 });
 exports.getFcmMessage = getFcmMessage;

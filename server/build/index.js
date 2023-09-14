@@ -10,6 +10,7 @@ const app = (0, express_1.default)();
 app.use(express_1.default.json());
 app.post('/api-demo', (req, res) => {
     const destination = req.body;
+    console.log(destination);
     if (!destination) {
         return res.status(400).send({ message: "destination is required" });
     }
