@@ -6,17 +6,21 @@ const app = express()
 
 app.use(express.json());
 
-app.post('/api-demo', (req: Request, res: Response) => {
-    const { destination } = req.body;
-
+let checkValidDestination = (req: Request, res: Response) => {
+    const destination: string = req.body;
+    console.log("destination: ", destination);
     if (!destination) {
-        res.status(400).send({message: "destination is required"});
+        return res.status(400).send({message: "destination is required"});
     }
-
+    console.log("After destination check")
     runDemo(destination);
-    res.send({
+    return res.send({
         status: 'success'
     })
+}
+
+app.post('/api-demo', (req: Request, res: Response) => {
+    checkValidDestination(req, res);
 });
 
 app.get('/', (reg: Request, res: Response) => {

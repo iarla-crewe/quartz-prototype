@@ -5,13 +5,13 @@ import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./utils/message";
 
 var FCM = require('fcm-node');
-var serverKey = 'AAAAU4oYkts:APA91bEtoOdO75uTHC_3PaYUjUTyaIYzjJRZtxxIGShTnx5zSksEZClUQ0lyTEu4l86yg2Y57cmXD-wlcKj2s9j1k-z0up7ZyppcJLvkG8GNRqiKtdiZkh4D3aFKtkicevsChnc_H1qc';
+var serverKey = require('/Users/Diego/workspaces/Quartz/Prototype/backend/quartz-prototype-v2-server-vercel/quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
 var fcm = new FCM(serverKey);
 
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-let main = async (appToken: string) => {
+let sendMessage = async (appToken: string) => {
     let userId = 1;
     let transactionAmount = 2
     let paymentStatus: string;
@@ -111,7 +111,7 @@ let main = async (appToken: string) => {
 }
 
 export async function runDemo(appToken: string) {
-    main(appToken).then(
+    sendMessage(appToken).then(
         () => process.exit(),
         (err) => {
             console.error(err);
