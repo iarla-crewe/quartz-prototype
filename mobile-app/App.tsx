@@ -15,6 +15,7 @@ import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
 import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
 import NavigationService from './src/navigation/NavigationService';
 import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
+import DepositScreen from './src/ui/screens/DepositScreen';
 
 
 global.Buffer = require('buffer').Buffer;
@@ -48,6 +49,7 @@ export default function App(): JSX.Element {
         <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
             <Stack.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
                 <Stack.Screen name='Home' component={HomeScreen}/>
+                <Stack.Screen name='Deposit' component={DepositScreen} />
                 <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
                 <Stack.Screen name='Transfer' component={TransferScreen} />
                 <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
