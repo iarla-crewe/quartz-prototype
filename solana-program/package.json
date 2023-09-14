@@ -1,4 +1,5 @@
 {
+    "name": "quartz-prototype-solana-program",
     "scripts": {
         "lint:fix": "prettier */*.js \"*/**/*{.js,.ts}\" -w",
         "lint": "prettier */*.js \"*/**/*{.js,.ts}\" --check"
