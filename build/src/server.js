@@ -28,7 +28,7 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     let paymentStatus;
     //checks if the user can afford the transaction
     let canAfford = yield (0, balance_1.checkCanAfford)(connection, transactionAmount, userId);
-    if (canAfford) {
+    if (!canAfford) {
         console.log("transaction not accepted: Insufficent funds");
         return;
     }
