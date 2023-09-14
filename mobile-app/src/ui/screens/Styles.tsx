@@ -1,24 +1,29 @@
 import { StyleSheet } from "react-native"
 
 export const theme = StyleSheet.create({
+    mainContainer: {
+        height: "100%",
+        backgroundColor: "#2a2a2a"
+    },
     standardPadding: {
         padding: 16
     },
     h1: {
         fontSize: 32,
-        color: 'black'
+        color: 'white'
     },
     h2: {
         fontSize: 26,
-        color: 'black'
+        color: 'white'
     },
     h2b: {
         fontSize: 26,
-        color: 'black',
+        color: 'white',
         fontWeight: 'bold'
     },
     p: {
-        fontSize: 24
+        fontSize: 24,
+        color: '#c9c9c9'
     },
     button: {
         backgroundColor: 'lightgray',

@@ -44,10 +44,10 @@ export default function App(): JSX.Element {
   })
 
   return (
-    <View style = {styles.container}>
+    <View style = {{flex: 1}}>
         <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
-            <Stack.Navigator>
-                <Stack.Screen name='Home' component={HomeScreen} />
+            <Stack.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
+                <Stack.Screen name='Home' component={HomeScreen}/>
                 <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
                 <Stack.Screen name='Transfer' component={TransferScreen} />
                 <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
@@ -60,9 +60,3 @@ export default function App(): JSX.Element {
     </View>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-  }
-})
