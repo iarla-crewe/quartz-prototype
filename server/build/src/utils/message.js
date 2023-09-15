@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFcmMessage = void 0;
-const pay_1 = require("@solana/pay");
 let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     //TODO
     //Get the app token for the corresponding userId from our database
@@ -19,7 +18,6 @@ let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
 let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0, void 0, function* () {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
-    const { recipient, amount, splToken, reference, label, message } = (0, pay_1.parseURL)(solanaPayUrl);
     let fcmMessage = {
         to: appToken,
         notification: {
@@ -29,10 +27,9 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
         data: {
             screenToOpen: 'Spend',
             title: 'Payment Authentication',
-            url: JSON.stringify(solanaPayUrl)
+            url: solanaPayUrl.toString()
         }
     };
-    console.log(fcmMessage);
     return fcmMessage;
 });
 exports.getFcmMessage = getFcmMessage;
