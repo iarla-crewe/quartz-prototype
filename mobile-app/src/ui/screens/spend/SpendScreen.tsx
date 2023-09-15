@@ -7,18 +7,31 @@ import { theme } from "../Styles";
 import { useState, useRef, useEffect } from "react";
 import { createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
 import { spendSol, spendUsdc } from "../../../program/instructions";
+import { TransferRequestURL, parseURL } from "@solana/pay";
  
-export default function SpendScreen( { navigation } : { navigation: any } ) {
+export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
+    const { solanaPayUrl, sentTime } : any = route.params;
+
+    console.log("url: ", solanaPayUrl);
+    let transactionTest = new URL(solanaPayUrl);
+//.protocol is null
+    console.log("Protocol: ", transactionTest.protocol);
+
+    const { recipient, amount, splToken, reference, label, message } = parseURL(transactionTest) as TransferRequestURL;
+    console.log("Refrence", reference);
+    console.log("Label", label);
+    console.log("Message", message);
+
     // TODO - Remove dummy data
     const remainingTime = 15000;
     const transactionData = new CardTransactionData({
-        amountFiat: 19,
-        fiatCurrency: 'EUR',
-        amountToken: 20,
-        tokenType: USDC,
-        timestamp: new Date(),
-        vendor: 'Old Oak',
-        location: 'Oliver Plunket Street'
+        amountFiat: amount!.toNumber(), // TODO - change to dynamic
+        fiatCurrency: 'EUR', // TODO - change to dynamic
+        amountToken: amount!.toNumber(),
+        tokenType: USDC, // TODO - change to dynamic
+        timestamp: new Date(sentTime),
+        vendor: label!,
+        location: message!
     });
 
     const [timer, setTimer] = useState(remainingTime / 1000);
@@ -61,7 +74,8 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
                             'SpendAccepted',
                             {
                                 token: transactionData.tokenType,
-                                amount: transactionData.amountToken
+                                amount: transactionData.amountToken,
+                                transaction: transaction
                             }
                         );
                     }       

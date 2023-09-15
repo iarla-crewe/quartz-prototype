@@ -5,11 +5,17 @@ import { CardTransactionData } from "../../../model/data/CardTransaction";
 import { SOL, USDC } from "../../../model/data/Tokens";
 import { theme } from "../Styles";
 import { useEffect } from "react";
-import { createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
+import { USDC_MINT_ADDRESS, createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
 import { spendSol, spendUsdc } from "../../../program/instructions";
+import { TransferRequestURL, parseURL } from '@solana/pay';
 
 export default function SpendAcceptedScreen( { route, navigation } : { route: any, navigation: any} ) {
-    const { token, amount } = route.params;
+    const { token, amount2, transaction } = route.params;
+
+    const { recipient, amount, splToken, reference, label, message } = parseURL(transaction.solanaPayUrl) as TransferRequestURL;
+    console.log("Refrence", reference);
+    console.log("Label", label);
+    console.log("Message", message);
 
     const connection = createConnection();
     const wallet = getTestWallet();
@@ -19,10 +25,10 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
     useEffect(() => {
         (async () => {
             let tx;
-            if (token === SOL) {
-                tx = await spendSol(program, wallet.publicKey, amount);
-            } else if (token === USDC) {
-                tx = await spendUsdc(connection, program, wallet, amount);
+            if (splToken === undefined) {
+                tx = await spendSol(program, wallet.publicKey, amount!.toNumber());
+            } else if (splToken === USDC_MINT_ADDRESS) {
+                tx = await spendUsdc(connection, program, wallet, amount!.toNumber());
             } else {
                 console.log("Invalid token provided");
                 return;
