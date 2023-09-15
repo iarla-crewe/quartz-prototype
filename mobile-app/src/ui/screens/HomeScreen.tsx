@@ -1,11 +1,12 @@
 import { 
-    Text,
-    TouchableOpacity, 
+    Text, 
     View, 
     ScrollView,
-    RefreshControl
+    RefreshControl,
+    Image,
+    ActivityIndicator
 } from "react-native";
-import { theme } from "./Styles";
+import { theme, themeColor } from "./Styles";
 import { 
     USDC_MINT_ADDRESS,
     createConnection,
@@ -19,6 +20,7 @@ import {
 } from "../../program/program_utils";
 import { useState, useEffect } from 'react';
 import { airdropSol, initAccount } from "../../program/instructions";
+import { getSolPrice, getUsdcPrice } from "../../utils";
 
 export default function HomeScreen() {
     const wallet = getTestWallet();
@@ -28,17 +30,23 @@ export default function HomeScreen() {
     const [solValue, setSolValue] = useState(0);
     const [usdcValue, setUsdcValue] = useState(0);
 
+    const [initialLoading, setInitialLoading] = useState(true);
+
     const [refreshing, setRefreshing] = useState(false);
     const refreshBalance = async () => {
         setRefreshing(true);
         try {
-            const [sol, usdc] = await Promise.all([
+            const [sol, usdc, solPrice, usdcPrice] = await Promise.all([
                 getVaultBalance(createConnection(), wallet.publicKey),
-                getVaultUsdcBalance(createConnection(), wallet.publicKey)
+                getVaultUsdcBalance(createConnection(), wallet.publicKey),
+                getSolPrice(),
+                getUsdcPrice()
             ])
 
             setSolBalance(sol);
             setUsdcBalance(usdc);
+            setSolValue(sol * solPrice);
+            setUsdcValue(usdc * usdcPrice);
         } catch (err) {
             console.log(err);
         } finally {
@@ -47,8 +55,22 @@ export default function HomeScreen() {
     }
 
     useEffect(() => {
-        refreshBalance();
+        const initialLoad = async () => {
+            await refreshBalance();
+            setInitialLoading(false);
+        }
+        initialLoad();
     }, []);
+
+    if (initialLoading) {
+        return (
+            <View style={theme.mainContainer}>
+                <View style={theme.centeredView}>
+                    <ActivityIndicator size="large" color={themeColor.primary} />
+                </View>
+            </View>
+        )
+    }
 
     return (
         <View style={theme.mainContainer}>
@@ -62,20 +84,28 @@ export default function HomeScreen() {
                     <RefreshControl refreshing={refreshing} onRefresh={async () => {await refreshBalance()}} />
                 }
             >
-                <View style={theme.standardPadding}>
+                <View style={theme.headerPadding}>
                     <Text style={theme.h1}>€{(solValue + usdcValue).toFixed(2)}</Text>
                 </View>
 
-                <View style={theme.standardPadding}>
+                <View style={theme.balance}>
+                    <Image source={require("../../../assets/sol.png")} style={theme.tokenIcon} />
+                    <View style={theme.standardPadding}>
+                        <Text style={theme.h2}>{solBalance}</Text>
+                    </View>
                     <View>
-                        <Text style={theme.h2}>SOL: {solBalance}</Text>
+                        <Text style={theme.subP}>€{solValue.toFixed(2)}</Text>
                     </View>
                 </View>
                 
 
-                <View style={theme.standardPadding}>
+                <View style={theme.balance}>
+                    <Image source={require("../../../assets/usdc.png")} style={theme.tokenIcon} />
+                    <View style={theme.standardPadding}>
+                        <Text style={theme.h2}>{usdcBalance.toFixed(2)}</Text>
+                    </View>
                     <View>
-                        <Text style={theme.h2}>USDC: {usdcBalance.toFixed(2)}</Text>
+                        <Text style={theme.subP}>€{usdcValue.toFixed(2)}</Text>
                     </View>
                 </View>
 

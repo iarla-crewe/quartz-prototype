@@ -67,3 +67,27 @@ export const getToken = async () => {
   // save the token to the db
   console.log(`Token: ${token}`);
 };
+
+export const getSolPrice = async () => {
+  const response = await fetch(
+    `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur`,
+    {
+      method: "GET",
+    }
+  );
+
+  const data = await response.json();
+  return data.solana.eur;
+};
+
+export const getUsdcPrice = async () => {
+  const response = await fetch(
+    `https://api.coingecko.com/api/v3/simple/price?ids=usd-coin&vs_currencies=eur`,
+    {
+      method: "GET",
+    }
+  );
+
+  const data = await response.json();
+  return data["usd-coin"].eur;
+};

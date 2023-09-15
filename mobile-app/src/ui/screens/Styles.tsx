@@ -4,6 +4,7 @@ export enum themeColor {
     primary = "#f5f2ff",
     secondary = "#153aa1",
     darkGrey = "#3a3a39",
+    grey = "#575757",
     text = "#3c315b"
 }
 export const theme = StyleSheet.create({
@@ -14,22 +15,30 @@ export const theme = StyleSheet.create({
     standardPadding: {
         padding: 16
     },
+    headerPadding: {
+        padding: 16,
+        paddingBottom: 32
+    },
     h1: {
-        fontSize: 32,
+        fontSize: 44,
         color: themeColor.text
     },
     h2: {
-        fontSize: 26,
+        fontSize: 30,
         color: themeColor.text
     },
     h2b: {
-        fontSize: 26,
+        fontSize: 30,
         color: themeColor.text,
         fontWeight: 'bold'
     },
     p: {
         fontSize: 24,
         color: themeColor.darkGrey
+    },
+    subP: {
+        fontSize: 24,
+        color: themeColor.grey
     },
     button: {
         backgroundColor: 'lightgray',
@@ -67,5 +76,14 @@ export const theme = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5
+    },
+    balance: {
+        flexDirection: "row",
+        alignItems: "center"
+    },
+    tokenIcon: {
+        width: 30,
+        height: 30,
+        borderRadius: 30/2
     }
 });
