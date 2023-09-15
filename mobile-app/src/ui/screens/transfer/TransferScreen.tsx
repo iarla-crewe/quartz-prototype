@@ -1,7 +1,7 @@
 import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SOL, TokenType, USDC } from "../../../model/data/Tokens";
 import React from "react";
-import { theme } from "../Styles";
+import { theme, themeColor } from "../Styles";
 import BackButton from "../../components/BackButton";
 import { transferSol, transferUsdc } from "../../../program/instructions";
 import { createConnection, getProgram, getProvider, getTestWallet, getVault, getVaultBalance, getVaultUsdcBalance } from "../../../program/program_utils";
@@ -71,91 +71,97 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
     }
     
     return (
-        <View>
-            <Modal
-                transparent={true}         
-                visible={isModalVisible}
-            >
-                <View style = {theme.centeredView}>
-                    <View style = {theme.modalView}>
-                        <Text style = {theme.p}> {modalText} </Text>
+        <View style={theme.mainContainer}>
+            <View style={theme.verticalCenteredView}>
+                <Modal
+                    transparent={true}         
+                    visible={isModalVisible}
+                >
+                    <View style = {theme.centeredView}>
+                        <View style = {theme.modalView}>
+                            <Text style = {theme.p}> {modalText} </Text>
+                        </View>
+                    </View>
+                </Modal>
+
+                <View style={{alignItems: "center"}}>
+                    <View style={theme.standardPadding}>
+                        <Text style={theme.h1}>{token.name}</Text>
                     </View>
                 </View>
-            </Modal>
 
-            <View style={theme.standardPadding}>
-                <Text style={theme.h1}>{token.name}</Text>
-            </View>
+                <View style={theme.standardPadding}>
+                    <TextInput
+                        style={theme.textInput}
+                        value={address}
+                        onChangeText={text => setAddress(text)}
+                        placeholderTextColor={themeColor.darkGrey}
+                        placeholder="Recipient's Solana Address"
+                    />
+                </View>
 
-            <View style={theme.standardPadding}>
-                <TextInput
-                    style={theme.textInput}
-                    value={address}
-                    onChangeText={text => setAddress(text)}
-                    placeholder="Recipient's Solana Address"
-                />
-            </View>
+                <View style={theme.standardPadding}>
+                    <TextInput
+                        style={theme.textInput}
+                        value={amount}
+                        onChangeText={text => setAmount(text)}
+                        placeholderTextColor={themeColor.darkGrey}
+                        placeholder="Amount"
+                    />
+                </View>
 
-            <View style={theme.standardPadding}>
-                <TextInput
-                    style={theme.textInput}
-                    value={amount}
-                    onChangeText={text => setAmount(text)}
-                    placeholder="Amount"
-                />
-            </View>
+                <TouchableOpacity 
+                    style = {theme.button}
+                    onPress={
+                        async () => {
+                            if (!(await isInputValid())) return;
 
-            <TouchableOpacity 
-                style = {theme.button}
-                onPress={
-                    async () => {
-                        if (!(await isInputValid())) return;
+                            const receiver = new PublicKey(address);
+                            let tx;
 
-                        const receiver = new PublicKey(address);
-                        let tx;
+                            if (token === SOL) {
+                                tx = await transferSol(program, wallet.publicKey, receiver, Number(amount));
+                            } else if (token === USDC) {
+                                tx = await transferUsdc(connection, program, wallet, receiver, Number(amount));
+                            } else {
+                                console.log("Invalid token provided");
+                                return;
+                            }
 
-                        if (token === SOL) {
-                            tx = await transferSol(program, wallet.publicKey, receiver, Number(amount));
-                        } else if (token === USDC) {
-                            tx = await transferUsdc(connection, program, wallet, receiver, Number(amount));
-                        } else {
-                            console.log("Invalid token provided");
-                            return;
-                        }
+                            if (tx instanceof Error) {
+                                navigation.navigate(
+                                    'TransactionFailed',
+                                    { error: tx.message }
+                                )
+                                return;
+                            }
+                
+                            const status = (await connection.getSignatureStatus(tx)).value?.confirmationStatus
 
-                        if (tx instanceof Error) {
-                            navigation.navigate(
-                                'TransactionFailed',
-                                { error: tx.message }
-                            )
-                            return;
-                        }
-            
-                        const status = (await connection.getSignatureStatus(tx)).value?.confirmationStatus
-
-                        if (status === 'confirmed') {
-                            navigation.navigate(
-                                'TransferConfirmed',
-                                { 
-                                    token: token.name, 
-                                    address: address, 
-                                    amount: amount,
-                                    transactionHash: tx
-                                }
-                            )
-                        } else {
-                            navigation.navigate(
-                                'TransactionFailed',
-                                { error: "transaction was sent but not confirmed" }
-                            )
+                            if (status === 'confirmed') {
+                                navigation.navigate(
+                                    'TransferConfirmed',
+                                    { 
+                                        token: token.name, 
+                                        address: address, 
+                                        amount: amount,
+                                        transactionHash: tx
+                                    }
+                                )
+                            } else {
+                                navigation.navigate(
+                                    'TransactionFailed',
+                                    { error: "transaction was sent but not confirmed" }
+                                )
+                            }
                         }
                     }
-                }
-            >
-                <Text style={theme.buttonText}>Transfer</Text>
-            </TouchableOpacity>
+                >
+                    <Text style={theme.buttonText}>Transfer</Text>
+                </TouchableOpacity>
 
-            <BackButton data={navigation} />
+                <BackButton data={navigation} />
+            </View>
         </View>
     );
 }

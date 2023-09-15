@@ -62,6 +62,11 @@ export const theme = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center'
     },
+    verticalCenteredView: {
+        flex: 1,
+        height: "100%",
+        justifyContent: "center"
+    },
     modalView: {
         margin: 20,
         backgroundColor: 'white',
