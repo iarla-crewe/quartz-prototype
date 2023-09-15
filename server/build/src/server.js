@@ -43,7 +43,6 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     const url = (0, pay_1.encodeURL)({ recipient, amount, splToken, reference, label, message });
     //creates the fcm message
     let fcmMessage = yield (0, message_1.getFcmMessage)(url, userId, appToken);
-    console.log("fcm message", fcmMessage);
     //sends notification with transaction to user to accept a payment
     yield fcm.send(fcmMessage, function (err, response) {
         if (err) {
@@ -72,7 +71,7 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
          * You can implement a polling strategy to query for the transaction periodically.
          */
         const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-            console.count('Checking for transaction...');
+            //console.count('Checking for transaction...');
             try {
                 signatureInfo = yield (0, pay_1.findReference)(connection, reference, { finality: 'confirmed' });
                 console.log('\n 🖌  Signature found: ', signatureInfo.signature);

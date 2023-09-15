@@ -9,8 +9,6 @@ app.use(express.json());
 app.post('/api-demo', (req: Request, res: Response) => {
     const { destination }: { destination: string } = req.body;
 
-    console.log(destination)
-
     if (!destination) {
         return res.status(400).send({message: "destination is required"});
     }

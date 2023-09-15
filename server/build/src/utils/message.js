@@ -32,7 +32,6 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
             url: JSON.stringify(solanaPayUrl)
         }
     };
-    console.log(fcmMessage);
     return fcmMessage;
 });
 exports.getFcmMessage = getFcmMessage;

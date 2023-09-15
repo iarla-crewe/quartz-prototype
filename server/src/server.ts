@@ -34,7 +34,6 @@ let sendMessage = async (appToken: string) => {
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
     //creates the fcm message
     let fcmMessage = await getFcmMessage(url, userId, appToken);
-    console.log("fcm message", fcmMessage);
     //sends notification with transaction to user to accept a payment
     await fcm.send(fcmMessage, function (err: any, response: any) {
         if (err) {
@@ -65,7 +64,7 @@ let sendMessage = async (appToken: string) => {
          * You can implement a polling strategy to query for the transaction periodically.
          */
         const interval = setInterval(async () => {
-            console.count('Checking for transaction...');
+            //console.count('Checking for transaction...');
             try {
                 signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
                 console.log('\n 🖌  Signature found: ', signatureInfo.signature);

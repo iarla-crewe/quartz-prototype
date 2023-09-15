@@ -25,7 +25,5 @@ export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: s
         }
     };
 
-    console.log(fcmMessage);
-
     return fcmMessage;
 }
