@@ -1,11 +1,12 @@
+import { StatusBar } from 'expo-status-bar';
 import { StyleSheet, View } from 'react-native';
 import { Image } from 'expo-image';
 import { Audio } from 'expo-av';
 import { useEffect, useState } from 'react';
 
 export default function App() {
-  const [ showConfirm, setShowConfirm ] = useState(false);
-
+  const [error, setError] = useState("");
+  
   const playBeep = async () => {
     const { sound } = await Audio.Sound.createAsync( require('./assets/beep.wav'));
     await sound.playAsync();
@@ -15,34 +16,33 @@ export default function App() {
   const callAPI = async () => {
     const options = {
       method: 'POST',
-      headers: {'Content-Type': 'application/json', 'User-Agent': 'insomnia/2023.5.8'},
+      headers: {'Content-Type': 'application/json'},
       body: '{"destination":"cqvN9x0JSGqqwhRYja_tKj:APA91bGKAPCNurJkHcojn3BdxmeBLqzHmSUizI0ldpwtQBip7zx0alQroW5KwtC8nm0T5_-7KlK0AcC-Cwv6aYefAzauTyL-UQCfKq2qilMfEZcFg4uFxeBPbunnnhmeKBptlX7clN-R"}'
     };
     
     fetch('https://quartz-prototype-v2-server-vercel.vercel.app/api-demo', options)
       .then(response => {
         console.log(response.status);
-        if (response.ok) {
-          setShowConfirm(true);
-          playBeep();
-        }
+        if(!response.ok) setError(response.status.toString());
       })
-      .catch(err => console.error(err));
+      .catch(err => {
+        console.error(err);
+        setError(err);
+      });
   }
 
   useEffect(() => {
+    playBeep();
     callAPI();
-  }, []);
+  })
 
   return (
     <View style={styles.container}>
-      {showConfirm ? (
         <Image
           style={styles.image}
           source={require('./assets/green_checkmark.webp')}
           contentFit="contain"
         />
-      ) : null}
     </View>
   );
 }
