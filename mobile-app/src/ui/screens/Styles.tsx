@@ -41,7 +41,7 @@ export const theme = StyleSheet.create({
         color: themeColor.grey
     },
     button: {
-        backgroundColor: 'lightgray',
+        backgroundColor: themeColor.secondary,
         borderRadius: 10,
         justifyContent: "center",
         alignItems: "center",
@@ -49,7 +49,7 @@ export const theme = StyleSheet.create({
         padding: 16
     },
     buttonText: {
-        color: 'black'
+        color: 'white'
     },
     textInput: {
         width: "100%",
