@@ -1,12 +1,12 @@
-/* eslint-disable prettier/prettier */
 import React, { useEffect } from 'react';
-import { PermissionsAndroid, Platform, View } from 'react-native';
+import { PermissionsAndroid, Platform, View, SafeAreaView } from 'react-native';
 import { Alert } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import NavigationService from './src/navigation/NavigationService';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import HomeScreen from './src/ui/screens/HomeScreen';
 import TransferScreen from './src/ui/screens/transfer/TransferScreen';
@@ -17,6 +17,7 @@ import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
 import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
 import DepositScreen from './src/ui/screens/DepositScreen';
 import TokenSelectScreen from './src/ui/screens/transfer/TokenSelectScreen';
+import { themeColor } from './src/ui/screens/Styles';
 
 
 global.Buffer = require('buffer').Buffer;
@@ -53,10 +54,33 @@ function SpendStackNavigator() {
 
 function TabNavigator() {
   return (
-    <Tab.Navigator screenOptions={{headerShown: false}}>
+    <Tab.Navigator
+      initialRouteName='Home'
+      safeAreaInsets={{ bottom: 0 }}
+      screenOptions={({ route }) => ({
+        headerShown: false,
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === 'Deposit') {
+            iconName = focused ? 'card-plus' : 'card-plus-outline';
+          } else if (route.name === 'Send') {
+            iconName = focused ? 'send' : 'send-outline';
+          } else {  // Home
+            iconName = focused ? 'home' : 'home-outline';
+          }
+
+          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: themeColor.secondary,
+        tabBarInactiveTintColor: themeColor.darkGrey,
+        tabBarStyle: {
+          borderTopWidth: 0,
+        },
+      })}
+    >
       <Tab.Screen name='Home' component={HomeScreen} />
       <Tab.Screen name='Deposit' component={DepositScreen} />
-      <Tab.Screen name='Transfer' component={TransferStackNavigator} />
+      <Tab.Screen name='Send' component={TransferStackNavigator} />
     </Tab.Navigator>
   )
 }
@@ -88,10 +112,10 @@ export default function App(): JSX.Element {
   })
 
   return (
-    <View style = {{flex: 1}}>
+    <SafeAreaView style = {{flex: 1, backgroundColor: themeColor.primary}}>
       <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
         <MainStackNavigator />
       </NavigationContainer>
-    </View>
+    </SafeAreaView>
   );
 }

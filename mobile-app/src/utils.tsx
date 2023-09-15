@@ -65,5 +65,5 @@ export const getToken = async () => {
   await messaging().registerDeviceForRemoteMessages();
   const token = await messaging().getToken();
   // save the token to the db
-  console.log(token);
+  console.log(`Token: ${token}`);
 };

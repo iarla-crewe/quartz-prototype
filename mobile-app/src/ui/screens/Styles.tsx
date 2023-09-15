@@ -1,29 +1,35 @@
 import { StyleSheet } from "react-native"
 
+export enum themeColor {
+    primary = "#f5f2ff",
+    secondary = "#153aa1",
+    darkGrey = "#3a3a39",
+    text = "#3c315b"
+}
 export const theme = StyleSheet.create({
     mainContainer: {
         height: "100%",
-        backgroundColor: "#2a2a2a"
+        backgroundColor: themeColor.primary
     },
     standardPadding: {
         padding: 16
     },
     h1: {
         fontSize: 32,
-        color: 'white'
+        color: themeColor.text
     },
     h2: {
         fontSize: 26,
-        color: 'white'
+        color: themeColor.text
     },
     h2b: {
         fontSize: 26,
-        color: 'white',
+        color: themeColor.text,
         fontWeight: 'bold'
     },
     p: {
         fontSize: 24,
-        color: '#c9c9c9'
+        color: themeColor.darkGrey
     },
     button: {
         backgroundColor: 'lightgray',
@@ -43,8 +49,9 @@ export const theme = StyleSheet.create({
     },
     centeredView: {
         flex: 1,
+        height: '100%',
         alignItems: 'center',
-        marginTop: 50
+        justifyContent: 'center'
     },
     modalView: {
         margin: 20,
@@ -60,5 +67,5 @@ export const theme = StyleSheet.create({
         shadowOpacity: 0.25,
         shadowRadius: 4,
         elevation: 5
-    }    
+    }
 });

@@ -1,6 +1,6 @@
 import { View } from "react-native";
 
-export default function DepositScreen( { navigation } : { navigation: any} ) {
+export default function DepositScreen() {
     return (
         <View>
             
