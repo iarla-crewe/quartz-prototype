@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "quartz-prototype-v2-pos-demo",
-    "slug": "quartz-prototype-v2-pos-demo",
+    "name": "pay-demo",
+    "slug": "pay-demo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -22,14 +22,14 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.quartz.prototypev2.posdemo"
+      "package": "com.quartz.paydemo"
     },
     "web": {
       "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "052b65bd-7a59-43ca-94d3-8e9669e3df80"
+        "projectId": "ba6dee38-aa4a-42bc-a908-12c867ecdaf0"
       }
     }
   }

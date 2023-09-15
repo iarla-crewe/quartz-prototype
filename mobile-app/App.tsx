@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { PermissionsAndroid, Platform, View, SafeAreaView } from 'react-native';
+import { PermissionsAndroid, Platform, SafeAreaView, StyleSheet } from 'react-native';
 import { Alert } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
 import { NavigationContainer } from "@react-navigation/native";
@@ -119,3 +119,9 @@ export default function App(): JSX.Element {
     </SafeAreaView>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  }
+})

@@ -1,6 +1,11 @@
 import { View, Text } from "react-native";
+import DisplayCardTransaction from "../components/DisplayCardTransaction";
 import HomeButton from "../components/HomeButton";
+import { CardTransactionData } from "../../model/data/CardTransaction";
+import { SOL, USDC } from "../../model/data/Tokens";
 import { theme } from "./Styles";
+import { useEffect } from "react";
+import ConfirmationSignature from "../components/ConfirmationSignature";
 
 export default function TransactionFailedScreen( { route, navigation } : { route: any, navigation: any} ) {
     const { error } = route.params;

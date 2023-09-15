@@ -1,3 +1,5 @@
+import { TransferRequestURL, parseURL } from "@solana/pay";
+
 let getAppToken = async (userId: number) => {
     //TODO
     //Get the app token for the corresponding userId from our database
@@ -7,7 +9,9 @@ let getAppToken = async (userId: number) => {
 export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: string) => {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
+    const { recipient, amount, splToken, reference, label, message } = parseURL(solanaPayUrl) as TransferRequestURL;
 
+    
     let fcmMessage = {
         to: appToken,
         notification: {
@@ -17,11 +21,7 @@ export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: s
         data: {
             screenToOpen: 'Spend',
             title: 'Payment Authentication',
-            url: solanaPayUrl
-            // body: JSON.stringify({
-            //     name: 'SolanaPay url',
-            //     url: solanaPayUrl
-            // }),
+            url: JSON.stringify(solanaPayUrl)
         }
     };
 
