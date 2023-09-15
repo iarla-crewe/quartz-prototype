@@ -21,7 +21,7 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
     // let appToken = await getAppToken(userId);
     const { recipient, amount, splToken, reference, label, message } = (0, pay_1.parseURL)(solanaPayUrl);
     let fcmMessage = {
-        to: "flJ2SP6tTayIEyF6tupNjh:APA91bGvO9e_QsWrxt5YQw6xNwHZEENioSnRJWxcNn-fQnZ2STUdM1zZvu6HfcPjjBPUtK5fbgZ0__ZAz_ZU1P2kz2fIASR6JaiwFMnOsCAT-uOhfNHdCk9p1pGFRW2tGGmh31hCpU6P",
+        to: appToken,
         notification: {
             title: 'Payment Authentication Needed',
             body: 'Please accept or decline this transaction',
