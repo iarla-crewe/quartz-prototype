@@ -2,12 +2,12 @@ import { View, Text, TouchableOpacity } from "react-native";
 import Clipboard from "@react-native-community/clipboard";
 import { useState, useEffect } from 'react';
 import { theme } from "./Styles";
-import { getTestWallet } from "../../program/program_utils";
+import { getTestWallet, getVault } from "../../program/program_utils";
 import {useNavigationState} from '@react-navigation/native';
 
 
 export default function DepositScreen() {
-    const address = getTestWallet().publicKey.toBase58();
+    const address = getVault(getTestWallet().publicKey).toBase58();
     const firstPart = address.slice(0, 4);
     const lastPart = address.slice(-4);
 

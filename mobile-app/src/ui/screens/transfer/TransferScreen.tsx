@@ -95,7 +95,7 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                         style={theme.textInput}
                         value={address}
                         onChangeText={text => setAddress(text)}
-                        placeholderTextColor={themeColor.darkGrey}
+                        placeholderTextColor={themeColor.grey}
                         placeholder="Recipient's Solana Address"
                     />
                 </View>
@@ -105,7 +105,7 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                         style={theme.textInput}
                         value={amount}
                         onChangeText={text => setAmount(text)}
-                        placeholderTextColor={themeColor.darkGrey}
+                        placeholderTextColor={themeColor.grey}
                         placeholder="Amount"
                     />
                 </View>

@@ -54,7 +54,8 @@ export const theme = StyleSheet.create({
     textInput: {
         width: "100%",
         paddingHorizontal: 8,
-        backgroundColor: "white"
+        backgroundColor: "white",
+        color: themeColor.darkGrey
     },
     centeredView: {
         flex: 1,
