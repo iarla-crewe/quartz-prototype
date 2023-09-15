@@ -85,5 +85,10 @@ export const theme = StyleSheet.create({
         width: 30,
         height: 30,
         borderRadius: 30/2
+    },
+    tokenIconBig: {
+        width: 100,
+        height: 100,
+        borderRadius: 100/2
     }
 });
