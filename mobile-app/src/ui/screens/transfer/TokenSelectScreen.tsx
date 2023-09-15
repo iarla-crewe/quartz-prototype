@@ -3,7 +3,7 @@ import { SOL, USDC } from '../../../model/data/Tokens'
 import { theme } from "../Styles";
 import BackButton from "../../components/BackButton";
 
-export default function TransferSelectScreen( { navigation } : {navigation: any} ) {
+export default function TokenSelectScreen( { navigation } : {navigation: any} ) {
     return (
         <View>
             <TouchableOpacity 

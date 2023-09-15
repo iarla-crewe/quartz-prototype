@@ -1,21 +1,22 @@
 /* eslint-disable prettier/prettier */
 import React, { useEffect } from 'react';
-import { PermissionsAndroid, Platform, StyleSheet, View } from 'react-native';
-
+import { PermissionsAndroid, Platform, View } from 'react-native';
 import { Alert } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import NavigationService from './src/navigation/NavigationService';
+
 import HomeScreen from './src/ui/screens/HomeScreen';
-import TransferSelectScreen from './src/ui/screens/transfer/TransferSelectScreen';
 import TransferScreen from './src/ui/screens/transfer/TransferScreen';
 import TransferConfirmedScreen from './src/ui/screens/transfer/TransferConfirmedScreen';
 import SpendScreen from './src/ui/screens/spend/SpendScreen';
 import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
 import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
-import NavigationService from './src/navigation/NavigationService';
 import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
 import DepositScreen from './src/ui/screens/DepositScreen';
+import TokenSelectScreen from './src/ui/screens/transfer/TokenSelectScreen';
 
 
 global.Buffer = require('buffer').Buffer;
@@ -26,6 +27,48 @@ Object.assign(global, {
 });
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
+
+function TransferStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name='TokenSelect' component={TokenSelectScreen} />
+      <Stack.Screen name='Transfer' component={TransferScreen} />
+      <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
+      <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />
+    </Stack.Navigator>
+  )
+}
+
+function SpendStackNavigator() {
+  return (
+    <Stack.Navigator screenOptions={{headerShown: false}}>
+      <Stack.Screen name='Spend' component={SpendScreen} />
+      <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
+      <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
+      <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />
+    </Stack.Navigator>
+  )
+}
+
+function TabNavigator() {
+  return (
+    <Tab.Navigator screenOptions={{headerShown: false}}>
+      <Tab.Screen name='Home' component={HomeScreen} />
+      <Tab.Screen name='Deposit' component={DepositScreen} />
+      <Tab.Screen name='Transfer' component={TransferStackNavigator} />
+    </Tab.Navigator>
+  )
+}
+
+function MainStackNavigator() {
+  return (
+    <Stack.Navigator initialRouteName='Tabs' screenOptions={{headerShown: false}}>
+        <Stack.Screen name='Tabs' component={TabNavigator}/>
+        <Stack.Screen name='Spend' component={SpendStackNavigator} />
+    </Stack.Navigator>
+  )
+}
 
 export default function App(): JSX.Element {
   useEffect(() => {
@@ -46,19 +89,9 @@ export default function App(): JSX.Element {
 
   return (
     <View style = {{flex: 1}}>
-        <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
-            <Stack.Navigator initialRouteName='Home' screenOptions={{headerShown: false}}>
-                <Stack.Screen name='Home' component={HomeScreen}/>
-                <Stack.Screen name='Deposit' component={DepositScreen} />
-                <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
-                <Stack.Screen name='Transfer' component={TransferScreen} />
-                <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
-                <Stack.Screen name='Spend' component={SpendScreen} />
-                <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
-                <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
-                <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />
-            </Stack.Navigator>
-        </NavigationContainer>
+      <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
+        <MainStackNavigator />
+      </NavigationContainer>
     </View>
   );
 }
