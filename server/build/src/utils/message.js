@@ -18,6 +18,9 @@ let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
 let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0, void 0, function* () {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
+    console.log(solanaPayUrl);
+    const stringUrl = stringifyURL(solanaPayUrl);
+    console.log(stringUrl);
     let fcmMessage = {
         to: appToken,
         notification: {
@@ -27,9 +30,26 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
         data: {
             screenToOpen: 'Spend',
             title: 'Payment Authentication',
-            url: solanaPayUrl.toString()
+            urlObj: stringUrl
         }
     };
     return fcmMessage;
 });
 exports.getFcmMessage = getFcmMessage;
+function stringifyURL(url) {
+    let object = {
+        href: url.href,
+        origin: url.origin,
+        protocol: url.protocol,
+        username: url.username,
+        password: url.password,
+        host: url.host,
+        hostname: url.hostname,
+        port: url.port,
+        pathname: url.pathname,
+        search: url.search,
+        searchParams: Object.fromEntries(url.searchParams),
+        hash: url.hash,
+    };
+    return JSON.stringify(object);
+}
