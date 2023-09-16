@@ -9,6 +9,7 @@ import { createConnection, getProgram, getProvider, getTestWallet } from "../../
 import { spendSol, spendUsdc } from "../../../program/instructions";
 import { TransferRequestURL, parseURL } from "@solana/pay";
 import { customParseTransferRequestURL } from "../../../utils";
+const url = require('url');
  
 export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
     const { solanaPayUrl, sentTime } : {solanaPayUrl: any, sentTime: number} = route.params;
