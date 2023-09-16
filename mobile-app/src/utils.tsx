@@ -1,6 +1,9 @@
 /* eslint-disable prettier/prettier */
 import messaging from '@react-native-firebase/messaging';
 import NavigationService from './navigation/NavigationService';
+import { PublicKey } from '@solana/web3.js';
+import { ParseURLError, TransferRequestURL } from '@solana/pay';
+import BigNumber from 'bignumber.js';
 
 export function currencyToString(rawAmount: number, decimals: number) {
   return (rawAmount / 10 ** decimals).toFixed(decimals);
@@ -34,8 +37,10 @@ export const notificationListeners = async () => {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('A new FCM message arrived!', remoteMessage);
 
+    console.log("url object: \n ", remoteMessage.data!.urlObj);
+
     NavigationService.navigate(remoteMessage.data!.screenToOpen, { 
-      solanaPayUrl: remoteMessage.data!.url, 
+      solanaPayUrl: remoteMessage.data!.urlObj, 
       sentTime: remoteMessage.sentTime 
     });
   });
@@ -71,3 +76,56 @@ export const getToken = async () => {
   // save the token to the db
   console.log(token);
 };
+
+export function customParseTransferRequestURL(obj: any): TransferRequestURL {
+  let recipient: PublicKey;
+  try {
+      recipient = new PublicKey(obj.pathname);
+  } catch (error: any) {
+      throw new ParseURLError('recipient invalid');
+  }
+
+  let amount: BigNumber | undefined;
+  const amountParam = obj.searchParams.amount;
+  if (amountParam != null) {
+      if (!/^\d+(\.\d+)?$/.test(amountParam)) throw new ParseURLError('amount invalid');
+
+      amount = new BigNumber(amountParam);
+      if (amount.isNaN()) throw new ParseURLError('amount NaN');
+      if (amount.isNegative()) throw new ParseURLError('amount negative');
+  }
+
+  let splToken: PublicKey | undefined;
+  const splTokenParam = obj.searchParams['spl-token'];
+  if (splTokenParam != null) {
+      try {
+          splToken = new PublicKey(splTokenParam);
+      } catch (error) {
+          throw new ParseURLError('spl-token invalid');
+      }
+  }
+
+  let reference: PublicKey[] | undefined;
+  const referenceParam = obj.searchParams.reference;
+  if (referenceParam != "") {
+      try {
+          reference = [new PublicKey(referenceParam)];
+      } catch (error) {
+          throw new ParseURLError('reference invalid');
+      }
+  }
+
+  const label = obj.searchParams.label || undefined;
+  const message = obj.searchParams.message || undefined;
+  const memo = obj.searchParams.memo || undefined;
+
+  return {
+      recipient,
+      amount,
+      splToken,
+      reference,
+      label,
+      message,
+      memo,
+  };
+}

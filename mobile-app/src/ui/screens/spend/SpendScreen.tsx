@@ -8,16 +8,17 @@ import { useState, useRef, useEffect } from "react";
 import { createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
 import { spendSol, spendUsdc } from "../../../program/instructions";
 import { TransferRequestURL, parseURL } from "@solana/pay";
+import { customParseTransferRequestURL } from "../../../utils";
  
 export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
-    const { solanaPayUrl, sentTime } : any = route.params;
+    const { solanaPayUrl, sentTime } : {solanaPayUrl: any, sentTime: number} = route.params;
 
-    console.log("url: ", solanaPayUrl);
-    let transactionTest = new URL(solanaPayUrl);
-//.protocol is null
-    console.log("Protocol: ", transactionTest.protocol);
+    const parsedObject = JSON.parse(solanaPayUrl);
+    console.log("solana pay", parsedObject)
+    console.log("solana pay protocol", parsedObject.protocol);
+    console.log("solana pay pathname", parsedObject.pathname);
 
-    const { recipient, amount, splToken, reference, label, message } = parseURL(transactionTest) as TransferRequestURL;
+    const { recipient, amount, splToken, reference, label, message } = customParseTransferRequestURL(parsedObject);
     console.log("Refrence", reference);
     console.log("Label", label);
     console.log("Message", message);
@@ -75,7 +76,8 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
                             {
                                 token: transactionData.tokenType,
                                 amount: transactionData.amountToken,
-                                transaction: transaction
+                                solanaPayUrl: solanaPayUrl,
+                                sentTime: sentTime
                             }
                         );
                     }       
