@@ -7,20 +7,30 @@ import { theme } from "../Styles";
 import { useState, useRef, useEffect } from "react";
 import { createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
 import { spendSol, spendUsdc } from "../../../program/instructions";
+import { TransferRequestURL, parseURL } from "@solana/pay";
+import { currencyToString, customParseTransferRequestURL } from "../../../utils";
+const url = require('url');
  
-export default function SpendScreen( { navigation } : { navigation: any } ) {
+export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
+    const { solanaPayUrl, sentTime } : {solanaPayUrl: any, sentTime: number} = route.params;
+
+    const parsedObject = JSON.parse(solanaPayUrl);
+
+    const { recipient, amount, splToken, reference, label, message } = customParseTransferRequestURL(parsedObject);
+
     // TODO - Remove dummy data
     const remainingTime = 15000;
-    const transactionData = new CardTransactionData({
-        amountFiat: 19,
-        fiatCurrency: 'EUR',
-        amountToken: 20,
-        tokenType: USDC,
-        timestamp: new Date(),
-        vendor: 'Old Oak',
-        location: 'Oliver Plunket Street'
-    });
 
+    const transactionData = new CardTransactionData({
+        amountFiat: amount!.toNumber(), // TODO - change to dynamic
+        fiatCurrency: 'EUR', // TODO - change to dynamic
+        amountToken: amount!.toNumber(), //This is the number ui amount
+        tokenType: USDC, // TODO - change to dynamic
+        timestamp: new Date(sentTime).toTimeString(), //in raw format - new Date(sentTime)
+        vendor: label!,
+        location: message!
+    });
+    
     const [timer, setTimer] = useState(remainingTime / 1000);
     const decreaseTimer = () => setTimer((prev) => prev - 1);
     useEffect(() => {
@@ -60,8 +70,8 @@ export default function SpendScreen( { navigation } : { navigation: any } ) {
                         navigation.navigate(
                             'SpendAccepted',
                             {
-                                token: transactionData.tokenType,
-                                amount: transactionData.amountToken
+                                transactionData: transactionData,
+                                sentTime: sentTime
                             }
                         );
                     }       

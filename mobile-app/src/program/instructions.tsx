@@ -114,7 +114,7 @@ const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, l
 }
 
 const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, amount: number) => {
-    const usdc = amount * (10 ** (DEVNET_USDC_DECIMALS - 2));
+    const usdc = amount * (10 ** (DEVNET_USDC_DECIMALS));
     const vault = getVault(owner.publicKey);
     const vaultAta = getVaultAta(owner.publicKey, USDC_MINT_ADDRESS);
 
