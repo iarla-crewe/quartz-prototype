@@ -6,13 +6,13 @@ export class CardTransactionData {
     fiatCurrency: string;
     amountToken: number;
     tokenType: TokenType;
-    timestamp: Date;
+    timestamp: string;
     vendor: string;
     location?: string;
   
     constructor(
       { amountFiat, fiatCurrency, amountToken, tokenType, timestamp, vendor, location } :
-      { amountFiat: number, fiatCurrency: string, amountToken: number, tokenType: TokenType, timestamp: Date, vendor: string, location: string | undefined }
+      { amountFiat: number, fiatCurrency: string, amountToken: number, tokenType: TokenType, timestamp: string, vendor: string, location: string | undefined }
     ) {
       this.amountFiat = amountFiat;
       this.fiatCurrency = fiatCurrency;

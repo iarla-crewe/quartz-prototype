@@ -37,8 +37,6 @@ export const notificationListeners = async () => {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('A new FCM message arrived!', remoteMessage);
 
-    console.log("url object: \n ", remoteMessage.data!.urlObj);
-
     NavigationService.navigate(remoteMessage.data!.screenToOpen, { 
       solanaPayUrl: remoteMessage.data!.urlObj, 
       sentTime: remoteMessage.sentTime 
@@ -51,7 +49,10 @@ export const notificationListeners = async () => {
       'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
-    NavigationService.navigate(remoteMessage.data!.screenToOpen);
+    NavigationService.navigate(remoteMessage.data!.screenToOpen, { 
+      solanaPayUrl: remoteMessage.data!.urlObj, 
+      sentTime: remoteMessage.sentTime 
+    });
   });
 
   // Check whether an initial notification is available
@@ -63,7 +64,10 @@ export const notificationListeners = async () => {
           'Notification caused app to open from quit state:',
           remoteMessage.notification,
         );
-        NavigationService.navigate(remoteMessage.data!.screenToOpen);
+        NavigationService.navigate(remoteMessage.data!.screenToOpen, { 
+          solanaPayUrl: remoteMessage.data!.urlObj, 
+          sentTime: remoteMessage.sentTime 
+        });
       }
     });
 

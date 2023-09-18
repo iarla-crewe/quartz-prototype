@@ -10,12 +10,7 @@ import { spendSol, spendUsdc } from "../../../program/instructions";
 import { TransferRequestURL, parseURL } from '@solana/pay';
 
 export default function SpendAcceptedScreen( { route, navigation } : { route: any, navigation: any} ) {
-    const { token, amount2, transaction } = route.params;
-
-    const { recipient, amount, splToken, reference, label, message } = parseURL(transaction.solanaPayUrl) as TransferRequestURL;
-    console.log("Refrence", reference);
-    console.log("Label", label);
-    console.log("Message", message);
+    const { transactionData, sentTime } = route.params;
 
     const connection = createConnection();
     const wallet = getTestWallet();
@@ -25,10 +20,13 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
     useEffect(() => {
         (async () => {
             let tx;
-            if (splToken === undefined) {
-                tx = await spendSol(program, wallet.publicKey, amount!.toNumber());
-            } else if (splToken === USDC_MINT_ADDRESS) {
-                tx = await spendUsdc(connection, program, wallet, amount!.toNumber());
+
+            console.log("Spend Accept: ", transactionData);
+            
+            if (transactionData.tokenType === SOL) {
+                tx = await spendSol(program, wallet.publicKey, transactionData.amountToken!);
+            } else if (transactionData.tokenType === USDC) {
+                tx = await spendUsdc(connection, program, wallet, transactionData.amountToken!);
             } else {
                 console.log("Invalid token provided");
                 return;
@@ -47,7 +45,8 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
             if (status === 'confirmed') {
                 navigation.navigate(
                     'SpendConfirmed',
-                    { transactionHash: tx }
+                    { transactionHash: tx,
+                    transactionData: transactionData}
                 );
             } else {
                 navigation.navigate(
