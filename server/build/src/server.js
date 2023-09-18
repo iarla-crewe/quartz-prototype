@@ -24,7 +24,7 @@ var fcm = new FCM(serverKey);
 let connection = new web3_js_1.Connection((0, web3_js_1.clusterApiUrl)('devnet'), 'confirmed');
 let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     let userId = 1;
-    let transactionAmount = 2;
+    let transactionAmount = 0.001;
     let paymentStatus;
     //checks if the user can afford the transaction
     let canAfford = yield (0, balance_1.checkCanAfford)(connection, transactionAmount, userId);
