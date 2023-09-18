@@ -15,6 +15,7 @@ import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
 import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
 import NavigationService from './src/navigation/NavigationService';
 import SpendConfirmedScreen from './src/ui/screens/spend/SpendConfirmedScreen';
+import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
 
 
 global.Buffer = require('buffer').Buffer;
@@ -51,10 +52,12 @@ export default function App(): JSX.Element {
                 <Stack.Screen name='TransferSelect' component={TransferSelectScreen} />
                 <Stack.Screen name='Transfer' component={TransferScreen} />
                 <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
+
                 <Stack.Screen name='Spend' component={SpendScreen} />
                 <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
                 <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
                 <Stack.Screen name='SpendConfirmed' component={SpendConfirmedScreen} />
+                <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />        
             </Stack.Navigator>
         </NavigationContainer>
     </View>
