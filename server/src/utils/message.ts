@@ -9,11 +9,8 @@ let getAppToken = async (userId: number) => {
 export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: string) => {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
-
-    console.log(solanaPayUrl);
-
+    
     const stringUrl = stringifyURL(solanaPayUrl);
-    console.log(stringUrl);
 
     let fcmMessage = {
         to: appToken,
