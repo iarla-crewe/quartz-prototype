@@ -12,7 +12,6 @@ import { TransferRequestURL, parseURL } from '@solana/pay';
 export default function SpendAcceptedScreen( { route, navigation } : { route: any, navigation: any} ) {
     const { transactionDataJSON, sentTime } = route.params;
     const transactionData = CardTransactionData.fromJSON(transactionDataJSON);
-    console.log("[test] " + transactionData.toString());
 
     const connection = createConnection();
     const wallet = getTestWallet();
@@ -25,6 +24,10 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
 
             console.log("Spend Accept: ", transactionData);
             
+            if (transactionData === undefined) {
+                console.log("Error: Deserialization of transaction data failed");
+                return;
+            }
             if (transactionData.tokenType === SOL) {
                 tx = await spendSol(program, wallet.publicKey, transactionData.amountToken!);
             } else if (transactionData.tokenType === USDC) {
