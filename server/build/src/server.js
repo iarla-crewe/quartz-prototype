@@ -19,7 +19,7 @@ const pay_1 = require("@solana/pay");
 const bignumber_js_1 = __importDefault(require("bignumber.js"));
 const message_1 = require("./utils/message");
 var FCM = require('fcm-node');
-var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
+var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json'); // Relative path is from Build directory's javascript
 var fcm = new FCM(serverKey);
 let connection = new web3_js_1.Connection((0, web3_js_1.clusterApiUrl)('devnet'), 'confirmed');
 let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
