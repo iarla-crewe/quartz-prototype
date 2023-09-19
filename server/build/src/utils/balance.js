@@ -87,7 +87,6 @@ function checkCanAfford(connection, amount, userId) {
             //USDC
             userBalance = yield getVaultUsdcBalance(connection, userId);
         }
-        console.log("Vault of mint: ", cardTokenMint, " Balance: ", userBalance);
         if (userBalance > amount) {
             return true;
         }

@@ -5,10 +5,7 @@ import { SOL, USDC } from "../../../model/data/Tokens";
 import DisplayCardTransaction from "../../components/DisplayCardTransaction";
 import { theme } from "../Styles";
 import { useState, useRef, useEffect } from "react";
-import { createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
-import { spendSol, spendUsdc } from "../../../program/instructions";
-import { TransferRequestURL, parseURL } from "@solana/pay";
-import { currencyToString, customParseTransferRequestURL } from "../../../utils";
+import { customParseTransferRequestURL } from "../../../utils";
 const url = require('url');
  
 export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
@@ -26,9 +23,10 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
         fiatCurrency: 'EUR', // TODO - change to dynamic
         amountToken: amount!.toNumber(), //This is the number ui amount
         tokenType: USDC, // TODO - change to dynamic
-        timestamp: new Date(sentTime).toTimeString(), //in raw format - new Date(sentTime)
+        timestamp: new Date(sentTime).toTimeString(),
         vendor: label!,
-        location: message!
+        location: message!,
+        reference: reference!
     });
     
     const [timer, setTimer] = useState(remainingTime / 1000);

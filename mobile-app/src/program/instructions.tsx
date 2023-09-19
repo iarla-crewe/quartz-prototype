@@ -1,5 +1,5 @@
 import { Program, BN, Wallet, web3 } from "@coral-xyz/anchor";
-import { Connection, LAMPORTS_PER_SOL, PublicKey } from "@solana/web3.js";
+import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { QuartzPrototypeV2 } from "./quartz_prototype_v2";
 import { DEVNET_USDC_DECIMALS, QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, getVault, getVaultAta } from "./program_utils";
 import { getAssociatedTokenAddress, createAssociatedTokenAccount } from "@solana/spl-token";
@@ -113,7 +113,7 @@ const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, l
     }
 }
 
-const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, amount: number) => {
+const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, amount: number, reference: PublicKey[] | undefined) => {
     const usdc = amount * (10 ** (DEVNET_USDC_DECIMALS));
     const vault = getVault(owner.publicKey);
     const vaultAta = getVaultAta(owner.publicKey, USDC_MINT_ADDRESS);
@@ -141,8 +141,25 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
         return handleError(err, "getATA error: ");
     }
 
+    // try {
+    //     const tx = await program.methods
+    //         .spendSpl(new BN(usdc))
+    //         .accounts({
+    //             vault: vault,
+    //             vaultAtaUsdc: vaultAta,
+    //             tokenMint: USDC_MINT_ADDRESS,
+    //             receiver: QUARTZ_SPEND_ADDRESS,
+    //             receiverAta: quartzAta 
+    //         })
+    //         .rpc()  
+    //     console.log(tx);
+    //     return tx;
+    // } catch (err: unknown) {
+    //     return handleError(err, "instruction error: ");
+    // }
+
     try {
-        const tx = await program.methods
+        const instruction = await program.methods
             .spendSpl(new BN(usdc))
             .accounts({
                 vault: vault,
@@ -151,9 +168,29 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
                 receiver: QUARTZ_SPEND_ADDRESS,
                 receiverAta: quartzAta 
             })
-            .rpc()  
-        console.log(tx);
-        return tx;
+            .instruction()
+        console.log(instruction);
+
+    // If reference accounts are provided, add them to the transfer instruction
+    if (reference) {
+        if (!Array.isArray(reference)) {
+            reference = [reference];
+        }
+
+        for (const pubkey of reference) {
+            instruction.keys.push({ pubkey, isWritable: false, isSigner: false });
+        }
+    }
+
+    const tx = new Transaction().add(instruction);
+
+    const signature = await sendAndConfirmTransaction(
+        connection,
+        tx,
+        [owner.payer]
+    )
+    console.log(signature);
+    return signature;
     } catch (err: unknown) {
         return handleError(err, "instruction error: ");
     }

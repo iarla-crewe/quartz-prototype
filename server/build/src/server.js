@@ -71,7 +71,7 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
          * You can implement a polling strategy to query for the transaction periodically.
          */
         const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-            //console.count('Checking for transaction...');
+            console.count('Checking for transaction...');
             try {
                 signatureInfo = yield (0, pay_1.findReference)(connection, reference, { finality: 'confirmed' });
                 console.log('\n 🖌  Signature found: ', signatureInfo.signature);
@@ -100,7 +100,7 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
      */
     console.log('\n6. 🔗 Validate transaction \n');
     try {
-        yield (0, pay_1.validateTransfer)(connection, signature, { recipient: balance_1.QUARTZ_SPEND_ADDRESS, amount });
+        yield (0, pay_1.validateTransfer)(connection, signature, { recipient: balance_1.QUARTZ_SPEND_ADDRESS, amount, splToken });
         // Update payment status
         paymentStatus = 'validated';
         console.log('✅ Payment validated');

@@ -108,7 +108,6 @@ const getSolanaPrice = async () => {
         //USDC
         userBalance = await getVaultUsdcBalance(connection, userId)
     }
-    console.log("Vault of mint: ", cardTokenMint, " Balance: ", userBalance);
 
     if (userBalance > amount) {
         return true;

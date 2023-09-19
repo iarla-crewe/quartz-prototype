@@ -18,9 +18,7 @@ let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
 let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0, void 0, function* () {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
-    console.log(solanaPayUrl);
     const stringUrl = stringifyURL(solanaPayUrl);
-    console.log(stringUrl);
     let fcmMessage = {
         to: appToken,
         notification: {

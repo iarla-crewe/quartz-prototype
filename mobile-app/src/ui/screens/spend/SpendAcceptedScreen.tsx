@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { USDC_MINT_ADDRESS, createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
 import { spendSol, spendUsdc } from "../../../program/instructions";
 import { TransferRequestURL, parseURL } from '@solana/pay';
+import { PublicKey } from "@solana/web3.js";
 
 export default function SpendAcceptedScreen( { route, navigation } : { route: any, navigation: any} ) {
     const { transactionDataJSON, sentTime } = route.params;
@@ -31,7 +32,7 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
             if (transactionData.tokenType === SOL) {
                 tx = await spendSol(program, wallet.publicKey, transactionData.amountToken!);
             } else if (transactionData.tokenType === USDC) {
-                tx = await spendUsdc(connection, program, wallet, transactionData.amountToken!);
+                tx = await spendUsdc(connection, program, wallet, transactionData.amountToken!, transactionData.reference!);
             } else {
                 console.log("Invalid token provided");
                 return;
