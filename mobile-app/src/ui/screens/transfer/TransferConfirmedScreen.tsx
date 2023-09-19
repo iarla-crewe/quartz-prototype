@@ -7,35 +7,34 @@ export default function TransferConfirmedScreen( { route, navigation } : {route:
     const { tokenName, address, amount, transactionHash } = route.params;
 
     return (
-        <View>
-            <View style={theme.standardPadding}>
-                <Text style={theme.h1}>Transaction confirmed</Text>
-            </View>
+        <View style={theme.mainContainer}>
+            <View style={theme.centeredView}>
+                <View style={theme.standardPadding}>
+                    <Text style={theme.h1}>Transaction Confirmed</Text>
+                </View>
 
-            <View style={theme.standardPadding}>
-                <View style={{flexDirection: 'row'}}>
+                <View style={theme.standardPadding}>
+                    <View style={{flexDirection: 'row'}}>
+                        <Text style={theme.h2b}>
+                            {amount} {tokenName}
+                        </Text>
+
+                        <View style={{paddingHorizontal: 8}}>
+                            <Text style={theme.p}>
+                                sent to
+                            </Text>
+                        </View>
+                    </View>
+
                     <Text style={theme.h2b}>
-                        {amount} {tokenName}
-                    </Text>
-
-                    <Text style={{
-                        fontSize: 26,
-                        paddingHorizontal: 8
-                    }}>
-                        sent to  
+                        {address}
                     </Text>
                 </View>
 
-                <Text style={theme.h2b}>
-                    {address}
-                </Text>
+                <View style={theme.standardPadding}>
+                    <ConfirmationSignature data={transactionHash} />
+                </View>
             </View>
-
-            <View style={theme.standardPadding}>
-                <ConfirmationSignature data={transactionHash} />
-            </View>
-
-            <HomeButton data={navigation} />
         </View>
     )
 }

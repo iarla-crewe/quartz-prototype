@@ -142,7 +142,7 @@ export default function TransferScreen( { route, navigation } : {route: any, nav
                                 navigation.navigate(
                                     'TransferConfirmed',
                                     { 
-                                        token: token.name, 
+                                        tokenName: token.name, 
                                         address: address, 
                                         amount: amount,
                                         transactionHash: tx

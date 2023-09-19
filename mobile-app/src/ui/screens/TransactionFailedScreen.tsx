@@ -11,7 +11,7 @@ export default function TransactionFailedScreen( { route, navigation } : { route
     const { error } = route.params;
 
     return (
-        <View>
+        <View style={theme.mainContainer}>
             <View style={theme.standardPadding}>
                 <Text style={theme.h1}>Transaction Failed</Text>
             </View>
@@ -19,8 +19,6 @@ export default function TransactionFailedScreen( { route, navigation } : { route
             <View style={theme.standardPadding}>
                 <Text style={theme.h2}>Error: {error}</Text>
             </View>
-
-            <HomeButton data={navigation} />
         </View>
     )
 }

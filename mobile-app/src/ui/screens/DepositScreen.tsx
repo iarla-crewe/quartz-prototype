@@ -8,8 +8,8 @@ import {useNavigationState} from '@react-navigation/native';
 
 export default function DepositScreen() {
     const address = getVault(getTestWallet().publicKey).toBase58();
-    const firstPart = address.slice(0, 4);
-    const lastPart = address.slice(-4);
+    const firstPart = address.slice(0, 6);
+    const lastPart = address.slice(-6);
 
     const [buttonText, setButtonText] = useState("Copy");
     const navigationState = useNavigationState(state => state);
