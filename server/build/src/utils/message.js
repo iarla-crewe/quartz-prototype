@@ -10,7 +10,6 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFcmMessage = void 0;
-const pay_1 = require("@solana/pay");
 let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     //TODO
     //Get the app token for the corresponding userId from our database
@@ -19,7 +18,9 @@ let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
 let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0, void 0, function* () {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
-    const { recipient, amount, splToken, reference, label, message } = (0, pay_1.parseURL)(solanaPayUrl);
+    console.log(solanaPayUrl);
+    const stringUrl = stringifyURL(solanaPayUrl);
+    console.log(stringUrl);
     let fcmMessage = {
         to: appToken,
         notification: {
@@ -29,17 +30,26 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
         data: {
             screenToOpen: 'Spend',
             title: 'Payment Authentication',
-<<<<<<< HEAD
-            url: JSON.stringify(solanaPayUrl)
-=======
-            url: solanaPayUrl
-            // body: JSON.stringify({
-            //     name: 'SolanaPay url',
-            //     url: solanaPayUrl
-            // }),
->>>>>>> a0998e6d68eedf40d3cd2198fafa69cefe8dda0b
+            urlObj: stringUrl
         }
     };
     return fcmMessage;
 });
 exports.getFcmMessage = getFcmMessage;
+function stringifyURL(url) {
+    let object = {
+        href: url.href,
+        origin: url.origin,
+        protocol: url.protocol,
+        username: url.username,
+        password: url.password,
+        host: url.host,
+        hostname: url.hostname,
+        port: url.port,
+        pathname: url.pathname,
+        search: url.search,
+        searchParams: Object.fromEntries(url.searchParams),
+        hash: url.hash,
+    };
+    return JSON.stringify(object);
+}

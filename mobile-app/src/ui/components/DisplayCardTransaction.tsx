@@ -6,14 +6,15 @@ import { currencyToString } from "../../utils";
 const DisplayCardTransaction = (props: any) => {
     const transactionData = props.data;
 
-    const fiatDisplay = currencyToString(transactionData.amountFiat, 2);
-    const tokenDisplay = currencyToString(transactionData.amountToken, transactionData.tokenType.decimals);
+    //add back if transactionData.amountToken is stored as raw amount instead of ui amount
+    // const fiatDisplay = currencyToString(transactionData.amountFiat, 2);
+    // const tokenDisplay = currencyToString(transactionData.amountToken, transactionData.tokenType.decimals);
 
     return (
         <View>
             <View style={styles.standardPadding}>
                 <Text style={styles.largeText}>
-                    {tokenDisplay} {transactionData.tokenType.name} {'('}{fiatDisplay} {transactionData.fiatCurrency}{')'}
+                    {transactionData.amountToken} {transactionData.tokenType.name} {'('}{transactionData.amountFiat} {transactionData.fiatCurrency}{')'}
                 </Text>
                 <Text style={styles.mediumText}>
                     {transactionData.vendor}, {transactionData.location}
@@ -22,7 +23,7 @@ const DisplayCardTransaction = (props: any) => {
 
             <View style={styles.standardPadding}>
                 <Text>
-                    {transactionData.timestamp.toString()}
+                    {transactionData.timestamp}
                 </Text>
             </View>
         </View>

@@ -5,11 +5,13 @@ import { CardTransactionData } from "../../../model/data/CardTransaction";
 import { SOL, USDC } from "../../../model/data/Tokens";
 import { theme } from "../Styles";
 import { useEffect } from "react";
-import { createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
+import { USDC_MINT_ADDRESS, createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
 import { spendSol, spendUsdc } from "../../../program/instructions";
+import { TransferRequestURL, parseURL } from '@solana/pay';
 
 export default function SpendAcceptedScreen( { route, navigation } : { route: any, navigation: any} ) {
-    const { token, amount } = route.params;
+    const { transactionDataJSON, sentTime } = route.params;
+    const transactionData = CardTransactionData.fromJSON(transactionDataJSON);
 
     const connection = createConnection();
     const wallet = getTestWallet();
@@ -19,10 +21,17 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
     useEffect(() => {
         (async () => {
             let tx;
-            if (token === SOL) {
-                tx = await spendSol(program, wallet.publicKey, amount);
-            } else if (token === USDC) {
-                tx = await spendUsdc(connection, program, wallet, amount);
+
+            console.log("Spend Accept: ", transactionData);
+            
+            if (transactionData === undefined) {
+                console.log("Error: Deserialization of transaction data failed");
+                return;
+            }
+            if (transactionData.tokenType === SOL) {
+                tx = await spendSol(program, wallet.publicKey, transactionData.amountToken!);
+            } else if (transactionData.tokenType === USDC) {
+                tx = await spendUsdc(connection, program, wallet, transactionData.amountToken!);
             } else {
                 console.log("Invalid token provided");
                 return;
@@ -41,7 +50,8 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
             if (status === 'confirmed') {
                 navigation.navigate(
                     'SpendConfirmed',
-                    { transactionHash: tx }
+                    { transactionHash: tx,
+                    transactionDataJSON: transactionData.toJSON()}
                 );
             } else {
                 navigation.navigate(

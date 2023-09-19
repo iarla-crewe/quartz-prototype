@@ -19,12 +19,12 @@ const pay_1 = require("@solana/pay");
 const bignumber_js_1 = __importDefault(require("bignumber.js"));
 const message_1 = require("./utils/message");
 var FCM = require('fcm-node');
-var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json');
+var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json'); // Relative path is from Build directory's javascript
 var fcm = new FCM(serverKey);
 let connection = new web3_js_1.Connection((0, web3_js_1.clusterApiUrl)('devnet'), 'confirmed');
 let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     let userId = 1;
-    let transactionAmount = 2;
+    let transactionAmount = 0.001;
     let paymentStatus;
     //checks if the user can afford the transaction
     let canAfford = yield (0, balance_1.checkCanAfford)(connection, transactionAmount, userId);
@@ -38,7 +38,7 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     const amount = new bignumber_js_1.default(transactionAmount);
     const reference = new web3_js_1.Keypair().publicKey;
     const label = 'Impala';
-    const message = `Impala - €${transactionAmount}`;
+    const message = `Washington street, Cork City, Co.Cork`;
     const splToken = balance_1.USDC_MINT_ADDRESS;
     const url = (0, pay_1.encodeURL)({ recipient, amount, splToken, reference, label, message });
     //creates the fcm message

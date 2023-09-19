@@ -12,7 +12,7 @@ let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
 let sendMessage = async (appToken: string) => {
     let userId = 1;
-    let transactionAmount = 2
+    let transactionAmount = 0.001
     let paymentStatus: string;
 
     //checks if the user can afford the transaction
@@ -27,11 +27,12 @@ let sendMessage = async (appToken: string) => {
     console.log('💰 Create a payment request link \n');
     const recipient = QUARTZ_SPEND_ADDRESS
     const amount = new BigNumber(transactionAmount);
-    const reference = new Keypair().publicKey;
+    const reference = new Keypair().publicKey
     const label = 'Impala';
-    const message = `Impala - €${transactionAmount}`;
+    const message = `Washington street, Cork City, Co.Cork`;
     const splToken = USDC_MINT_ADDRESS;
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
+
     //creates the fcm message
     let fcmMessage = await getFcmMessage(url, userId, appToken);
     //sends notification with transaction to user to accept a payment
@@ -116,4 +117,3 @@ export async function runDemo(appToken: string) {
         }
     );
 }
-

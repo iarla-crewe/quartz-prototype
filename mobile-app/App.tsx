@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import NavigationService from './src/navigation/NavigationService';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import { themeColor } from './src/ui/screens/Styles';
 
 import HomeScreen from './src/ui/screens/HomeScreen';
 import TransferScreen from './src/ui/screens/transfer/TransferScreen';
@@ -14,10 +15,10 @@ import TransferConfirmedScreen from './src/ui/screens/transfer/TransferConfirmed
 import SpendScreen from './src/ui/screens/spend/SpendScreen';
 import SpendAcceptedScreen from './src/ui/screens/spend/SpendAcceptedScreen';
 import SpendDeclinedScreen from './src/ui/screens/spend/SpendDeclinedScreen';
+import SpendConfirmedScreen from './src/ui/screens/spend/SpendConfirmedScreen';
 import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
 import DepositScreen from './src/ui/screens/DepositScreen';
 import TokenSelectScreen from './src/ui/screens/transfer/TokenSelectScreen';
-import { themeColor } from './src/ui/screens/Styles';
 
 
 global.Buffer = require('buffer').Buffer;

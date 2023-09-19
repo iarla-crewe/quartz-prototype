@@ -10,5 +10,5 @@ export const SOL: TokenType = {
 
 export const USDC: TokenType = {
     name: 'USDC',
-    decimals: 2
+    decimals: 6
 }
