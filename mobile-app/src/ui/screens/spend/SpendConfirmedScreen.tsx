@@ -8,8 +8,8 @@ import { useEffect } from "react";
 import ConfirmationSignature from "../../components/ConfirmationSignature";
 
 export default function SpendConfirmedScreen( { route, navigation } : { route: any, navigation: any} ) {
-    // TODO - Remove dummy data
-    const { transactionHash, transactionData } = route.params;
+    const { transactionHash, transactionDataJSON } = route.params;
+    const transactionData = CardTransactionData.fromJSON(transactionDataJSON);
 
     return (
         <View>

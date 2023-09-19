@@ -10,7 +10,9 @@ import { spendSol, spendUsdc } from "../../../program/instructions";
 import { TransferRequestURL, parseURL } from '@solana/pay';
 
 export default function SpendAcceptedScreen( { route, navigation } : { route: any, navigation: any} ) {
-    const { transactionData, sentTime } = route.params;
+    const { transactionDataJSON, sentTime } = route.params;
+    const transactionData = CardTransactionData.fromJSON(transactionDataJSON);
+    console.log("[test] " + transactionData.toString());
 
     const connection = createConnection();
     const wallet = getTestWallet();
@@ -46,7 +48,7 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
                 navigation.navigate(
                     'SpendConfirmed',
                     { transactionHash: tx,
-                    transactionData: transactionData}
+                    transactionDataJSON: transactionData.toJSON()}
                 );
             } else {
                 navigation.navigate(

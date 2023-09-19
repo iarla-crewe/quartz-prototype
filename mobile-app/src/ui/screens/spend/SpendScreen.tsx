@@ -66,11 +66,11 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
                     () => {
                         clearInterval(timer);
                         setIsTimerEnd(true);
-
+                        
                         navigation.navigate(
                             'SpendAccepted',
                             {
-                                transactionData: transactionData,
+                                transactionDataJSON: transactionData.toJSON(),
                                 sentTime: sentTime
                             }
                         );

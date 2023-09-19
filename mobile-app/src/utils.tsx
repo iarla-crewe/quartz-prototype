@@ -35,7 +35,7 @@ export async function requestUserPermission() {
 
 export const notificationListeners = async () => {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
-    console.log('A new FCM message arrived!', remoteMessage);
+    console.log('A new FCM message arrived!');
 
     NavigationService.navigate(remoteMessage.data!.screenToOpen, { 
       solanaPayUrl: remoteMessage.data!.urlObj, 
