@@ -9,12 +9,12 @@ export default function TransferConfirmedScreen( { route, navigation } : {route:
     return (
         <View style={theme.mainContainer}>
             <View style={theme.centeredView}>
-                <View style={theme.standardPadding}>
+                <View style={theme.extraPadding}>
                     <Text style={theme.h1}>Transaction Confirmed</Text>
                 </View>
 
-                <View style={theme.standardPadding}>
-                    <View style={{flexDirection: 'row'}}>
+                <View style={theme.extraPadding}>
+                    <View style={{flexDirection: 'row', alignItems: "center", justifyContent: "center"}}>
                         <Text style={theme.h2b}>
                             {amount} {tokenName}
                         </Text>
@@ -31,7 +31,7 @@ export default function TransferConfirmedScreen( { route, navigation } : {route:
                     </Text>
                 </View>
 
-                <View style={theme.standardPadding}>
+                <View style={theme.extraPadding}>
                     <ConfirmationSignature data={transactionHash} />
                 </View>
             </View>

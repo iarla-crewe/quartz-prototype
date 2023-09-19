@@ -15,29 +15,37 @@ export const theme = StyleSheet.create({
     standardPadding: {
         padding: 16
     },
+    extraPadding: {
+        padding: 32
+    },
     headerPadding: {
         padding: 16,
         paddingBottom: 32
     },
     h1: {
         fontSize: 44,
+        textAlign: "center",
         color: themeColor.text
     },
     h2: {
         fontSize: 30,
+        textAlign: "center",
         color: themeColor.text
     },
     h2b: {
         fontSize: 30,
+        textAlign: "center",
         color: themeColor.text,
         fontWeight: 'bold'
     },
     p: {
         fontSize: 24,
+        textAlign: "center",
         color: themeColor.darkGrey
     },
     subP: {
         fontSize: 24,
+        textAlign: "center",
         color: themeColor.grey
     },
     button: {
