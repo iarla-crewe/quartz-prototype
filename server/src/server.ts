@@ -1,6 +1,6 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
 import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford } from "./utils/balance";
-import { encodeURL, createQR, findReference, validateTransfer, FindReferenceError } from '@solana/pay';
+import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./utils/message";
 
@@ -65,7 +65,7 @@ let sendMessage = async (appToken: string) => {
          * You can implement a polling strategy to query for the transaction periodically.
          */
         const interval = setInterval(async () => {
-            //console.count('Checking for transaction...');
+            console.count('Checking for transaction...');
             try {
                 signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
                 console.log('\n 🖌  Signature found: ', signatureInfo.signature);
@@ -96,7 +96,7 @@ let sendMessage = async (appToken: string) => {
     console.log('\n6. 🔗 Validate transaction \n');
 
     try {
-        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount });
+        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount, splToken });
 
         // Update payment status
         paymentStatus = 'validated';
@@ -105,7 +105,6 @@ let sendMessage = async (appToken: string) => {
     } catch (error) {
         console.error('❌ Payment failed', error);
     }
-
 }
 
 export async function runDemo(appToken: string) {
