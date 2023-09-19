@@ -24,7 +24,7 @@ var fcm = new FCM(serverKey);
 let connection = new web3_js_1.Connection((0, web3_js_1.clusterApiUrl)('devnet'), 'confirmed');
 let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     let userId = 1;
-    let transactionAmount = 0.001;
+    let transactionAmount = 0.01;
     let paymentStatus;
     //checks if the user can afford the transaction
     let canAfford = yield (0, balance_1.checkCanAfford)(connection, transactionAmount, userId);
@@ -58,6 +58,7 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     paymentStatus = 'pending';
     console.log('\n5. Find the transaction');
     let signatureInfo;
+    console.log("here");
     const signature = yield new Promise((resolve, reject) => {
         /**
          * Retry until we find the transaction
@@ -70,9 +71,11 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
          *
          * You can implement a polling strategy to query for the transaction periodically.
          */
+        console.log("inside");
         const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
             console.count('Checking for transaction...');
             try {
+                console.log("in try");
                 signatureInfo = yield (0, pay_1.findReference)(connection, reference, { finality: 'confirmed' });
                 console.log('\n 🖌  Signature found: ', signatureInfo.signature);
                 clearInterval(interval);
