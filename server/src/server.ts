@@ -19,7 +19,7 @@ let sendMessage = async (appToken: string) => {
     let canAfford = await checkCanAfford(connection, transactionAmount, userId);
 
     if (!canAfford) {
-        console.log("[server] Transaction not accepted: Insufficent funds.");
+        console.log("[server] Transaction not accepted: Insufficent funds");
         return
     }
 
