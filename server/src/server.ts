@@ -53,7 +53,6 @@ let sendMessage = async (appToken: string) => {
     let signatureInfo;
 
 
-    console.log("here")
     const signature: string = await new Promise((resolve, reject) => {
         /**
          * Retry until we find the transaction
@@ -66,11 +65,9 @@ let sendMessage = async (appToken: string) => {
          *
          * You can implement a polling strategy to query for the transaction periodically.
          */
-        console.log("inside")
         const interval = setInterval(async () => {
-            console.count('Checking for transaction...');
+            //console.count('Checking for transaction...');
             try {
-                console.log("in try")
                 signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
                 console.log('\n 🖌  Signature found: ', signatureInfo.signature);
                 clearInterval(interval);

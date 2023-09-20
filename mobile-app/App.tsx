@@ -96,6 +96,10 @@ function MainStackNavigator() {
   )
 }
 
+const openSettings = () => {
+  Linking.openSettings();
+};
+
 export default function App(): JSX.Element {
   useEffect(() => {
     if (Platform.OS == "android") {
@@ -108,6 +112,17 @@ export default function App(): JSX.Element {
           console.log("Android version is API 31, bypassing permissions...");
           requestUserPermission();
           notificationListeners();
+        }
+        else if (res === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+          console.log('Notification Permission Denied with Never Ask Again.');
+          Alert.alert(
+            'Notification Permission Required',
+            'App needs to send you notifications to accept or deny spend transactions. Please go to app settings and grant permission.',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Open Settings', onPress: openSettings },
+            ],
+          );
         }
       }).catch(error => {
         Alert.alert("Something went wrong: ", error);
