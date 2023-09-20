@@ -78,19 +78,24 @@ const getSolanaPrice = () => __awaiter(void 0, void 0, void 0, function* () {
 function checkCanAfford(connection, amount, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         let userBalance;
+        console.log("[server] Getting mint...");
         let cardTokenMint = yield (0, exports.getCardTokenMint)(userId);
         if (cardTokenMint === 'native_sol') {
+            console.log("[server] Getting SOL balance");
             userBalance = yield getVaultBalance(connection, userId);
             userBalance = (yield getSolanaPrice()) * userBalance;
         }
         else {
             //USDC
+            console.log("[server] Getting USDC balance...");
             userBalance = yield getVaultUsdcBalance(connection, userId);
         }
         if (userBalance > amount) {
+            console.log("[server] User has enough!");
             return true;
         }
         else {
+            console.log("[server] User does not have enough.");
             return false;
         }
     });
