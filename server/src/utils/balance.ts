@@ -109,7 +109,9 @@ const getSolanaPrice = async () => {
     } else {
         //USDC
         console.log("[server] Getting USDC balance...")
-        userBalance = await getVaultUsdcBalance(connection, userId)
+        const rawBalance = await getVaultAtaBalance(connection, userId, USDC_MINT_ADDRESS);
+        userBalance = rawBalance / 10 ** DEVNET_USDC_DECIMALS;
+        //userBalance = await getVaultUsdcBalance(connection, userId)
     }
 
     if (userBalance > amount) {

@@ -88,7 +88,9 @@ function checkCanAfford(connection, amount, userId) {
         else {
             //USDC
             console.log("[server] Getting USDC balance...");
-            userBalance = yield getVaultUsdcBalance(connection, userId);
+            const rawBalance = yield getVaultAtaBalance(connection, userId, exports.USDC_MINT_ADDRESS);
+            userBalance = rawBalance / 10 ** DEVNET_USDC_DECIMALS;
+            //userBalance = await getVaultUsdcBalance(connection, userId)
         }
         if (userBalance > amount) {
             console.log("[server] User has enough!");
