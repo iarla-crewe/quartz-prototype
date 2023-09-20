@@ -59,7 +59,7 @@ const getVaultAtaBalance = (connection, userId, tokenAddress) => __awaiter(void 
         return formatedBalance;
     }
     catch (e) {
-        console.log(e);
+        console.error("[server] " + e);
         return 0;
     }
 });

@@ -26,14 +26,14 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     let userId = 1;
     let transactionAmount = 0.01;
     let paymentStatus;
-    //checks if the user can afford the transaction
+    console.log("[server] Checking if user can afford transaction...");
     let canAfford = yield (0, balance_1.checkCanAfford)(connection, transactionAmount, userId);
     if (!canAfford) {
-        console.log("transaction not accepted: Insufficent funds");
+        console.log("[server] Transaction not accepted: Insufficent funds");
         return;
     }
     //creates a payment link
-    console.log('💰 Create a payment request link \n');
+    console.log('[server] 💰 Create a payment request link \n');
     const recipient = balance_1.QUARTZ_SPEND_ADDRESS;
     const amount = new bignumber_js_1.default(transactionAmount);
     const reference = new web3_js_1.Keypair().publicKey;
@@ -46,17 +46,17 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     //sends notification with transaction to user to accept a payment
     yield fcm.send(fcmMessage, function (err, response) {
         if (err) {
-            console.log("Something has gone wrong! " + err);
-            console.log("Response: " + response);
+            console.log("[server] Something has gone wrong! " + err);
+            console.log("[server] Response: " + response);
         }
         else {
             // showToast("Successfully sent with response");
-            console.log("Successfully sent with response: ", response);
+            console.log("[server] Successfully sent with response: ", response);
         }
     });
     //update payment status
     paymentStatus = 'pending';
-    console.log('\n5. Find the transaction');
+    console.log('\n[server] 5. Find the transaction');
     let signatureInfo;
     const signature = yield new Promise((resolve, reject) => {
         /**
@@ -74,13 +74,13 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
             //console.count('Checking for transaction...');
             try {
                 signatureInfo = yield (0, pay_1.findReference)(connection, reference, { finality: 'confirmed' });
-                console.log('\n 🖌  Signature found: ', signatureInfo.signature);
+                console.log('\n[server] 🖌  Signature found: ', signatureInfo.signature);
                 clearInterval(interval);
                 resolve(signatureInfo.signature);
             }
             catch (error) {
                 if (!(error instanceof pay_1.FindReferenceError)) {
-                    console.error(error);
+                    console.error("[server]" + error);
                     clearInterval(interval);
                     reject(error);
                 }
@@ -98,22 +98,22 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
      * `validateTransactionSignature` allows you to validate that the transaction signature
      * found matches the transaction that you expected.
      */
-    console.log('\n6. 🔗 Validate transaction \n');
+    console.log('\n[server] 6. 🔗 Validate transaction \n');
     try {
         yield (0, pay_1.validateTransfer)(connection, signature, { recipient: balance_1.QUARTZ_SPEND_ADDRESS, amount, splToken });
         // Update payment status
         paymentStatus = 'validated';
-        console.log('✅ Payment validated');
-        console.log('💳 Accept debit card transaction');
+        console.log('[server] ✅ Payment validated');
+        console.log('[server] 💳 Accept debit card transaction');
     }
     catch (error) {
-        console.error('❌ Payment failed', error);
+        console.error('[server] ❌ Payment failed', error);
     }
 });
 function runDemo(appToken) {
     return __awaiter(this, void 0, void 0, function* () {
         sendMessage(appToken).then(() => process.exit(), (err) => {
-            console.error(err);
+            console.error("[server] " + err);
             process.exit(-1);
         });
     });

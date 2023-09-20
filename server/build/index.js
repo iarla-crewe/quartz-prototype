@@ -13,10 +13,10 @@ app.post('/api-demo', (req, res) => {
     if (!destination) {
         return res.status(400).send({ message: "destination is required" });
     }
+    console.log("[server] Running demo...");
     (0, server_1.runDemo)(destination);
     return res.send({
-        status: 'success',
-        destination: destination
+        status: 'success'
     });
 });
 app.get('/', (reg, res) => {
@@ -25,6 +25,6 @@ app.get('/', (reg, res) => {
     });
 });
 app.listen(PORT, () => {
-    console.log(`API listening on PORT ${PORT} `);
+    console.log(`[server] API listening on PORT ${PORT} `);
 });
 module.exports = app;

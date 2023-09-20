@@ -3,6 +3,8 @@ import { Image } from 'expo-image';
 import { Audio } from 'expo-av';
 import { useEffect, useState } from 'react';
 
+const DESTINATION_APP_TOKEN = "cK9ss8ycS0auoL_x85rl6G:APA91bGZJhSmqTmAxG5pPIlKI-73COlM-U1SHRbKpbbWWrddQQM0iq4wPhjFtIHA7Eh1DT7-HLnbUww_HWM1eHH991EjHb-wJs42SIhbPomtqUVB3IvHPNvmKILRLa5IVdU7Obdb2NrR";
+
 export default function App() {
   const [error, setError] = useState("");
   const playBeep = async () => {
@@ -15,7 +17,7 @@ export default function App() {
     const options = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: '{"destination":"cqvN9x0JSGqqwhRYja_tKj:APA91bGKAPCNurJkHcojn3BdxmeBLqzHmSUizI0ldpwtQBip7zx0alQroW5KwtC8nm0T5_-7KlK0AcC-Cwv6aYefAzauTyL-UQCfKq2qilMfEZcFg4uFxeBPbunnnhmeKBptlX7clN-R"}'
+      body: `{"destination":${DESTINATION_APP_TOKEN}}`
     };
     
     fetch('https://quartz-prototype-v2-server-vercel.vercel.app/api-demo', options)
