@@ -1,11 +1,7 @@
 {
     "version": 2,
-    "builds": [
-      {
-        "src": "build/index.js",
-        "use": "@now/node"
-      }
-    ],
+    "buildCommand": "npm run build",
+    "outputDirectory": "build",
     "routes": [
       {
         "src": "/(.*)",
