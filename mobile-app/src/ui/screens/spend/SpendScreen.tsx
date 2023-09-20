@@ -16,7 +16,14 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
     const { recipient, amount, splToken, reference, label, message } = customParseTransferRequestURL(parsedObject);
 
     // TODO - Remove dummy data
-    const remainingTime = 15000;
+    console.log("sent time: ", sentTime);
+    let currentTime = new Date();
+    let timeDifference = Number(currentTime) - Number(sentTime);
+    console.log("time diffrence: ", timeDifference);
+
+    const remainingTime = 15000 - timeDifference;
+
+    console.log("Remaining time: ", remainingTime);
 
     const transactionData = new CardTransactionData({
         amountFiat: amount!.toNumber(), // TODO - change to dynamic
