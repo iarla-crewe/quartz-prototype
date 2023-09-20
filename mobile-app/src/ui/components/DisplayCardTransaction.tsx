@@ -1,6 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { CardTransactionData } from "../../model/data/CardTransaction";
 import { currencyToString } from "../../utils";
+import { theme } from "../screens/Styles";
 
 
 const DisplayCardTransaction = (props: any) => {
@@ -12,16 +13,16 @@ const DisplayCardTransaction = (props: any) => {
 
     return (
         <View>
-            <View style={styles.standardPadding}>
-                <Text style={styles.largeText}>
+            <View style={theme.standardPadding}>
+                <Text style={theme.h3}>
                     {transactionData.amountToken} {transactionData.tokenType.name} {'('}{transactionData.amountFiat} {transactionData.fiatCurrency}{')'}
                 </Text>
-                <Text style={styles.mediumText}>
+                <Text style={theme.p}>
                     {transactionData.vendor}, {transactionData.location}
                 </Text>
             </View>
 
-            <View style={styles.standardPadding}>
+            <View style={theme.standardPadding}>
                 <Text>
                     {transactionData.timestamp}
                 </Text>
@@ -31,16 +32,3 @@ const DisplayCardTransaction = (props: any) => {
 }
 
 export default DisplayCardTransaction;
-
-const styles = StyleSheet.create({
-    largeText: {
-        fontSize: 28,
-        color: 'black'
-    },
-    mediumText: {
-        fontSize: 24
-    },
-    standardPadding: {
-        padding: 16
-    }
-})

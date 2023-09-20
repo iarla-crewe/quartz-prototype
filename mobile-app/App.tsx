@@ -104,12 +104,16 @@ export default function App(): JSX.Element {
         if (!!res && res === 'granted') {
           requestUserPermission();
           notificationListeners();
+        } else if (Platform.Version == "31") {
+          console.log("Android version is API 31, bypassing permissions...");
+          requestUserPermission();
+          notificationListeners();
         }
       }).catch(error => {
         Alert.alert("Something went wrong: ", error);
       })
     } else {
-
+      console.log("Error: Unsupported OS")
     }
   })
 

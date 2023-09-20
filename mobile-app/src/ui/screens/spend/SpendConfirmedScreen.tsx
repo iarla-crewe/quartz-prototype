@@ -12,18 +12,20 @@ export default function SpendConfirmedScreen( { route, navigation } : { route: a
     const transactionData = CardTransactionData.fromJSON(transactionDataJSON);
 
     return (
-        <View>
-            <View style={theme.standardPadding}>
-                <Text style={theme.h1}>Transaction Confirmed</Text>
+        <View style={theme.mainContainer}>
+            <View style={theme.centeredView}>
+                <View style={theme.standardPadding}>
+                    <Text style={theme.h1}>Transaction Confirmed</Text>
+                </View>
+
+                <DisplayCardTransaction data={transactionData} />
+
+                <View style={theme.standardPadding}>
+                    <ConfirmationSignature data={transactionHash} />
+                </View>
+
+                <HomeButton data={navigation} />
             </View>
-
-            <DisplayCardTransaction data={transactionData} />
-
-            <View style={theme.standardPadding}>
-                <ConfirmationSignature data={transactionHash} />
-            </View>
-
-            <HomeButton data={navigation} />
         </View>
     )
 }

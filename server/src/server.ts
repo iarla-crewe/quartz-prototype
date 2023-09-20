@@ -12,7 +12,7 @@ let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
 let sendMessage = async (appToken: string) => {
     let userId = 1;
-    let transactionAmount = 0.001
+    let transactionAmount = 0.01
     let paymentStatus: string;
 
     //checks if the user can afford the transaction
@@ -52,6 +52,8 @@ let sendMessage = async (appToken: string) => {
     console.log('\n5. Find the transaction');
     let signatureInfo;
 
+
+    console.log("here")
     const signature: string = await new Promise((resolve, reject) => {
         /**
          * Retry until we find the transaction
@@ -64,9 +66,11 @@ let sendMessage = async (appToken: string) => {
          *
          * You can implement a polling strategy to query for the transaction periodically.
          */
+        console.log("inside")
         const interval = setInterval(async () => {
             console.count('Checking for transaction...');
             try {
+                console.log("in try")
                 signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
                 console.log('\n 🖌  Signature found: ', signatureInfo.signature);
                 clearInterval(interval);
