@@ -35,6 +35,9 @@ let sendMessage = async (appToken: string) => {
 
     //creates the fcm message
     let fcmMessage = await getFcmMessage(url, userId, appToken);
+
+    let sendTime = new Date();
+
     //sends notification with transaction to user to accept a payment
     await fcm.send(fcmMessage, function (err: any, response: any) {
         if (err) {
