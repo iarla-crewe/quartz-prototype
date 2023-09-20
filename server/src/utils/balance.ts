@@ -28,7 +28,7 @@ export const getCardTokenMint = async (userId: number) => {
     return USDC_MINT_ADDRESS.toBase58();
 }
 
-const getWalletAddress =async (userId:number) => {
+export const getWalletAddress =async (userId:number) => {
     //TODO
     //use the userId to find the users wallet address stored in our database
     //return vaultAddress as a string
@@ -36,21 +36,21 @@ const getWalletAddress =async (userId:number) => {
     
 }
 
-const getVault = (userPubkey: PublicKey) => {
+export const getVault = (userPubkey: PublicKey) => {
     return PublicKey.findProgramAddressSync(
       [utf8.encode(VAULT_SEED), userPubkey.toBuffer()],
       QUARTZ_PROGRAM_ID
     )[0];
   }
 
-const getVaultAta = (userPubkey: PublicKey, tokenAddress: PublicKey) => {
+export const getVaultAta = (userPubkey: PublicKey, tokenAddress: PublicKey) => {
     return PublicKey.findProgramAddressSync(
         [utf8.encode(VAULT_ATA_SEED), userPubkey.toBuffer(), tokenAddress.toBuffer()],
         QUARTZ_PROGRAM_ID
     )[0];
 }
 
-const getVaultBalance = async (connection: Connection, userId: number) => {
+export const getVaultBalance = async (connection: Connection, userId: number) => {
     const wallet = await getWalletAddress(userId);
     const vault = getVault(new PublicKey(wallet));
 
@@ -63,7 +63,7 @@ const getVaultBalance = async (connection: Connection, userId: number) => {
     }
 };
 
-const getVaultAtaBalance = async (connection: Connection, userId: number, tokenAddress: PublicKey) => {
+export const getVaultAtaBalance = async (connection: Connection, userId: number, tokenAddress: PublicKey) => {
     const wallet = await getWalletAddress(userId);
     const vaultAta = getVaultAta(new PublicKey(wallet), tokenAddress);
     try {
@@ -77,14 +77,14 @@ const getVaultAtaBalance = async (connection: Connection, userId: number, tokenA
     }
 }
 
-const getVaultUsdcBalance = async (connection: Connection, userId: number) => {
+export const getVaultUsdcBalance = async (connection: Connection, userId: number) => {
     const rawBalance = await getVaultAtaBalance(connection, userId, USDC_MINT_ADDRESS);
     return rawBalance / 10 ** DEVNET_USDC_DECIMALS;
 }
 
 //coin gecko
 
-const getSolanaPrice = async () => {
+export const getSolanaPrice = async () => {
     const response = await fetch(
       `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`,
       {
@@ -97,7 +97,7 @@ const getSolanaPrice = async () => {
   };
 
 
-  export async function checkCanAfford(connection: Connection, amount: number, userId: number) {
+export async function checkCanAfford(connection: Connection, amount: number, userId: number) {
     let userBalance;
 
     console.log("[server] Getting mint...")
