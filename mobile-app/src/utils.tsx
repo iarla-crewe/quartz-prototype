@@ -37,8 +37,8 @@ export const notificationListeners = async () => {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('A new FCM message arrived!');
     
-    NavigationService.navigate(remoteMessage.data!.screenToOpen, {
-      screen: "SpendScreen",
+    NavigationService.navigate(remoteMessage.data!.navigationFlow, {
+      screen: remoteMessage.data!.screenToOpen,
       params: {
         solanaPayUrl: remoteMessage.data!.urlObj, 
         sentTime: remoteMessage.sentTime 
@@ -52,8 +52,8 @@ export const notificationListeners = async () => {
       'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
-    NavigationService.navigate(remoteMessage.data!.screenToOpen, {
-      screen: "SpendScreen",
+    NavigationService.navigate(remoteMessage.data!.navigationFlow, {
+      screen: remoteMessage.data!.screenToOpen,
       params: {
         solanaPayUrl: remoteMessage.data!.urlObj, 
         sentTime: remoteMessage.sentTime 
@@ -70,8 +70,8 @@ export const notificationListeners = async () => {
           'Notification caused app to open from quit state:',
           remoteMessage.notification,
         );
-        NavigationService.navigate(remoteMessage.data!.screenToOpen, {
-          screen: "SpendScreen",
+        NavigationService.navigate(remoteMessage.data!.navigationFlow, {
+          screen: remoteMessage.data!.screenToOpen,
           params: {
             solanaPayUrl: remoteMessage.data!.urlObj, 
             sentTime: remoteMessage.sentTime 

@@ -38,13 +38,6 @@ function TransferStackNavigator() {
       <Stack.Screen name='Transfer' component={TransferScreen} />
       <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
       <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />
-    </Stack.Navigator>
-  )
-}
-
-function SpendStackNavigator() {
-  return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
       <Stack.Screen name='SpendScreen' component={SpendScreen} />
       <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
       <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
@@ -87,15 +80,6 @@ function TabNavigator() {
   )
 }
 
-function MainStackNavigator() {
-  return (
-    <Stack.Navigator initialRouteName='Tabs' screenOptions={{headerShown: false}}>
-        <Stack.Screen name='Tabs' component={TabNavigator}/>
-        <Stack.Screen name='Spend' component={SpendStackNavigator} />
-    </Stack.Navigator>
-  )
-}
-
 const openSettings = () => {
   Linking.openSettings();
 };
@@ -135,7 +119,7 @@ export default function App(): JSX.Element {
   return (
     <SafeAreaView style = {{flex: 1, backgroundColor: themeColor.primary}}>
       <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
-        <MainStackNavigator />
+        <TabNavigator />
       </NavigationContainer>
     </SafeAreaView>
   );
