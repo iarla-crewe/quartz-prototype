@@ -2,6 +2,12 @@
     "version": 2,
     "buildCommand": "npm run build",
     "outputDirectory": "build",
+    "functions": {
+      "build/index.js": {
+        "memory": 3000,
+        "maxDuration": 60
+      }
+    },
     "routes": [
       {
         "src": "/(.*)",
