@@ -43,7 +43,7 @@ export const notificationListeners = async () => {
       params: {
         solanaPayUrl: remoteMessage.data!.urlObj, 
         sentTime: remoteMessage.sentTime,
-        timeLimit: remoteMessage.data!.timeLimit 
+        timeLimit: remoteMessage.data!.timeLimit
       } 
     });
   });

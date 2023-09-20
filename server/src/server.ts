@@ -12,7 +12,7 @@ let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
 let sendMessage = async (appToken: string) => {
     let userId = 1;
-    let transactionAmount = 0.01
+    let transactionAmount = 0.10
     let paymentStatus: string;
 
     console.log("[server] Checking if user can afford transaction...")

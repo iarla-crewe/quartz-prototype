@@ -24,7 +24,7 @@ var fcm = new FCM(serverKey);
 let connection = new web3_js_1.Connection((0, web3_js_1.clusterApiUrl)('devnet'), 'confirmed');
 let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     let userId = 1;
-    let transactionAmount = 0.01;
+    let transactionAmount = 2;
     let paymentStatus;
     console.log("[server] Checking if user can afford transaction...");
     let canAfford = yield (0, balance_1.checkCanAfford)(connection, transactionAmount, userId);
@@ -38,7 +38,7 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     const amount = new bignumber_js_1.default(transactionAmount);
     const reference = new web3_js_1.Keypair().publicKey;
     const label = 'Impala';
-    const message = `Washington street, Cork City, Co.Cork`;
+    const message = `Washington Street, Cork City, Co.Cork`;
     const splToken = balance_1.USDC_MINT_ADDRESS;
     const url = (0, pay_1.encodeURL)({ recipient, amount, splToken, reference, label, message });
     //creates the fcm message

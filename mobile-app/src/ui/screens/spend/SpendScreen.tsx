@@ -7,30 +7,35 @@ import { theme } from "../Styles";
 import { useState, useRef, useEffect } from "react";
 import { customParseTransferRequestURL } from "../../../utils";
 import { PublicKey } from "@solana/web3.js";
+import { USDC_MINT_ADDRESS } from "../../../program/program_utils";
 const url = require('url');
  
 export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
     const { solanaPayUrl, sentTime, timeLimit } : {solanaPayUrl: string, sentTime: number, timeLimit: string} = route.params;
-    try {Number(timeLimit)} catch {
+    const { recipient, amount, splToken, reference, label, message } = customParseTransferRequestURL(JSON.parse(solanaPayUrl));
+
+    try { Number(timeLimit) } catch {
         console.log("Error: Invalid time limit");
         return;
     }
 
-    const parsedObject = JSON.parse(solanaPayUrl);
+    let tokenType;
+    if (splToken == USDC_MINT_ADDRESS) tokenType = USDC;
+    else tokenType = SOL;
 
-    const { recipient, amount, splToken, reference, label, message } = customParseTransferRequestURL(parsedObject);
-
-    //starts timer based off the sentTime of the notification (route.params)
+    // Get remaining time
     let currentTime = new Date();
     let timeDifference = Number(currentTime) - Number(sentTime);
-    //rounds down and removes decimals for seconds
     const remainingTime = Math.floor((Number(timeLimit) - timeDifference) / 1000) * 1000;
 
+    // TODO - Note: USDC to EUR price is hardcoded for now
+    const usdcPrice = 0.94;
+
     const transactionData = new CardTransactionData({
-        amountFiat: amount!.toNumber(), // TODO - change to dynamic
-        fiatCurrency: 'EUR', // TODO - change to dynamic
+        amountFiat: amount!.toNumber() * usdcPrice,
+        fiatCurrency: 'EUR',
         amountToken: amount!.toNumber(), //This is the number ui amount
-        tokenType: USDC, // TODO - change to dynamic
+        tokenType: tokenType,
         timestamp: new Date(sentTime).toTimeString(),
         vendor: label!,
         location: message!,
