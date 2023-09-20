@@ -58,7 +58,6 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     paymentStatus = 'pending';
     console.log('\n5. Find the transaction');
     let signatureInfo;
-    console.log("here");
     const signature = yield new Promise((resolve, reject) => {
         /**
          * Retry until we find the transaction
@@ -71,11 +70,9 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
          *
          * You can implement a polling strategy to query for the transaction periodically.
          */
-        console.log("inside");
         const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-            console.count('Checking for transaction...');
+            //console.count('Checking for transaction...');
             try {
-                console.log("in try");
                 signatureInfo = yield (0, pay_1.findReference)(connection, reference, { finality: 'confirmed' });
                 console.log('\n 🖌  Signature found: ', signatureInfo.signature);
                 clearInterval(interval);

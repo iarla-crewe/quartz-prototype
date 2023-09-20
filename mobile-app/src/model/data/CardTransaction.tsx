@@ -1,3 +1,4 @@
+import { publicKey } from "@coral-xyz/anchor/dist/cjs/utils";
 import { SOL, USDC, TokenType } from "./Tokens";
 import { PublicKey } from "@solana/web3.js";
 
@@ -34,6 +35,7 @@ export class CardTransactionData {
       const timestamp = data.timestamp;
       const vendor = data.vendor;
       const location = data.location;
+      const reference = [new PublicKey(data.reference)]
 
       let tokenType = JSON.parse(data.tokenType);
       if (tokenType.name === "SOL") tokenType = SOL;
@@ -44,11 +46,16 @@ export class CardTransactionData {
       }
 
       return new CardTransactionData({
-        amountFiat, fiatCurrency, amountToken, tokenType, timestamp, vendor, location
+        amountFiat, fiatCurrency, amountToken, tokenType, timestamp, vendor, location, reference
       });
     }
 
     toJSON() {
+      let i;
+      for (i = 0, i < this.reference!.length, i ++) {
+
+      }
+
       return JSON.stringify(
         {
           amountFiat: this.amountFiat,
@@ -57,7 +64,8 @@ export class CardTransactionData {
           tokenType: JSON.stringify(this.tokenType),
           timestamp: this.timestamp,
           vendor: this.vendor,
-          location: this.location
+          location: this.location,
+          reference: this.reference!.map((publicKey) => publicKey.toBase58())
         }
       );
     }

@@ -14,6 +14,8 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
     const { transactionDataJSON, sentTime } = route.params;
     const transactionData = CardTransactionData.fromJSON(transactionDataJSON);
 
+    console.log("Reference in spend accepted screen,", transactionData?.reference);
+
     const connection = createConnection();
     const wallet = getTestWallet();
     const provider = getProvider(connection, wallet);

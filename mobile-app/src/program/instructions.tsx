@@ -141,23 +141,6 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
         return handleError(err, "getATA error: ");
     }
 
-    // try {
-    //     const tx = await program.methods
-    //         .spendSpl(new BN(usdc))
-    //         .accounts({
-    //             vault: vault,
-    //             vaultAtaUsdc: vaultAta,
-    //             tokenMint: USDC_MINT_ADDRESS,
-    //             receiver: QUARTZ_SPEND_ADDRESS,
-    //             receiverAta: quartzAta 
-    //         })
-    //         .rpc()  
-    //     console.log(tx);
-    //     return tx;
-    // } catch (err: unknown) {
-    //     return handleError(err, "instruction error: ");
-    // }
-
     try {
         const instruction = await program.methods
             .spendSpl(new BN(usdc))

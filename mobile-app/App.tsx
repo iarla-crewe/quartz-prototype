@@ -2,7 +2,7 @@
 import React, { useEffect } from 'react';
 import { PermissionsAndroid, Platform, StyleSheet, View } from 'react-native';
 
-import { Alert } from 'react-native';
+import { Alert, Linking } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -27,6 +27,10 @@ Object.assign(global, {
 
 const Stack = createNativeStackNavigator();
 
+const openSettings = () => {
+  Linking.openSettings();
+};
+
 export default function App(): JSX.Element {
   useEffect(() => {
     if (Platform.OS == "android") {
@@ -35,6 +39,17 @@ export default function App(): JSX.Element {
         if (!!res && res === 'granted') {
           requestUserPermission();
           notificationListeners();
+        }
+        else if (res === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
+          console.log('Notification Permission Denied with Never Ask Again.');
+          Alert.alert(
+            'Notification Permission Required',
+            'App needs to send you notifications to accept or deny spend transactions. Please go to app settings and grant permission.',
+            [
+              { text: 'Cancel', style: 'cancel' },
+              { text: 'Open Settings', onPress: openSettings },
+            ],
+          );
         }
       }).catch(error => {
         Alert.alert("Something went wrong: ", error);
