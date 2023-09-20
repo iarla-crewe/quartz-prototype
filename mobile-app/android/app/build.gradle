@@ -74,9 +74,9 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
-    namespace "com.quartzprototypev2mobileapp"
+    namespace "com.quartz.prototype"
     defaultConfig {
-        applicationId "com.quartzprototypev2mobileapp"
+        applicationId "com.quartz.prototype"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

@@ -9,7 +9,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:358799151835:android:e217c82417eb8d4fbbb2fe",
         "android_client_info": {
-          "package_name": "com.quartzprototypev2mobileapp"
+          "package_name": "com.quartz.prototype"
         }
       },
       "oauth_client": [
@@ -17,7 +17,7 @@
           "client_id": "358799151835-mukp56g38t78ufh8ujeba2otsosodjmd.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.quartzprototypev2mobileapp",
+            "package_name": "com.quartz.prototype",
             "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },

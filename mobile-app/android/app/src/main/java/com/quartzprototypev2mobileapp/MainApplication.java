@@ -1,4 +1,4 @@
-package com.quartzprototypev2mobileapp;
+package com.quartz.prototype;
 
 import android.app.Application;
 import com.facebook.react.PackageList;

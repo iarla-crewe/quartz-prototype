@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "QuartzPrototypeV2MobileApp.app"
-               BlueprintName = "QuartzPrototypeV2MobileApp"
-               ReferencedContainer = "container:QuartzPrototypeV2MobileApp.xcodeproj">
+               BuildableName = "QuartzPrototype.app"
+               BlueprintName = "QuartzPrototype"
+               ReferencedContainer = "container:QuartzPrototype.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "QuartzPrototypeV2MobileAppTests.xctest"
-               BlueprintName = "QuartzPrototypeV2MobileAppTests"
-               ReferencedContainer = "container:QuartzPrototypeV2MobileApp.xcodeproj">
+               BuildableName = "QuartzPrototypeTests.xctest"
+               BlueprintName = "QuartzPrototypeTests"
+               ReferencedContainer = "container:QuartzPrototype.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "QuartzPrototypeV2MobileApp.app"
-            BlueprintName = "QuartzPrototypeV2MobileApp"
-            ReferencedContainer = "container:QuartzPrototypeV2MobileApp.xcodeproj">
+            BuildableName = "QuartzPrototype.app"
+            BlueprintName = "QuartzPrototype"
+            ReferencedContainer = "container:QuartzPrototype.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "QuartzPrototypeV2MobileApp.app"
-            BlueprintName = "QuartzPrototypeV2MobileApp"
-            ReferencedContainer = "container:QuartzPrototypeV2MobileApp.xcodeproj">
+            BuildableName = "QuartzPrototype.app"
+            BlueprintName = "QuartzPrototype"
+            ReferencedContainer = "container:QuartzPrototype.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>
