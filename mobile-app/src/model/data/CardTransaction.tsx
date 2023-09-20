@@ -51,10 +51,13 @@ export class CardTransactionData {
     }
 
     toJSON() {
-      let i;
-      for (i = 0, i < this.reference!.length, i ++) {
-
+      function publicKeyToStringArray(publicKey: PublicKey) {
+        return publicKey.toString();
       }
+      
+      // Use the map() method to convert each PublicKey to a string array
+      const stringArrays = this.reference?.map(publicKeyToStringArray);
+      console.log("string arrays ",stringArrays);
 
       return JSON.stringify(
         {
