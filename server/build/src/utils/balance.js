@@ -102,23 +102,19 @@ function checkCanAfford(connection, amount, userId) {
         console.log("[server] Getting mint...");
         let cardTokenMint = yield getCardTokenMint(userId);
         if (cardTokenMint === 'native_sol') {
-            console.log("[server] Getting SOL balance");
+            console.log("[server] Getting SOL balance...");
             userBalance = yield getVaultBalance(connection, userId);
             userBalance = (yield getSolanaPrice()) * userBalance;
         }
         else {
             //USDC
             console.log("[server] Getting USDC balance...");
-            const rawBalance = yield getVaultAtaBalance(connection, userId, exports.USDC_MINT_ADDRESS);
-            userBalance = rawBalance / 10 ** DEVNET_USDC_DECIMALS;
-            //userBalance = await getVaultUsdcBalance(connection, userId)
+            userBalance = yield getVaultUsdcBalance(connection, userId);
         }
         if (userBalance > amount) {
-            console.log("[server] User has enough!");
             return true;
         }
         else {
-            console.log("[server] User does not have enough.");
             return false;
         }
     });

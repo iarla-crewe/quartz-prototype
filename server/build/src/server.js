@@ -29,7 +29,7 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
     console.log("[server] Checking if user can afford transaction...");
     let canAfford = yield (0, balance_1.checkCanAfford)(connection, transactionAmount, userId);
     if (!canAfford) {
-        console.log("[server] Transaction not accepted: Insufficent funds");
+        console.log("[server] Transaction not accepted: Insufficent funds.");
         return;
     }
     //creates a payment link

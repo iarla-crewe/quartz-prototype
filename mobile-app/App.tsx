@@ -42,7 +42,6 @@ function TransferStackNavigator() {
       <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
       <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
       <Stack.Screen name='SpendConfirmed' component={SpendConfirmedScreen} />
-      <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />
     </Stack.Navigator>
   )
 }
