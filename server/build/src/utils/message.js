@@ -26,7 +26,7 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
             body: 'Please accept or decline this transaction',
         },
         data: {
-            screenToOpen: 'Spend',
+            screenToOpen: 'SpendFlow',
             title: 'Payment Authentication',
             urlObj: stringUrl
         }

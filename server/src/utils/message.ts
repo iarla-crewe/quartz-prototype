@@ -19,7 +19,7 @@ export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: s
             body: 'Please accept or decline this transaction',
         },
         data: {
-            screenToOpen: 'Spend',
+            screenToOpen: 'SpendFlow',
             title: 'Payment Authentication',
             urlObj: stringUrl
         }
