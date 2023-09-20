@@ -103,23 +103,19 @@ export async function checkCanAfford(connection: Connection, amount: number, use
     console.log("[server] Getting mint...")
     let cardTokenMint = await getCardTokenMint(userId);
     if (cardTokenMint === 'native_sol') {
-        console.log("[server] Getting SOL balance")
+        console.log("[server] Getting SOL balance...")
         userBalance = await getVaultBalance(connection, userId)
         userBalance = await getSolanaPrice() * userBalance;
     } else {
         //USDC
         console.log("[server] Getting USDC balance...")
-        const rawBalance = await getVaultAtaBalance(connection, userId, USDC_MINT_ADDRESS);
-        userBalance = rawBalance / 10 ** DEVNET_USDC_DECIMALS;
-        //userBalance = await getVaultUsdcBalance(connection, userId)
+        userBalance = await getVaultUsdcBalance(connection, userId)
     }
 
     if (userBalance > amount) {
-        console.log("[server] User has enough!")
         return true;
     }
     else {
-        console.log("[server] User does not have enough.")
         return false
     }
 }
