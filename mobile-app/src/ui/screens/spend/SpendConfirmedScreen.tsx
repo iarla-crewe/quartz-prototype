@@ -10,6 +10,7 @@ import ConfirmationSignature from "../../components/ConfirmationSignature";
 export default function SpendConfirmedScreen( { route, navigation } : { route: any, navigation: any} ) {
     const { transactionHash, transactionDataJSON } = route.params;
     const transactionData = CardTransactionData.fromJSON(transactionDataJSON);
+    console.log("Navigation: ", navigation);
 
     return (
         <View style={theme.mainContainer}>

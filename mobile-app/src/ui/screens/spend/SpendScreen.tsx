@@ -10,7 +10,7 @@ import { PublicKey } from "@solana/web3.js";
 const url = require('url');
  
 export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
-    const { solanaPayUrl, sentTime } : {solanaPayUrl: any, sentTime: number} = route.params;
+    const { solanaPayUrl, sentTime } : {solanaPayUrl: string, sentTime: number} = route.params;
 
     const parsedObject = JSON.parse(solanaPayUrl);
 
