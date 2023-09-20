@@ -91,7 +91,7 @@ function MainStackNavigator() {
   return (
     <Stack.Navigator initialRouteName='Tabs' screenOptions={{headerShown: false}}>
         <Stack.Screen name='Tabs' component={TabNavigator}/>
-        <Stack.Screen name='Spend' component={SpendStackNavigator} />
+        <Stack.Screen name='SpendFlow' component={SpendStackNavigator} />
     </Stack.Navigator>
   )
 }
