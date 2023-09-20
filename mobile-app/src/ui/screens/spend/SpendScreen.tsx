@@ -10,34 +10,17 @@ import { PublicKey } from "@solana/web3.js";
 const url = require('url');
  
 export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
-    const { solanaPayUrl, sentTime } : {solanaPayUrl: any, sentTime: number} = route.params;
+    const { solanaPayUrl, sentTime } : {solanaPayUrl: string, sentTime: number} = route.params;
 
     const parsedObject = JSON.parse(solanaPayUrl);
 
     const { recipient, amount, splToken, reference, label, message } = customParseTransferRequestURL(parsedObject);
 
-    let test = new PublicKey("4RhDCgDD41J5UygR5ABzXcaGPRV9Gfi4CxheZwzKX1M4");
-    console.log("test: ", test);
-
-
-    console.log("reference in spend screen ", reference);
-
-    console.log("string reference in spend screen ", reference![0]);
-
-    console.log("type of string  reference in spend screen ", typeof reference![0]);
-
-    console.log("instance of: ", (reference![0] instanceof PublicKey))
-    // TODO - Remove dummy data
-    // console.log("sent time: ", sentTime);
-    // let currentTime = new Date();
-    // let timeDifference = Number(currentTime) - Number(sentTime);
-    // console.log("time diffrence: ", timeDifference);
-
-    // const remainingTime = 15000 - timeDifference;
-
-    // console.log("Remaining time: ", remainingTime);
-
-    const remainingTime = 15000
+    //starts timer based off the sentTime of the notification (route.params)
+    let currentTime = new Date();
+    let timeDifference = Number(currentTime) - Number(sentTime);
+    //rounds down and removes decimals for seconds
+    const remainingTime = Math.floor((15000 - timeDifference) / 1000) * 1000;
 
     const transactionData = new CardTransactionData({
         amountFiat: amount!.toNumber(), // TODO - change to dynamic

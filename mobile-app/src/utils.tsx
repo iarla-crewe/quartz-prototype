@@ -36,10 +36,13 @@ export async function requestUserPermission() {
 export const notificationListeners = async () => {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('A new FCM message arrived!');
-
-    NavigationService.navigate(remoteMessage.data!.screenToOpen, { 
-      solanaPayUrl: remoteMessage.data!.urlObj, 
-      sentTime: remoteMessage.sentTime 
+    
+    NavigationService.navigate(remoteMessage.data!.screenToOpen, {
+      screen: "SpendScreen",
+      params: {
+        solanaPayUrl: remoteMessage.data!.urlObj, 
+        sentTime: remoteMessage.sentTime 
+      } 
     });
   });
   // Assume a message-notification contains a "type" property in the data payload of the screen to open
@@ -49,9 +52,12 @@ export const notificationListeners = async () => {
       'Notification caused app to open from background state:',
       remoteMessage.notification,
     );
-    NavigationService.navigate(remoteMessage.data!.screenToOpen, { 
-      solanaPayUrl: remoteMessage.data!.urlObj, 
-      sentTime: remoteMessage.sentTime 
+    NavigationService.navigate(remoteMessage.data!.screenToOpen, {
+      screen: "SpendScreen",
+      params: {
+        solanaPayUrl: remoteMessage.data!.urlObj, 
+        sentTime: remoteMessage.sentTime 
+      } 
     });
   });
 
@@ -64,9 +70,12 @@ export const notificationListeners = async () => {
           'Notification caused app to open from quit state:',
           remoteMessage.notification,
         );
-        NavigationService.navigate(remoteMessage.data!.screenToOpen, { 
-          solanaPayUrl: remoteMessage.data!.urlObj, 
-          sentTime: remoteMessage.sentTime 
+        NavigationService.navigate(remoteMessage.data!.screenToOpen, {
+          screen: "SpendScreen",
+          params: {
+            solanaPayUrl: remoteMessage.data!.urlObj, 
+            sentTime: remoteMessage.sentTime 
+          } 
         });
       }
     });

@@ -51,14 +51,6 @@ export class CardTransactionData {
     }
 
     toJSON() {
-      function publicKeyToStringArray(publicKey: PublicKey) {
-        return publicKey.toString();
-      }
-      
-      // Use the map() method to convert each PublicKey to a string array
-      const stringArrays = this.reference?.map(publicKeyToStringArray);
-      console.log("string arrays ",stringArrays);
-
       return JSON.stringify(
         {
           amountFiat: this.amountFiat,
@@ -68,7 +60,7 @@ export class CardTransactionData {
           timestamp: this.timestamp,
           vendor: this.vendor,
           location: this.location,
-          reference: this.reference.map((publicKey) => publicKey.toBase58())
+          reference: this.reference?.map((publicKey) => publicKey.toBase58())
         }
       );
     }
