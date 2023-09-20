@@ -50,7 +50,7 @@ const getVaultAta = (userPubkey: PublicKey, tokenAddress: PublicKey) => {
     )[0];
 }
 
-export const getVaultBalance = async (connection: Connection, userId: number) => {
+const getVaultBalance = async (connection: Connection, userId: number) => {
     const wallet = await getWalletAddress(userId);
     const vault = getVault(new PublicKey(wallet));
 
@@ -77,14 +77,14 @@ const getVaultAtaBalance = async (connection: Connection, userId: number, tokenA
     }
 }
 
-export const getVaultUsdcBalance = async (connection: Connection, userId: number) => {
+const getVaultUsdcBalance = async (connection: Connection, userId: number) => {
     const rawBalance = await getVaultAtaBalance(connection, userId, USDC_MINT_ADDRESS);
     return rawBalance / 10 ** DEVNET_USDC_DECIMALS;
 }
 
 //coin gecko
 
-export const getSolanaPrice = async () => {
+const getSolanaPrice = async () => {
     const response = await fetch(
       `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`,
       {

@@ -1,9 +1,8 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getSolanaPrice, getVaultUsdcBalance } from "./utils/balance";
+import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford } from "./utils/balance";
 import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./utils/message";
-import { getVaultBalance } from "./utils/balance";
 
 var FCM = require('fcm-node');
 var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json'); // Relative path is from Build directory's javascript
@@ -16,30 +15,9 @@ let sendMessage = async (appToken: string) => {
     let transactionAmount = 0.01
     let paymentStatus: string;
 
+    console.log("[server] QuartzSpendAddress: " + QUARTZ_SPEND_ADDRESS);
     console.log("[server] Checking if user can afford transaction...")
-    //let canAfford = await checkCanAfford(connection, transactionAmount, userId);
-    let canAfford;
-    let userBalance;
-    console.log("[server] Getting mint...")
-    let cardTokenMint = await getCardTokenMint(userId);
-    if (cardTokenMint === 'native_sol') {
-        console.log("[server] Getting SOL balance")
-        userBalance = await getVaultBalance(connection, userId)
-        userBalance = await getSolanaPrice() * userBalance;
-    } else {
-        //USDC
-        console.log("[server] Getting USDC balance...")
-        userBalance = await getVaultUsdcBalance(connection, userId)
-    }
-
-    if (userBalance > transactionAmount) {
-        console.log("[server] User has enough!")
-        canAfford = true;
-    }
-    else {
-        console.log("[server] User does not have enough.")
-        canAfford = false
-    }
+    let canAfford = await checkCanAfford(connection, transactionAmount, userId);
 
     if (!canAfford) {
         console.log("[server] Transaction not accepted: Insufficent funds");
