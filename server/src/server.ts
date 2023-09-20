@@ -15,7 +15,6 @@ let sendMessage = async (appToken: string) => {
     let transactionAmount = 0.01
     let paymentStatus: string;
 
-    console.log("[server] QuartzSpendAddress: " + QUARTZ_SPEND_ADDRESS);
     console.log("[server] Checking if user can afford transaction...")
     let canAfford = await checkCanAfford(connection, transactionAmount, userId);
 

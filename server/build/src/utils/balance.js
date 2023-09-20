@@ -20,82 +20,96 @@ const QUARTZ_PROGRAM_ID = new web3_js_1.PublicKey("5Dxjir2yDi1aZAzgcnkEGmnLVop49
 exports.USDC_MINT_ADDRESS = new web3_js_1.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU"); // Devnet USDC address
 // const USDC_MINT_ADDRESS = new PublicKey("EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v");       // Mainnet USDC address
 const DEVNET_USDC_DECIMALS = 6;
-const getCardTokenMint = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    //TODO 
-    //use the userId to find the users token prefrence for their card
-    //returns the token mint string or "native_sol"
-    return exports.USDC_MINT_ADDRESS.toBase58();
-});
+function getCardTokenMint(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO 
+        //use the userId to find the users token prefrence for their card
+        //returns the token mint string or "native_sol"
+        return exports.USDC_MINT_ADDRESS.toBase58();
+    });
+}
 exports.getCardTokenMint = getCardTokenMint;
-const getWalletAddress = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    //TODO
-    //use the userId to find the users wallet address stored in our database
-    //return vaultAddress as a string
-    return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";
-});
+function getWalletAddress(userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        //TODO
+        //use the userId to find the users wallet address stored in our database
+        //return vaultAddress as a string
+        return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";
+    });
+}
 exports.getWalletAddress = getWalletAddress;
-const getVault = (userPubkey) => {
+function getVault(userPubkey) {
     return web3_js_1.PublicKey.findProgramAddressSync([bytes_1.utf8.encode(VAULT_SEED), userPubkey.toBuffer()], QUARTZ_PROGRAM_ID)[0];
-};
+}
 exports.getVault = getVault;
-const getVaultAta = (userPubkey, tokenAddress) => {
+function getVaultAta(userPubkey, tokenAddress) {
     return web3_js_1.PublicKey.findProgramAddressSync([bytes_1.utf8.encode(VAULT_ATA_SEED), userPubkey.toBuffer(), tokenAddress.toBuffer()], QUARTZ_PROGRAM_ID)[0];
-};
+}
 exports.getVaultAta = getVaultAta;
-const getVaultBalance = (connection, userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const wallet = yield (0, exports.getWalletAddress)(userId);
-    const vault = (0, exports.getVault)(new web3_js_1.PublicKey(wallet));
-    try {
-        const lamports = yield connection.getBalance(new web3_js_1.PublicKey(vault));
-        return lamports / web3_js_1.LAMPORTS_PER_SOL;
-    }
-    catch (e) {
-        return 0;
-    }
-});
+function getVaultBalance(connection, userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const wallet = yield getWalletAddress(userId);
+        const vault = getVault(new web3_js_1.PublicKey(wallet));
+        try {
+            const lamports = yield connection.getBalance(new web3_js_1.PublicKey(vault));
+            return lamports / web3_js_1.LAMPORTS_PER_SOL;
+        }
+        catch (e) {
+            return 0;
+        }
+    });
+}
 exports.getVaultBalance = getVaultBalance;
-const getVaultAtaBalance = (connection, userId, tokenAddress) => __awaiter(void 0, void 0, void 0, function* () {
-    const wallet = yield (0, exports.getWalletAddress)(userId);
-    const vaultAta = (0, exports.getVaultAta)(new web3_js_1.PublicKey(wallet), tokenAddress);
-    try {
-        const balance = (yield connection.getTokenAccountBalance(vaultAta)).value.amount;
-        let formatedBalance = yield Number(balance);
-        return formatedBalance;
-    }
-    catch (e) {
-        console.error("[server] " + e);
-        return 0;
-    }
-});
+;
+function getVaultAtaBalance(connection, userId, tokenAddress) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const wallet = yield getWalletAddress(userId);
+        const vaultAta = getVaultAta(new web3_js_1.PublicKey(wallet), tokenAddress);
+        try {
+            const balance = (yield connection.getTokenAccountBalance(vaultAta)).value.amount;
+            let formatedBalance = yield Number(balance);
+            return formatedBalance;
+        }
+        catch (e) {
+            console.error("[server] " + e);
+            return 0;
+        }
+    });
+}
 exports.getVaultAtaBalance = getVaultAtaBalance;
-const getVaultUsdcBalance = (connection, userId) => __awaiter(void 0, void 0, void 0, function* () {
-    const rawBalance = yield (0, exports.getVaultAtaBalance)(connection, userId, exports.USDC_MINT_ADDRESS);
-    return rawBalance / 10 ** DEVNET_USDC_DECIMALS;
-});
+function getVaultUsdcBalance(connection, userId) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const rawBalance = yield getVaultAtaBalance(connection, userId, exports.USDC_MINT_ADDRESS);
+        return rawBalance / 10 ** DEVNET_USDC_DECIMALS;
+    });
+}
 exports.getVaultUsdcBalance = getVaultUsdcBalance;
 //coin gecko
-const getSolanaPrice = () => __awaiter(void 0, void 0, void 0, function* () {
-    const response = yield fetch(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`, {
-        method: "GET",
+function getSolanaPrice() {
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield fetch(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`, {
+            method: "GET",
+        });
+        const data = yield response.json();
+        return data.solana.usd;
     });
-    const data = yield response.json();
-    return data.solana.usd;
-});
+}
 exports.getSolanaPrice = getSolanaPrice;
+;
 function checkCanAfford(connection, amount, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         let userBalance;
         console.log("[server] Getting mint...");
-        let cardTokenMint = yield (0, exports.getCardTokenMint)(userId);
+        let cardTokenMint = yield getCardTokenMint(userId);
         if (cardTokenMint === 'native_sol') {
             console.log("[server] Getting SOL balance");
-            userBalance = yield (0, exports.getVaultBalance)(connection, userId);
-            userBalance = (yield (0, exports.getSolanaPrice)()) * userBalance;
+            userBalance = yield getVaultBalance(connection, userId);
+            userBalance = (yield getSolanaPrice()) * userBalance;
         }
         else {
             //USDC
             console.log("[server] Getting USDC balance...");
-            const rawBalance = yield (0, exports.getVaultAtaBalance)(connection, userId, exports.USDC_MINT_ADDRESS);
+            const rawBalance = yield getVaultAtaBalance(connection, userId, exports.USDC_MINT_ADDRESS);
             userBalance = rawBalance / 10 ** DEVNET_USDC_DECIMALS;
             //userBalance = await getVaultUsdcBalance(connection, userId)
         }
