@@ -6,6 +6,8 @@ let getAppToken = async (userId: number) => {
     return 'flJ2SP6tTayIEyF6tupNjh:APA91bGvO9e_QsWrxt5YQw6xNwHZEENioSnRJWxcNn-fQnZ2STUdM1zZvu6HfcPjjBPUtK5fbgZ0__ZAz_ZU1P2kz2fIASR6JaiwFMnOsCAT-uOhfNHdCk9p1pGFRW2tGGmh31hCpU6P'
 }
 
+const RESPONSE_TIME_LIMIT = 15000;
+
 export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: string) => {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
@@ -22,6 +24,7 @@ export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: s
             navigationFlow: 'Send',
             screenToOpen: 'SpendScreen',
             title: 'Payment Authentication',
+            timeLimit: RESPONSE_TIME_LIMIT.toString(),
             urlObj: stringUrl
         }
     };

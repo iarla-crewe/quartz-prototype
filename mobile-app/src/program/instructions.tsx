@@ -11,7 +11,7 @@ const initAccount = async (program: Program<QuartzPrototypeV2>) => {
             .initAccount()
             .accounts({ tokenMint: USDC_MINT_ADDRESS })
             .rpc();
-        console.log(tx);
+        console.log("Transaction Signature: " + tx);
         return tx;
     } catch (err: unknown) {
         return handleError(err);
@@ -23,7 +23,7 @@ const airdropSol = async (connection: Connection, owner: PublicKey) => {
 
     try {
         const tx = await connection.requestAirdrop(vaultAddress, 4e9);
-        console.log(tx);
+        console.log("Transaction Signature: " + tx);
         return tx;
     } catch (err: unknown) {
         return handleError(err);
@@ -42,7 +42,7 @@ const transferSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey
                 receiver: receiver
             })
             .rpc()  
-        console.log(tx);
+        console.log("Transaction Signature: " + tx);
         return tx;
     } catch (err: unknown) {
         return handleError(err);
@@ -70,7 +70,7 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
                 USDC_MINT_ADDRESS,
                 receiver
             )
-            console.log(tx);
+            console.log("Transaction Signature: " + tx);
         }
         
     } catch (err: unknown) {
@@ -88,7 +88,7 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
                 receiverAta: receiverAta
             })
             .rpc()  
-        console.log(tx);    
+        console.log("Transaction Signature: " + tx);    
         return tx;
     } catch (err: unknown) {
         return handleError(err, "instruction error: ");
@@ -106,7 +106,7 @@ const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, l
                 receiver: QUARTZ_SPEND_ADDRESS
             })
             .rpc()  
-        console.log(tx);
+        console.log("Transaction Signature: " + tx);
         return tx;
     } catch (err: unknown) {
         return handleError(err);
@@ -134,7 +134,7 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
                 USDC_MINT_ADDRESS,
                 QUARTZ_SPEND_ADDRESS
             )
-            console.log(tx);
+            console.log("Created ATA. Signature: " + tx);
         }
         
     } catch (err: unknown) {
@@ -152,7 +152,7 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
                 receiverAta: quartzAta 
             })
             .instruction()
-        console.log(instruction);
+        console.log("Transaction Signature: " + instruction);
 
     // If reference accounts are provided, add them to the transfer instruction
     if (reference) {
@@ -172,7 +172,7 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
         tx,
         [owner.payer]
     )
-    console.log(signature);
+    console.log("Transaction Signature: " + signature);
     return signature;
     } catch (err: unknown) {
         return handleError(err, "instruction error: ");

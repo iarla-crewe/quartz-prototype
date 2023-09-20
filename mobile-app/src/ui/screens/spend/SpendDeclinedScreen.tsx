@@ -4,7 +4,6 @@ import { theme } from "../Styles";
 
 export default function SpendDeclinedScreen( { route, navigation } : {route: any, navigation: any} ) {
     const { reason } = route.params;
-    console.log("Navigation: ", navigation);
 
     return (
         <View style={theme.mainContainer}>

@@ -29,7 +29,7 @@ let sendMessage = async (appToken: string) => {
     const amount = new BigNumber(transactionAmount);
     const reference = new Keypair().publicKey
     const label = 'Impala';
-    const message = `Washington street, Cork City, Co.Cork`;
+    const message = `Washington Street, Cork City, Co.Cork`;
     const splToken = USDC_MINT_ADDRESS;
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
 

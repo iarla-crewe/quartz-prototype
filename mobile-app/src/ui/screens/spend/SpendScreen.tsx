@@ -10,7 +10,11 @@ import { PublicKey } from "@solana/web3.js";
 const url = require('url');
  
 export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
-    const { solanaPayUrl, sentTime } : {solanaPayUrl: string, sentTime: number} = route.params;
+    const { solanaPayUrl, sentTime, timeLimit } : {solanaPayUrl: string, sentTime: number, timeLimit: string} = route.params;
+    try {Number(timeLimit)} catch {
+        console.log("Error: Invalid time limit");
+        return;
+    }
 
     const parsedObject = JSON.parse(solanaPayUrl);
 
@@ -20,7 +24,7 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
     let currentTime = new Date();
     let timeDifference = Number(currentTime) - Number(sentTime);
     //rounds down and removes decimals for seconds
-    const remainingTime = Math.floor((15000 - timeDifference) / 1000) * 1000;
+    const remainingTime = Math.floor((Number(timeLimit) - timeDifference) / 1000) * 1000;
 
     const transactionData = new CardTransactionData({
         amountFiat: amount!.toNumber(), // TODO - change to dynamic
@@ -44,6 +48,9 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
     const [isTimerEnd, setIsTimerEnd] = useState(false);
 
     if (timer <= 0 && !isTimerEnd) {
+        clearInterval(timer);
+        setIsTimerEnd(true);
+
         navigation.navigate(
             'SpendDeclined',
             { reason: "Approval timed out" }

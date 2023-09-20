@@ -28,35 +28,35 @@ export async function requestUserPermission() {
     authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
   if (enabled) {
-    console.log('Authorization status:', authStatus);
     getToken();
+  } else {
+    console.log("Error: Firebase authorization unsuccessful");
   }
 }
 
 export const notificationListeners = async () => {
   const unsubscribe = messaging().onMessage(async remoteMessage => {
-    console.log('A new FCM message arrived!');
+    console.log('A new notification arrived');
     
     NavigationService.navigate(remoteMessage.data!.navigationFlow, {
       screen: remoteMessage.data!.screenToOpen,
       params: {
         solanaPayUrl: remoteMessage.data!.urlObj, 
-        sentTime: remoteMessage.sentTime 
+        sentTime: remoteMessage.sentTime,
+        timeLimit: remoteMessage.data!.timeLimit 
       } 
     });
   });
-  // Assume a message-notification contains a "type" property in the data payload of the screen to open
 
+  // Assume a message-notification contains a "type" property in the data payload of the screen to open
   messaging().onNotificationOpenedApp(remoteMessage => {
-    console.log(
-      'Notification caused app to open from background state:',
-      remoteMessage.notification,
-    );
+    console.log('A new notification arrived while the app was in background state');
     NavigationService.navigate(remoteMessage.data!.navigationFlow, {
       screen: remoteMessage.data!.screenToOpen,
       params: {
         solanaPayUrl: remoteMessage.data!.urlObj, 
-        sentTime: remoteMessage.sentTime 
+        sentTime: remoteMessage.sentTime,
+        timeLimit: remoteMessage.data!.timeLimit 
       } 
     });
   });
@@ -66,15 +66,13 @@ export const notificationListeners = async () => {
     .getInitialNotification()
     .then(remoteMessage => {
       if (remoteMessage) {
-        console.log(
-          'Notification caused app to open from quit state:',
-          remoteMessage.notification,
-        );
+        console.log('A new notification arrived while the app was not running');
         NavigationService.navigate(remoteMessage.data!.navigationFlow, {
           screen: remoteMessage.data!.screenToOpen,
           params: {
             solanaPayUrl: remoteMessage.data!.urlObj, 
-            sentTime: remoteMessage.sentTime 
+            sentTime: remoteMessage.sentTime,
+            timeLimit: remoteMessage.data!.timeLimit 
           } 
         });
       }
@@ -86,7 +84,6 @@ export const notificationListeners = async () => {
 export const getToken = async () => {
   await messaging().registerDeviceForRemoteMessages();
   const token = await messaging().getToken();
-  // save the token to the db
   console.log(`Token: ${token}`);
 };
 
@@ -163,6 +160,6 @@ export function customParseTransferRequestURL(obj: any): TransferRequestURL {
       reference,
       label,
       message,
-      memo,
+      memo
   };
 }

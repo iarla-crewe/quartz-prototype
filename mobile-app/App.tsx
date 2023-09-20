@@ -20,7 +20,6 @@ import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
 import DepositScreen from './src/ui/screens/DepositScreen';
 import TokenSelectScreen from './src/ui/screens/transfer/TokenSelectScreen';
 
-
 global.Buffer = require('buffer').Buffer;
 const TextEncodingPolyfill = require('text-encoding');
 Object.assign(global, {
@@ -38,6 +37,7 @@ function TransferStackNavigator() {
       <Stack.Screen name='Transfer' component={TransferScreen} />
       <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
       <Stack.Screen name='TransactionFailed' component={TransactionFailedScreen} />
+
       <Stack.Screen name='SpendScreen' component={SpendScreen} />
       <Stack.Screen name='SpendAccepted' component={SpendAcceptedScreen} />
       <Stack.Screen name='SpendDeclined' component={SpendDeclinedScreen} />
@@ -53,23 +53,17 @@ function TabNavigator() {
       safeAreaInsets={{ bottom: 0 }}
       screenOptions={({ route }) => ({
         headerShown: false,
-        tabBarIcon: ({ focused, color, size }) => {
-          let iconName;
-          if (route.name === 'Deposit') {
-            iconName = focused ? 'card-plus' : 'card-plus-outline';
-          } else if (route.name === 'Send') {
-            iconName = focused ? 'send' : 'send-outline';
-          } else {  // Home
-            iconName = focused ? 'home' : 'home-outline';
-          }
-
-          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
-        },
         tabBarActiveTintColor: themeColor.secondary,
         tabBarInactiveTintColor: themeColor.darkGrey,
-        tabBarStyle: {
-          borderTopWidth: 0,
-        },
+        tabBarStyle: {borderTopWidth: 0},
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
+          if (route.name === 'Deposit') iconName = focused ? 'card-plus' : 'card-plus-outline';
+          else if (route.name === 'Send') iconName = focused ? 'send' : 'send-outline';
+          else iconName = focused ? 'home' : 'home-outline';
+
+          return <MaterialCommunityIcons name={iconName} size={size} color={color} />;
+        }
       })}
     >
       <Tab.Screen name='Home' component={HomeScreen} />
@@ -87,7 +81,7 @@ export default function App(): JSX.Element {
   useEffect(() => {
     if (Platform.OS == "android") {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then((res) => {
-        console.log("res +++++++", res);
+        console.log("Notification permissions: ", res);
         if (!!res && res === 'granted') {
           requestUserPermission();
           notificationListeners();
@@ -96,19 +90,8 @@ export default function App(): JSX.Element {
           requestUserPermission();
           notificationListeners();
         }
-        else if (res === PermissionsAndroid.RESULTS.NEVER_ASK_AGAIN) {
-          console.log('Notification Permission Denied with Never Ask Again.');
-          Alert.alert(
-            'Notification Permission Required',
-            'App needs to send you notifications to accept or deny spend transactions. Please go to app settings and grant permission.',
-            [
-              { text: 'Cancel', style: 'cancel' },
-              { text: 'Open Settings', onPress: openSettings },
-            ],
-          );
-        }
       }).catch(error => {
-        Alert.alert("Something went wrong: ", error);
+        Alert.alert("Error: ", error);
       })
     } else {
       console.log("Error: Unsupported OS")
