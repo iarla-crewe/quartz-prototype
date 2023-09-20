@@ -54,9 +54,11 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
     }
 
     return (
-        <View>
+        <View style={theme.mainContainer}>
             <View style={theme.standardPadding}>
-                <Text style={theme.h1}>Accept transaction?</Text>
+                <View style={theme.verticalCenteredView}>
+                    <Text style={theme.h1}>Accept transaction?</Text>
+                </View>
             </View>
 
             <DisplayCardTransaction data={transactionData} />

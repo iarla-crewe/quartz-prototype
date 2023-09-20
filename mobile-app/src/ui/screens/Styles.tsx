@@ -38,6 +38,11 @@ export const theme = StyleSheet.create({
         color: themeColor.text,
         fontWeight: 'bold'
     },
+    h3: {
+        fontSize: 28,
+        textAlign: "center",
+        color: themeColor.text
+    },
     p: {
         fontSize: 24,
         textAlign: "center",

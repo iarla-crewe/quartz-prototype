@@ -6,18 +6,20 @@ export default function SpendDeclinedScreen( { route, navigation } : {route: any
     const { reason } = route.params;
 
     return (
-        <View>
-            <View style={theme.standardPadding}>
-                <Text style={theme.h1}>Transaction Declined</Text>
-            </View>
+        <View style={theme.mainContainer}>
+            <View style={theme.centeredView}>
+                <View style={theme.standardPadding}>
+                    <Text style={theme.h1}>Transaction Declined</Text>
+                </View>
 
-            <View style={theme.standardPadding}>
-                <Text style={theme.p}>
-                    {reason}
-                </Text>
-            </View>
+                <View style={theme.standardPadding}>
+                    <Text style={theme.p}>
+                        {reason}
+                    </Text>
+                </View>
 
-            <HomeButton data={navigation} />
+                <HomeButton data={navigation} />
+            </View>
         </View>
     )
 }

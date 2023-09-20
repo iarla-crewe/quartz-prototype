@@ -65,13 +65,15 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
     }, []);
 
     return (
-        <View>
-            <View style={theme.standardPadding}>
-                <Text style={theme.h1}>Transaction Approved</Text>
-            </View>
+        <View style={theme.mainContainer}>
+            <View style={theme.centeredView}>
+                <View style={theme.standardPadding}>
+                    <Text style={theme.h1}>Transaction Approved</Text>
+                </View>
 
-            <View style={theme.standardPadding}>
-                <Text style={theme.p}>Waiting for confirmation..</Text>
+                <View style={theme.standardPadding}>
+                    <Text style={theme.p}>Waiting for confirmation..</Text>
+                </View>
             </View>
         </View>
     )
