@@ -35,7 +35,7 @@ export class CardTransactionData {
       const timestamp = data.timestamp;
       const vendor = data.vendor;
       const location = data.location;
-      const reference = [new PublicKey(data.reference)]
+      const reference = data.reference.map((base58) => new PublicKey(base58));
 
       let tokenType = JSON.parse(data.tokenType);
       if (tokenType.name === "SOL") tokenType = SOL;
@@ -68,7 +68,7 @@ export class CardTransactionData {
           timestamp: this.timestamp,
           vendor: this.vendor,
           location: this.location,
-          reference: this.reference!.map((publicKey) => publicKey.toBase58())
+          reference: this.reference.map((publicKey) => publicKey.toBase58())
         }
       );
     }
