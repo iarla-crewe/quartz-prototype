@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { PermissionsAndroid, Platform, SafeAreaView, StyleSheet } from 'react-native';
+import { Linking, PermissionsAndroid, Platform, SafeAreaView, StyleSheet } from 'react-native';
 import { Alert } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
 import { NavigationContainer } from "@react-navigation/native";
