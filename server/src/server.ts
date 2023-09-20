@@ -15,6 +15,9 @@ let sendMessage = async (appToken: string) => {
     let transactionAmount = 0.01
     let paymentStatus: string;
 
+    
+    let foo = new PublicKey("jNFx1wSfb8CUxe8UZwfD3GnkBKvMqiUg69JHYM1Pi2G");
+
     console.log("[server] Checking if user can afford transaction...")
     let canAfford = await checkCanAfford(connection, transactionAmount, userId);
 
