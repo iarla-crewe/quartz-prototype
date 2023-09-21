@@ -15,7 +15,6 @@ app.post('/api-demo', (req: Request, res: Response) => {
     if (!label) return res.status(400).send({ message: "Label is required" });
     if (!location) return res.status(400).send({ message: "Location is required" });
 
-    console.log("[server] Running demo...");
     runDemo(appToken, fiat, label, location);
 
     return res.send({

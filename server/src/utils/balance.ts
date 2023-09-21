@@ -100,15 +100,11 @@ export async function getSolanaPrice() {
 export async function checkCanAfford(connection: Connection, amount: number, userId: number) {
     let userBalance;
 
-    console.log("[server] Getting mint...")
     let cardTokenMint = await getCardTokenMint(userId);
     if (cardTokenMint === 'native_sol') {
-        console.log("[server] Getting SOL balance...")
         userBalance = await getVaultBalance(connection, userId)
         userBalance = await getSolanaPrice() * userBalance;
-    } else {
-        //USDC
-        console.log("[server] Getting USDC balance...")
+    } else { // USDC
         userBalance = await getVaultUsdcBalance(connection, userId)
     }
 
