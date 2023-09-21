@@ -3,11 +3,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.CONFIRMATION_TIME_BUFFER = exports.RESPONSE_TIME_LIMIT = void 0;
 const express_1 = __importDefault(require("express"));
 const server_1 = require("./src/server");
 const PORT = 4000;
 const app = (0, express_1.default)();
 app.use(express_1.default.json());
+exports.RESPONSE_TIME_LIMIT = 15000;
+exports.CONFIRMATION_TIME_BUFFER = 10000;
 app.post('/api-demo', (req, res) => {
     const { appToken, fiat, label, location } = req.body;
     if (!appToken)
@@ -24,7 +27,7 @@ app.post('/api-demo', (req, res) => {
         return res.status(400).send({ message: "Label is required" });
     if (!location)
         return res.status(400).send({ message: "Location is required" });
-    (0, server_1.runDemo)(appToken, fiat, label, location);
+    (0, server_1.sendMessage)(appToken, fiat, label, location);
     return res.send({
         status: 'success'
     });

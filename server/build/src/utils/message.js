@@ -14,8 +14,7 @@ let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
     // TODO - Remove hardcoding
     return 'flJ2SP6tTayIEyF6tupNjh:APA91bGvO9e_QsWrxt5YQw6xNwHZEENioSnRJWxcNn-fQnZ2STUdM1zZvu6HfcPjjBPUtK5fbgZ0__ZAz_ZU1P2kz2fIASR6JaiwFMnOsCAT-uOhfNHdCk9p1pGFRW2tGGmh31hCpU6P';
 });
-const RESPONSE_TIME_LIMIT = 15000;
-let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0, void 0, function* () {
+let getFcmMessage = (solanaPayUrl, userId, appToken, timeLimit) => __awaiter(void 0, void 0, void 0, function* () {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
     const stringUrl = stringifyURL(solanaPayUrl);
@@ -29,7 +28,7 @@ let getFcmMessage = (solanaPayUrl, userId, appToken) => __awaiter(void 0, void 0
             navigationFlow: 'Send',
             screenToOpen: 'SpendScreen',
             title: 'Payment Authentication',
-            timeLimit: RESPONSE_TIME_LIMIT.toString(),
+            timeLimit: timeLimit.toString(),
             urlObj: stringUrl
         }
     };

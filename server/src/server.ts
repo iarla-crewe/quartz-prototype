@@ -3,6 +3,7 @@ import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMi
 import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./utils/message";
+import { CONFIRMATION_TIME_BUFFER, RESPONSE_TIME_LIMIT } from "..";
 
 var FCM = require('fcm-node');
 var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json'); // Relative path is from Build directory's javascript
@@ -10,7 +11,7 @@ var fcm = new FCM(serverKey);
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-export async function sendMessage(timeLimit: number, appToken: string, fiat: number, label: string, location: string) {
+export async function sendMessage(appToken: string, fiat: number, label: string, location: string) {
     console.log(`\n[server] Received card authentication request for ${appToken.slice(0, 5)}...`);
 
     let userId = 1;
@@ -44,7 +45,7 @@ export async function sendMessage(timeLimit: number, appToken: string, fiat: num
     });
 
     // Create FCM message
-    let fcmMessage = await getFcmMessage(url, userId, appToken, timeLimit);
+    let fcmMessage = await getFcmMessage(url, userId, appToken, RESPONSE_TIME_LIMIT);
 
     let sendTime = new Date();
 
@@ -67,22 +68,12 @@ export async function sendMessage(timeLimit: number, appToken: string, fiat: num
     let waitTime = 0 - refreshInterval;
     let signature = "";
 
-    /**
-     * Retry until we find the transaction
-     *
-     * If a transaction with the given reference can't be found, the `findTransactionSignature`
-     * function will throw an error. There are a few reasons why this could be a false negative:
-     *
-     * - Transaction is not yet confirmed
-     * - Customer is yet to approve/complete the transaction
-     *
-     * You can implement a polling strategy to query for the transaction periodically.
-     */
+    // Retry until we find the transaction
     await new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
             waitTime += refreshInterval;
 
-            if (waitTime > timeLimit) {
+            if (waitTime > RESPONSE_TIME_LIMIT + CONFIRMATION_TIME_BUFFER) {
                 paymentStatus = 'timeout';
                 clearInterval(interval);
                 reject();
@@ -91,6 +82,7 @@ export async function sendMessage(timeLimit: number, appToken: string, fiat: num
 
             try {
                 const signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
+                console.log("[server] Found reference.");
 
                 clearInterval(interval);
                 resolve(signatureInfo.signature);
@@ -118,15 +110,6 @@ export async function sendMessage(timeLimit: number, appToken: string, fiat: num
 
     paymentStatus = 'confirmed';
 
-    /**
-     * Validate transaction
-     *
-     * Once the `findTransactionSignature` function returns a signature,
-     * it confirms that a transaction with reference to this order has been recorded on-chain.
-     *
-     * `validateTransactionSignature` allows you to validate that the transaction signature
-     * found matches the transaction that you expected.
-     */
     try {
         await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount: BigNumber(amountToken), splToken });
 

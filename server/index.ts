@@ -6,7 +6,8 @@ const app = express()
 
 app.use(express.json());
 
-const RESPONSE_TIME_LIMIT = 15000;
+export const RESPONSE_TIME_LIMIT = 15000;
+export const CONFIRMATION_TIME_BUFFER = 10000;
 
 app.post('/api-demo', (req: Request, res: Response) => {
     const { appToken, fiat, label, location }: { appToken: string, fiat: number, label: string, location: string } = req.body;
@@ -17,7 +18,7 @@ app.post('/api-demo', (req: Request, res: Response) => {
     if (!label) return res.status(400).send({ message: "Label is required" });
     if (!location) return res.status(400).send({ message: "Location is required" });
 
-    sendMessage(RESPONSE_TIME_LIMIT, appToken, fiat, label, location);
+    sendMessage(appToken, fiat, label, location);
 
     return res.send({
         status: 'success'
