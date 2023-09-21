@@ -1,6 +1,11 @@
 import { runDemo } from "@/utils/sendMessage";
 import { NextRequest, NextResponse } from "next/server";
 
+export async function GET(request: NextRequest, response: NextResponse) {
+
+    return new NextResponse(JSON.stringify({ status: "online"}))
+}
+
 export async function POST(request: NextRequest, response: NextResponse) {
     const { destination }: { destination: string } = await request.json();
 
