@@ -30,7 +30,7 @@ export default function App() {
       `
     };
     
-    fetch('https://quartz-prototype-v2-server-vercel.vercel.app/api-demo', options)
+    fetch('https://www.quartzpay.io/api/demo', options)
       .then(response => {
         console.log(response.status);
         if(!response.ok) setError(response.status.toString());
