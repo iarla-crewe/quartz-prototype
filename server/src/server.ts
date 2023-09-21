@@ -10,12 +10,14 @@ var fcm = new FCM(serverKey);
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-let sendMessage = async (appToken: string) => {
+let sendMessage = async (appToken: string, fiat: number, label: string, location: string) => {
     let userId = 1;
     let transactionAmount = 0.10
     let paymentStatus: string;
 
-    console.log("[server] Checking if user can afford transaction...")
+    const amountToken = BigNumber(0); // TODO - Find required amount of token
+
+    console.log("[server] Checking if user can afford transaction...");
     let canAfford = await checkCanAfford(connection, transactionAmount, userId);
 
     if (!canAfford) {
@@ -26,12 +28,17 @@ let sendMessage = async (appToken: string) => {
     //creates a payment link
     console.log('[server] 💰 Create a payment request link \n');
     const recipient = QUARTZ_SPEND_ADDRESS
-    const amount = new BigNumber(transactionAmount);
-    const reference = new Keypair().publicKey
-    const label = 'Impala';
-    const message = `Washington Street, Cork City, Co.Cork`;
+    const amountFiat = new BigNumber(fiat);
+    const reference = new Keypair().publicKey;
     const splToken = USDC_MINT_ADDRESS;
-    const url = encodeURL({ recipient, amount, splToken, reference, label, message });
+    const url = encodeURL({ 
+        recipient, 
+        amount: amountFiat, 
+        splToken, 
+        reference, 
+        label, 
+        message: location 
+    });
 
     //creates the fcm message
     let fcmMessage = await getFcmMessage(url, userId, appToken);
@@ -100,7 +107,7 @@ let sendMessage = async (appToken: string) => {
     console.log('\n[server] 6. 🔗 Validate transaction \n');
 
     try {
-        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount, splToken });
+        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount: amountToken, splToken });
 
         // Update payment status
         paymentStatus = 'validated';
@@ -111,8 +118,8 @@ let sendMessage = async (appToken: string) => {
     }
 }
 
-export async function runDemo(appToken: string) {
-    sendMessage(appToken).then(
+export async function runDemo(appToken: string, fiat: number, label: string, location: string) {
+    sendMessage(appToken, fiat, label, location).then(
         () => process.exit(),
         (err) => {
             console.error("[server] " + err);

@@ -7,14 +7,16 @@ const app = express()
 app.use(express.json());
 
 app.post('/api-demo', (req: Request, res: Response) => {
-    const { destination }: { destination: string } = req.body;
+    const { appToken, fiat, label, location }: { appToken: string, fiat: number, label: string, location: string } = req.body;
 
-    if (!destination) {
-        return res.status(400).send({ message: "destination is required" });
-    }
+    if (!appToken) return res.status(400).send({ message: "AppToken is required" });
+    if (!fiat) return res.status(400).send({ message: "Fiat amount required" });
+    try { Number(fiat) } catch { return res.status(400).send({ message: "Invalid fiat amount" }); }
+    if (!label) return res.status(400).send({ message: "Label is required" });
+    if (!location) return res.status(400).send({ message: "Location is required" });
 
     console.log("[server] Running demo...");
-    runDemo(destination);
+    runDemo(appToken, fiat, label, location);
 
     return res.send({
         status: 'success'
