@@ -5,8 +5,7 @@ import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./message";
 
 var FCM = require('fcm-node');
-//var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json'); // Relative path is from Build directory's javascript
-var serverKey = process.env.NEXT_PUBLIC_FCM
+var serverKey = process.env.NEXT_PUBLIC_FCM;
 var fcm = new FCM(serverKey);
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
