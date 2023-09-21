@@ -1,5 +1,5 @@
 import express, { Request, Response } from 'express';
-import { sendMessage } from './src/server';
+import { sendMessage } from './src/sendMessage';
 
 const PORT = 4000
 const app = express()

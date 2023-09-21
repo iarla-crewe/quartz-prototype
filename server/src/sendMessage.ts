@@ -1,8 +1,8 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getRequiredTokenAmount } from "./utils/balance";
+import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getRequiredTokenAmount } from "./balance";
 import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
-import { getFcmMessage } from "./utils/message";
+import { getFcmMessage } from "./message";
 import { CONFIRMATION_TIME_BUFFER, RESPONSE_TIME_LIMIT } from "..";
 
 var FCM = require('fcm-node');
