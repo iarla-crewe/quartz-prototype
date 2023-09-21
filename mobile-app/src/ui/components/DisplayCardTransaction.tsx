@@ -7,10 +7,6 @@ import { theme } from "../screens/Styles";
 const DisplayCardTransaction = (props: any) => {
     const transactionData = props.data;
 
-    //add back if transactionData.amountToken is stored as raw amount instead of ui amount
-    // const fiatDisplay = currencyToString(transactionData.amountFiat, 2);
-    // const tokenDisplay = currencyToString(transactionData.amountToken, transactionData.tokenType.decimals);
-
     return (
         <View>
             <View style={theme.standardPadding}>

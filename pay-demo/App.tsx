@@ -3,7 +3,10 @@ import { Image } from 'expo-image';
 import { Audio } from 'expo-av';
 import { useEffect, useState } from 'react';
 
-const DESTINATION_APP_TOKEN = "cK9ss8ycS0auoL_x85rl6G:APA91bGZJhSmqTmAxG5pPIlKI-73COlM-U1SHRbKpbbWWrddQQM0iq4wPhjFtIHA7Eh1DT7-HLnbUww_HWM1eHH991EjHb-wJs42SIhbPomtqUVB3IvHPNvmKILRLa5IVdU7Obdb2NrR";
+const APP_TOKEN = "cK9ss8ycS0auoL_x85rl6G:APA91bGZJhSmqTmAxG5pPIlKI-73COlM-U1SHRbKpbbWWrddQQM0iq4wPhjFtIHA7Eh1DT7-HLnbUww_HWM1eHH991EjHb-wJs42SIhbPomtqUVB3IvHPNvmKILRLa5IVdU7Obdb2NrR";
+const FIAT = "5.50";
+const LABEL = "Impala Bar";
+const LOCATION = "Washington Street, Cork"
 
 export default function App() {
   const [error, setError] = useState("");
@@ -17,7 +20,14 @@ export default function App() {
     const options = {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: `{"destination":${DESTINATION_APP_TOKEN}}`
+      body: `
+        {
+          "appToken":${APP_TOKEN},
+          "fiat":${FIAT},
+          "label":${LABEL},
+          "location":${LOCATION}
+        }
+      `
     };
     
     fetch('https://quartz-prototype-v2-server-vercel.vercel.app/api-demo', options)
