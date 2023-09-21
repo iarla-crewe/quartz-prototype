@@ -1,58 +1,61 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford } from "./utils/balance";
-import { encodeURL, createQR, findReference, validateTransfer, FindReferenceError } from '@solana/pay';
+import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford } from "./balance";
+import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
-import { getFcmMessage } from "./utils/message";
+import { getFcmMessage } from "./message";
 
 var FCM = require('fcm-node');
-var serverKey = 'AAAAU4oYkts:APA91bEtoOdO75uTHC_3PaYUjUTyaIYzjJRZtxxIGShTnx5zSksEZClUQ0lyTEu4l86yg2Y57cmXD-wlcKj2s9j1k-z0up7ZyppcJLvkG8GNRqiKtdiZkh4D3aFKtkicevsChnc_H1qc';
+//var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json'); // Relative path is from Build directory's javascript
+var serverKey = process.env.NEXT_PUBLIC_FCM
 var fcm = new FCM(serverKey);
-
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-let main = async (appToken: string) => {
+let sendMessage = async (appToken: string) => {
     let userId = 1;
-    let transactionAmount = 2
+    let transactionAmount = 0.01
     let paymentStatus: string;
 
-    //checks if the user can afford the transaction
+    console.log("[server] Checking if user can afford transaction...")
     let canAfford = await checkCanAfford(connection, transactionAmount, userId);
 
-    if (canAfford!) {
-        console.log("transaction not accepted: Insufficent funds");
+    if (!canAfford) {
+        console.log("[server] Transaction not accepted: Insufficent funds");
         return
     }
 
     //creates a payment link
-    console.log('💰 Create a payment request link \n');
+    console.log('[server] 💰 Create a payment request link \n');
     const recipient = QUARTZ_SPEND_ADDRESS
     const amount = new BigNumber(transactionAmount);
-    const reference = new Keypair().publicKey;
+    const reference = new Keypair().publicKey
     const label = 'Impala';
-    const message = `Impala - €${transactionAmount}`;
+    const message = `Washington street, Cork City, Co.Cork`;
     const splToken = USDC_MINT_ADDRESS;
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
 
     //creates the fcm message
-    let fcmMessage = getFcmMessage(url, userId, appToken);
+    let fcmMessage = await getFcmMessage(url, userId, appToken);
+
+    let sendTime = new Date();
 
     //sends notification with transaction to user to accept a payment
-    fcm.send(fcmMessage, function (err: any, response: any) {
+    await fcm.send(fcmMessage, function (err: any, response: any) {
         if (err) {
-            console.log("Something has gone wrong!" + err);
-            console.log("Respponse:! " + response);
+            console.log("[server] Something has gone wrong! " + err);
+            console.log("[server] Response: " + response);
         } else {
             // showToast("Successfully sent with response");
-            console.log("Successfully sent with response: ", response);
+            console.log("[server] Successfully sent with response: ", response);
         }
 
     });
     //update payment status
     paymentStatus = 'pending';
 
-    console.log('\n5. Find the transaction');
+    console.log('\n[server] 5. Find the transaction');
     let signatureInfo;
+
 
     const signature: string = await new Promise((resolve, reject) => {
         /**
@@ -67,15 +70,15 @@ let main = async (appToken: string) => {
          * You can implement a polling strategy to query for the transaction periodically.
          */
         const interval = setInterval(async () => {
-            console.count('Checking for transaction...');
+            //console.count('Checking for transaction...');
             try {
                 signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
-                console.log('\n 🖌  Signature found: ', signatureInfo.signature);
+                console.log('\n[server] 🖌  Signature found: ', signatureInfo.signature);
                 clearInterval(interval);
                 resolve(signatureInfo.signature);
             } catch (error: any) {
                 if (!(error instanceof FindReferenceError)) {
-                    console.error(error);
+                    console.error("[server]" + error);
                     clearInterval(interval);
                     reject(error);
                 }
@@ -95,28 +98,26 @@ let main = async (appToken: string) => {
      * `validateTransactionSignature` allows you to validate that the transaction signature
      * found matches the transaction that you expected.
      */
-    console.log('\n6. 🔗 Validate transaction \n');
+    console.log('\n[server] 6. 🔗 Validate transaction \n');
 
     try {
-        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount });
+        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount, splToken });
 
         // Update payment status
         paymentStatus = 'validated';
-        console.log('✅ Payment validated');
-        console.log('💳 Accept debit card transaction');
+        console.log('[server] ✅ Payment validated');
+        console.log('[server] 💳 Accept debit card transaction');
     } catch (error) {
-        console.error('❌ Payment failed', error);
+        console.error('[server] ❌ Payment failed', error);
     }
-
 }
 
 export async function runDemo(appToken: string) {
-    main(appToken).then(
+    sendMessage(appToken).then(
         () => process.exit(),
         (err) => {
-            console.error(err);
+            console.error("[server] " + err);
             process.exit(-1);
         }
     );
 }
-

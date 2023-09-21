@@ -1,3 +1,5 @@
+import { TransferRequestURL, parseURL } from "@solana/pay";
+
 let getAppToken = async (userId: number) => {
     //TODO
     //Get the app token for the corresponding userId from our database
@@ -7,6 +9,8 @@ let getAppToken = async (userId: number) => {
 export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: string) => {
     //get the users application token from database
     // let appToken = await getAppToken(userId);
+    
+    const stringUrl = stringifyURL(solanaPayUrl);
 
     let fcmMessage = {
         to: appToken,
@@ -14,16 +18,31 @@ export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: s
             title: 'Payment Authentication Needed',
             body: 'Please accept or decline this transaction',
         },
-    
         data: {
-            screenToOpen: 'Spend',
+            navigationFlow: 'Send',
+            screenToOpen: 'SpendScreen',
             title: 'Payment Authentication',
-            body: JSON.stringify({
-                name: 'SolanaPay url',
-                url: solanaPayUrl
-            }),
+            urlObj: stringUrl
         }
     };
 
     return fcmMessage;
+}
+
+function stringifyURL(url: URL) {
+    let object = {
+        href: url.href,
+        origin: url.origin,
+        protocol: url.protocol,
+        username: url.username,
+        password: url.password,
+        host: url.host,
+        hostname: url.hostname,
+        port: url.port,
+        pathname: url.pathname,
+        search: url.search,
+        searchParams: Object.fromEntries(url.searchParams),
+        hash: url.hash,
+    };
+    return JSON.stringify(object);
 }
