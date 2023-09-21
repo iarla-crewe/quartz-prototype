@@ -28,7 +28,7 @@ export default function SpendAcceptedScreen( { route, navigation } : { route: an
                 return;
             }
             if (transactionData.tokenType === SOL) {
-                tx = await spendSol(program, wallet.publicKey, transactionData.amountToken!);
+                tx = await spendSol(connection, program, wallet, transactionData.amountToken!, transactionData.reference!);
             } else if (transactionData.tokenType === USDC) {
                 tx = await spendUsdc(connection, program, wallet, transactionData.amountToken!, transactionData.reference!);
             } else {

@@ -11,16 +11,25 @@ import { USDC_MINT_ADDRESS } from "../../../program/program_utils";
 const url = require('url');
  
 export default function SpendScreen( { route , navigation } : {route: any, navigation: any} ) {
-    const { solanaPayUrl, sentTime, timeLimit } : {solanaPayUrl: string, sentTime: number, timeLimit: string} = route.params;
+    const { solanaPayUrl, sentTime, timeLimit, amountFiat } : {solanaPayUrl: string, sentTime: number, timeLimit: string, amountFiat: string} = route.params;
     const { recipient, amount, splToken, reference, label, message } = customParseTransferRequestURL(JSON.parse(solanaPayUrl));
 
-    try { Number(timeLimit) } catch {
-        console.log("Error: Invalid time limit");
+    if (isNaN(Number(timeLimit))) {
+        console.log(`Error: Time limit ${timeLimit} is not a number`);
         return;
     }
 
+    if (isNaN(Number(amountFiat))) {
+        console.log(`Error: Fiat amount ${amountFiat} is not a number`);
+        return;
+    }
+
+    // TODO - Remove hardcoding of USDC/SOL to EUR prices
+    const usdcPrice = 0.94;
+    const solPrice = 18.83;
+
     let tokenType;
-    if (splToken == USDC_MINT_ADDRESS) tokenType = USDC;
+    if (splToken instanceof PublicKey && splToken.toBase58() === USDC_MINT_ADDRESS.toBase58()) tokenType = USDC;
     else tokenType = SOL;
 
     // Get remaining time
@@ -28,11 +37,8 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
     let timeDifference = Number(currentTime) - Number(sentTime);
     const remainingTime = Math.floor((Number(timeLimit) - timeDifference) / 1000) * 1000;
 
-    // TODO - Remove hardcoding of USDC to EUR price
-    const usdcPrice = 0.94;
-
     const transactionData = new CardTransactionData({
-        amountFiat: amount!.toNumber() * usdcPrice,
+        amountFiat: Number(amountFiat),
         fiatCurrency: 'EUR',
         amountToken: amount!.toNumber(), //This is the number ui amount
         tokenType: tokenType,

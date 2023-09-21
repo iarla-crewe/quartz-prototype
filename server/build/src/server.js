@@ -30,6 +30,7 @@ function sendMessage(appToken, fiat, label, location) {
         let paymentStatus;
         let cardTokenMint = yield (0, balance_1.getCardTokenMint)(userId);
         const amountToken = yield (0, balance_1.getRequiredTokenAmount)(cardTokenMint, fiat);
+        console.log("[server] Required token amount: " + amountToken);
         console.log("[server] Checking if user can afford transaction...");
         let canAfford = yield (0, balance_1.checkCanAfford)(connection, cardTokenMint, amountToken, userId);
         if (!canAfford) {
@@ -40,20 +41,18 @@ function sendMessage(appToken, fiat, label, location) {
         console.log("[server] User has sufficient funds");
         console.log('[server] Creating payment request link...');
         const recipient = balance_1.QUARTZ_SPEND_ADDRESS;
-        const amountFiat = new bignumber_js_1.default(fiat);
         const reference = new web3_js_1.Keypair().publicKey;
-        const splToken = balance_1.USDC_MINT_ADDRESS;
         const url = (0, pay_1.encodeURL)({
             recipient,
-            amount: amountFiat,
-            splToken,
+            amount: (0, bignumber_js_1.default)(amountToken),
+            splToken: cardTokenMint,
             reference,
             label,
             message: location
         });
+        console.log('[server] Reference account: ' + reference);
         // Create FCM message
-        let fcmMessage = yield (0, message_1.getFcmMessage)(url, userId, appToken, __1.RESPONSE_TIME_LIMIT);
-        let sendTime = new Date();
+        let fcmMessage = yield (0, message_1.getFcmMessage)(url, fiat, userId, appToken, __1.RESPONSE_TIME_LIMIT);
         // Send transaction notification to user for approval
         yield fcm.send(fcmMessage, function (err, response) {
             if (err) {
@@ -63,7 +62,6 @@ function sendMessage(appToken, fiat, label, location) {
             }
             else
                 console.log("[server] App notification successfully sent");
-            console.log("[server] Notification response: " + response);
         });
         console.log('[server] Awaiting transaction confirmation...');
         paymentStatus = 'pending';
@@ -82,9 +80,7 @@ function sendMessage(appToken, fiat, label, location) {
                 if (waitTime % 1000 == 0)
                     console.log(`[server] ${waitTime / 1000}s`);
                 try {
-                    console.log("foo1");
                     const signatureInfo = yield (0, pay_1.findReference)(connection, reference, { finality: 'confirmed' });
-                    console.log("foo2");
                     clearInterval(interval);
                     resolve(signatureInfo.signature);
                 }
@@ -114,7 +110,7 @@ function sendMessage(appToken, fiat, label, location) {
         }
         paymentStatus = 'confirmed';
         try {
-            yield (0, pay_1.validateTransfer)(connection, signature, { recipient: balance_1.QUARTZ_SPEND_ADDRESS, amount: (0, bignumber_js_1.default)(amountToken), splToken });
+            yield (0, pay_1.validateTransfer)(connection, signature, { recipient: balance_1.QUARTZ_SPEND_ADDRESS, amount: (0, bignumber_js_1.default)(amountToken), splToken: cardTokenMint });
             // Update payment status
             paymentStatus = 'validated';
             console.log('[server] Payment validated');

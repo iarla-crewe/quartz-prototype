@@ -19,6 +19,7 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
 
     let cardTokenMint = await getCardTokenMint(userId);
     const amountToken = await getRequiredTokenAmount(cardTokenMint, fiat);
+    console.log("[server] Required token amount: " + amountToken);
 
     console.log("[server] Checking if user can afford transaction...");
     let canAfford = await checkCanAfford(connection, cardTokenMint, amountToken, userId);
@@ -32,22 +33,19 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
     console.log("[server] User has sufficient funds");
     console.log('[server] Creating payment request link...');
     const recipient = QUARTZ_SPEND_ADDRESS
-    const amountFiat = new BigNumber(fiat);
     const reference = new Keypair().publicKey;
-    const splToken = USDC_MINT_ADDRESS;
     const url = encodeURL({ 
         recipient, 
-        amount: amountFiat, 
-        splToken, 
+        amount: BigNumber(amountToken), 
+        splToken: cardTokenMint, 
         reference, 
         label, 
         message: location 
     });
+    console.log('[server] Reference account: ' + reference);
 
     // Create FCM message
-    let fcmMessage = await getFcmMessage(url, userId, appToken, RESPONSE_TIME_LIMIT);
-
-    let sendTime = new Date();
+    let fcmMessage = await getFcmMessage(url, fiat, userId, appToken, RESPONSE_TIME_LIMIT);
 
     // Send transaction notification to user for approval
     await fcm.send(fcmMessage, function (err: any, response: any) {
@@ -57,8 +55,6 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
             return;
         }
         else console.log("[server] App notification successfully sent");
-
-        console.log("[server] Notification response: " + response)
     });
 
     console.log('[server] Awaiting transaction confirmation...');
@@ -82,7 +78,6 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
 
             try {
                 const signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
-                console.log("[server] Found reference.");
 
                 clearInterval(interval);
                 resolve(signatureInfo.signature);
@@ -111,7 +106,7 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
     paymentStatus = 'confirmed';
 
     try {
-        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount: BigNumber(amountToken), splToken });
+        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount: BigNumber(amountToken), splToken: cardTokenMint });
 
         // Update payment status
         paymentStatus = 'validated';

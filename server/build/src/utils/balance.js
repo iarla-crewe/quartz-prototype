@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkCanAfford = exports.getSolanaPrice = exports.getVaultUsdcBalance = exports.getVaultAtaBalance = exports.getVaultBalance = exports.getVaultAta = exports.getVault = exports.getWalletAddress = exports.getRequiredTokenAmount = exports.getCardTokenMint = exports.USDC_MINT_ADDRESS = exports.QUARTZ_SPEND_ADDRESS = exports.RPC_ENDPOINT = void 0;
+exports.checkCanAfford = exports.getUsdcPrice = exports.getSolPrice = exports.getVaultUsdcBalance = exports.getVaultAtaBalance = exports.getVaultBalance = exports.getVaultAta = exports.getVault = exports.getWalletAddress = exports.getRequiredTokenAmount = exports.getCardTokenMint = exports.USDC_MINT_ADDRESS = exports.QUARTZ_SPEND_ADDRESS = exports.RPC_ENDPOINT = void 0;
 const web3_js_1 = require("@solana/web3.js");
 const bytes_1 = require("@coral-xyz/anchor/dist/cjs/utils/bytes");
 const VAULT_SEED = "vault";
@@ -23,14 +23,19 @@ const DEVNET_USDC_DECIMALS = 6;
 function getCardTokenMint(userId) {
     return __awaiter(this, void 0, void 0, function* () {
         // TODO - Remove hardcoding
-        return exports.USDC_MINT_ADDRESS.toBase58();
+        // return USDC_MINT_ADDRESS;             // USDC hardcoded
+        return QUARTZ_PROGRAM_ID; // SOL hardcoded - anything other than USDC will result in SOL
     });
 }
 exports.getCardTokenMint = getCardTokenMint;
 function getRequiredTokenAmount(tokenMint, amountFiat) {
     return __awaiter(this, void 0, void 0, function* () {
-        // TODO - Implement
-        return 0;
+        let price;
+        if (tokenMint.toBase58() === exports.USDC_MINT_ADDRESS.toBase58())
+            price = yield (0, exports.getUsdcPrice)();
+        else
+            price = yield (0, exports.getSolPrice)();
+        return amountFiat / price;
     });
 }
 exports.getRequiredTokenAmount = getRequiredTokenAmount;
@@ -88,28 +93,32 @@ function getVaultUsdcBalance(connection, userId) {
 }
 exports.getVaultUsdcBalance = getVaultUsdcBalance;
 //coin gecko
-function getSolanaPrice() {
-    return __awaiter(this, void 0, void 0, function* () {
-        const response = yield fetch(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`, {
-            method: "GET",
-        });
-        const data = yield response.json();
-        return data.solana.usd;
+const getSolPrice = () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield fetch(`https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur`, {
+        method: "GET",
     });
-}
-exports.getSolanaPrice = getSolanaPrice;
-;
-function checkCanAfford(connection, tokenMint, amount, userId) {
+    const data = yield response.json();
+    return data.solana.eur;
+});
+exports.getSolPrice = getSolPrice;
+const getUsdcPrice = () => __awaiter(void 0, void 0, void 0, function* () {
+    const response = yield fetch(`https://api.coingecko.com/api/v3/simple/price?ids=usd-coin&vs_currencies=eur`, {
+        method: "GET",
+    });
+    const data = yield response.json();
+    return data["usd-coin"].eur;
+});
+exports.getUsdcPrice = getUsdcPrice;
+function checkCanAfford(connection, tokenMint, amountToken, userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        let userBalance;
-        if (tokenMint === 'native_sol') {
-            userBalance = yield getVaultBalance(connection, userId);
-            userBalance = (yield getSolanaPrice()) * userBalance;
+        let balance;
+        if (tokenMint === exports.USDC_MINT_ADDRESS) {
+            balance = yield getVaultUsdcBalance(connection, userId);
         }
-        else { // USDC
-            userBalance = yield getVaultUsdcBalance(connection, userId);
+        else { // SOL
+            balance = yield getVaultBalance(connection, userId);
         }
-        return (userBalance > amount);
+        return (balance > amountToken);
     });
 }
 exports.checkCanAfford = checkCanAfford;

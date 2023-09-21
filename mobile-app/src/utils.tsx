@@ -43,7 +43,8 @@ export const notificationListeners = async () => {
       params: {
         solanaPayUrl: remoteMessage.data!.urlObj, 
         sentTime: remoteMessage.sentTime,
-        timeLimit: remoteMessage.data!.timeLimit
+        timeLimit: remoteMessage.data!.timeLimit,
+        amountFiat: remoteMessage.data!.amountFiat
       } 
     });
   });
@@ -56,7 +57,8 @@ export const notificationListeners = async () => {
       params: {
         solanaPayUrl: remoteMessage.data!.urlObj, 
         sentTime: remoteMessage.sentTime,
-        timeLimit: remoteMessage.data!.timeLimit 
+        timeLimit: remoteMessage.data!.timeLimit,
+        amountFiat: remoteMessage.data!.amountFiat
       } 
     });
   });
@@ -72,7 +74,8 @@ export const notificationListeners = async () => {
           params: {
             solanaPayUrl: remoteMessage.data!.urlObj, 
             sentTime: remoteMessage.sentTime,
-            timeLimit: remoteMessage.data!.timeLimit 
+            timeLimit: remoteMessage.data!.timeLimit,
+            amountFiat: remoteMessage.data!.amountFiat 
           } 
         });
       }

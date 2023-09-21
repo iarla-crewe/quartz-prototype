@@ -12,6 +12,9 @@ export const theme = StyleSheet.create({
         height: "100%",
         backgroundColor: themeColor.primary
     },
+    halfPadding: {
+        padding: 8
+    },
     standardPadding: {
         padding: 16
     },

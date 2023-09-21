@@ -95,21 +95,41 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
     }
 }
 
-const spendSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey, lamports: number) => {
-    const vault = getVault(owner);
+const spendSol = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, lamports: number, reference: PublicKey[] | undefined) => {
+    const vault = getVault(owner.publicKey);
 
     try {
-        const tx = await program.methods
-            .spendLamports(new BN(lamports))
+        const instruction = await program.methods
+            .spendSpl(new BN(lamports))
             .accounts({
                 vault: vault,
-                receiver: QUARTZ_SPEND_ADDRESS
+                receiver: QUARTZ_SPEND_ADDRESS,
             })
-            .rpc()  
-        console.log("Transaction Signature: " + tx);
-        return tx;
+            .instruction()
+        console.log("Transaction Signature: " + instruction);
+
+    // If reference accounts are provided, add them to the transfer instruction
+    if (reference) {
+        if (!Array.isArray(reference)) {
+            reference = [reference];
+        }
+
+        for (const pubkey of reference) {
+            instruction.keys.push({ pubkey, isWritable: false, isSigner: false });
+        }
+    }
+
+    const tx = new Transaction().add(instruction);
+
+    const signature = await sendAndConfirmTransaction(
+        connection,
+        tx,
+        [owner.payer]
+    )
+    console.log("Transaction Signature: " + signature);
+    return signature;
     } catch (err: unknown) {
-        return handleError(err);
+        return handleError(err, "instruction error: ");
     }
 }
 

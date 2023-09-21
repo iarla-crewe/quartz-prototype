@@ -15,8 +15,14 @@ const DisplayCardTransaction = (props: any) => {
         <View>
             <View style={theme.standardPadding}>
                 <Text style={theme.h3}>
-                    {transactionData.amountToken} {transactionData.tokenType.name} {'('}{transactionData.amountFiat} {transactionData.fiatCurrency}{')'}
+                    {transactionData.amountToken} {transactionData.tokenType.name}
                 </Text>
+                <Text style={theme.h3}>
+                    {'('}{transactionData.amountFiat} {transactionData.fiatCurrency}{')'}
+                </Text>
+            </View>
+
+            <View style={theme.halfPadding}>
                 <Text style={theme.p}>
                     {transactionData.vendor}, {transactionData.location}
                 </Text>

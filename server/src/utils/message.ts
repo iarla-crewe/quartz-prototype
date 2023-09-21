@@ -1,15 +1,7 @@
-import { TransferRequestURL, parseURL } from "@solana/pay";
-
-let getAppToken = async (userId: number) => {
-    // TODO - Remove hardcoding
-    return 'flJ2SP6tTayIEyF6tupNjh:APA91bGvO9e_QsWrxt5YQw6xNwHZEENioSnRJWxcNn-fQnZ2STUdM1zZvu6HfcPjjBPUtK5fbgZ0__ZAz_ZU1P2kz2fIASR6JaiwFMnOsCAT-uOhfNHdCk9p1pGFRW2tGGmh31hCpU6P'
-}
-
-export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: string, timeLimit: number) => {
-    //get the users application token from database
-    // let appToken = await getAppToken(userId);
+export let getFcmMessage = async (solanaPayUrl: URL, amountFiat: number, userId: number, appToken: string, timeLimit: number) => {
     
     const stringUrl = stringifyURL(solanaPayUrl);
+    const fiatString = Number(amountFiat).toFixed(2);
 
     let fcmMessage = {
         to: appToken,
@@ -22,6 +14,7 @@ export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: s
             screenToOpen: 'SpendScreen',
             title: 'Payment Authentication',
             timeLimit: timeLimit.toString(),
+            amountFiat: fiatString,
             urlObj: stringUrl
         }
     };

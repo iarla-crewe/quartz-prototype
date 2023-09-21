@@ -23,12 +23,17 @@ const DEVNET_USDC_DECIMALS = 6;
 
 export async function getCardTokenMint(userId: number) {
     // TODO - Remove hardcoding
-    return USDC_MINT_ADDRESS.toBase58();
+
+    // return USDC_MINT_ADDRESS;             // USDC hardcoded
+    return QUARTZ_PROGRAM_ID                 // SOL hardcoded - anything other than USDC will result in SOL
 }
 
-export async function getRequiredTokenAmount(tokenMint: string, amountFiat: number) {
-    // TODO - Implement
-    return 0;
+export async function getRequiredTokenAmount(tokenMint: PublicKey, amountFiat: number) {
+    let price;
+    if (tokenMint.toBase58() === USDC_MINT_ADDRESS.toBase58()) price = await getUsdcPrice();
+    else price = await getSolPrice();
+
+    return amountFiat / price;
 }
 
 export async function getWalletAddress(userId:number) {
@@ -85,28 +90,38 @@ export async function getVaultUsdcBalance(connection: Connection, userId: number
 
 //coin gecko
 
-export async function getSolanaPrice() {
+export const getSolPrice = async () => {
     const response = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`,
+      `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur`,
       {
         method: "GET",
       }
     );
   
     const data = await response.json();
-    return data.solana.usd;
+    return data.solana.eur;
+  };
+  
+  export const getUsdcPrice = async () => {
+    const response = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=usd-coin&vs_currencies=eur`,
+      {
+        method: "GET",
+      }
+    );
+  
+    const data = await response.json();
+    return data["usd-coin"].eur;
   };
 
 
-export async function checkCanAfford(connection: Connection, tokenMint: string, amount: number, userId: number) {
-    let userBalance;
-
-    if (tokenMint === 'native_sol') {
-        userBalance = await getVaultBalance(connection, userId)
-        userBalance = await getSolanaPrice() * userBalance;
-    } else { // USDC
-        userBalance = await getVaultUsdcBalance(connection, userId)
+export async function checkCanAfford(connection: Connection, tokenMint: PublicKey, amountToken: number, userId: number) {
+    let balance;
+    if (tokenMint === USDC_MINT_ADDRESS) {
+        balance = await getVaultUsdcBalance(connection, userId)
+    } else { // SOL
+        balance = await getVaultBalance(connection, userId)
     }
 
-    return (userBalance > amount);
+    return (balance > amountToken);
 }
