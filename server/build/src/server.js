@@ -22,73 +22,103 @@ var FCM = require('fcm-node');
 var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json'); // Relative path is from Build directory's javascript
 var fcm = new FCM(serverKey);
 let connection = new web3_js_1.Connection((0, web3_js_1.clusterApiUrl)('devnet'), 'confirmed');
-let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
+let sendMessage = (appToken, fiat, label, location) => __awaiter(void 0, void 0, void 0, function* () {
+    console.log(`\n[server] Received card authentication request for ${appToken.slice(0, 5)}...`);
     let userId = 1;
-    let transactionAmount = 2;
     let paymentStatus;
+    let cardTokenMint = yield (0, balance_1.getCardTokenMint)(userId);
+    const amountToken = yield (0, balance_1.getRequiredTokenAmount)(cardTokenMint, fiat);
     console.log("[server] Checking if user can afford transaction...");
-    let canAfford = yield (0, balance_1.checkCanAfford)(connection, transactionAmount, userId);
+    let canAfford = yield (0, balance_1.checkCanAfford)(connection, cardTokenMint, amountToken, userId);
     if (!canAfford) {
-        console.log("[server] Transaction not accepted: Insufficent funds");
+        console.log('[server] Insufficient funds for transaction');
+        console.log('[server] ❌ Decline debit card transaction');
         return;
     }
-    //creates a payment link
-    console.log('[server] 💰 Create a payment request link \n');
+    console.log("[server] User has sufficient funds");
+    console.log('[server] Creating payment request link...');
     const recipient = balance_1.QUARTZ_SPEND_ADDRESS;
-    const amount = new bignumber_js_1.default(transactionAmount);
+    const amountFiat = new bignumber_js_1.default(fiat);
     const reference = new web3_js_1.Keypair().publicKey;
-    const label = 'Impala';
-    const message = `Washington Street, Cork City, Co.Cork`;
     const splToken = balance_1.USDC_MINT_ADDRESS;
-    const url = (0, pay_1.encodeURL)({ recipient, amount, splToken, reference, label, message });
-    //creates the fcm message
+    const url = (0, pay_1.encodeURL)({
+        recipient,
+        amount: amountFiat,
+        splToken,
+        reference,
+        label,
+        message: location
+    });
+    // Create FCM message
     let fcmMessage = yield (0, message_1.getFcmMessage)(url, userId, appToken);
     let sendTime = new Date();
-    //sends notification with transaction to user to accept a payment
+    // Send transaction notification to user for approval
     yield fcm.send(fcmMessage, function (err, response) {
         if (err) {
-            console.log("[server] Something has gone wrong! " + err);
-            console.log("[server] Response: " + response);
+            console.error("[server] Failed to send app notification: " + err);
+            console.error('[server] ❌ Decline debit card transaction');
+            return;
         }
-        else {
-            // showToast("Successfully sent with response");
-            console.log("[server] Successfully sent with response: ", response);
-        }
+        else
+            console.log("[server] App notification successfully sent");
+        console.log("[server] Notification response: " + response);
     });
-    //update payment status
+    console.log('[server] Awaiting transaction confirmation...');
     paymentStatus = 'pending';
-    console.log('\n[server] 5. Find the transaction');
-    let signatureInfo;
-    const signature = yield new Promise((resolve, reject) => {
-        /**
-         * Retry until we find the transaction
-         *
-         * If a transaction with the given reference can't be found, the `findTransactionSignature`
-         * function will throw an error. There are a few reasons why this could be a false negative:
-         *
-         * - Transaction is not yet confirmed
-         * - Customer is yet to approve/complete the transaction
-         *
-         * You can implement a polling strategy to query for the transaction periodically.
-         */
+    const timeLimit = 15000;
+    const refreshInterval = 250;
+    let waitTime = 0 - refreshInterval;
+    let signature = "";
+    /**
+     * Retry until we find the transaction
+     *
+     * If a transaction with the given reference can't be found, the `findTransactionSignature`
+     * function will throw an error. There are a few reasons why this could be a false negative:
+     *
+     * - Transaction is not yet confirmed
+     * - Customer is yet to approve/complete the transaction
+     *
+     * You can implement a polling strategy to query for the transaction periodically.
+     */
+    yield new Promise((resolve, reject) => {
         const interval = setInterval(() => __awaiter(void 0, void 0, void 0, function* () {
-            //console.count('Checking for transaction...');
+            waitTime += refreshInterval;
+            if (waitTime > timeLimit) {
+                paymentStatus = 'timeout';
+                clearInterval(interval);
+                reject();
+            }
+            if (waitTime % 1000 == 0)
+                console.log(`[server] ${waitTime / 1000}s`);
             try {
-                signatureInfo = yield (0, pay_1.findReference)(connection, reference, { finality: 'confirmed' });
-                console.log('\n[server] 🖌  Signature found: ', signatureInfo.signature);
+                const signatureInfo = yield (0, pay_1.findReference)(connection, reference, { finality: 'confirmed' });
                 clearInterval(interval);
                 resolve(signatureInfo.signature);
             }
             catch (error) {
                 if (!(error instanceof pay_1.FindReferenceError)) {
-                    console.error("[server]" + error);
                     clearInterval(interval);
                     reject(error);
                 }
             }
-        }), 250);
+        }), refreshInterval);
+    }).then((sig) => {
+        if (typeof sig === 'string') {
+            signature = sig;
+            console.log('\n[server] Signature found: ', signature);
+        }
+        else
+            console.error("[server] Error: Invalid signature");
+    }).catch((error) => {
+        if (paymentStatus === "timeout")
+            console.log("[server] Time limit exceeded");
+        else
+            console.error("[server] Error: findReference() failed: " + error);
     });
-    // Update payment status
+    if (signature === "") {
+        console.log('[server] ❌ Decline debit card transaction');
+        return;
+    }
     paymentStatus = 'confirmed';
     /**
      * Validate transaction
@@ -99,21 +129,21 @@ let sendMessage = (appToken) => __awaiter(void 0, void 0, void 0, function* () {
      * `validateTransactionSignature` allows you to validate that the transaction signature
      * found matches the transaction that you expected.
      */
-    console.log('\n[server] 6. 🔗 Validate transaction \n');
     try {
-        yield (0, pay_1.validateTransfer)(connection, signature, { recipient: balance_1.QUARTZ_SPEND_ADDRESS, amount, splToken });
+        yield (0, pay_1.validateTransfer)(connection, signature, { recipient: balance_1.QUARTZ_SPEND_ADDRESS, amount: (0, bignumber_js_1.default)(amountToken), splToken });
         // Update payment status
         paymentStatus = 'validated';
-        console.log('[server] ✅ Payment validated');
-        console.log('[server] 💳 Accept debit card transaction');
+        console.log('[server] Payment validated');
+        console.log('[server] ✅ Accept debit card transaction');
     }
     catch (error) {
-        console.error('[server] ❌ Payment failed', error);
+        console.error('[server] Payment failed: ', error);
+        console.error('[server] ❌ Decline debit card transaction');
     }
 });
-function runDemo(appToken) {
+function runDemo(appToken, fiat, label, location) {
     return __awaiter(this, void 0, void 0, function* () {
-        sendMessage(appToken).then(() => process.exit(), (err) => {
+        sendMessage(appToken, fiat, label, location).then(() => process.exit(), (err) => {
             console.error("[server] " + err);
             process.exit(-1);
         });

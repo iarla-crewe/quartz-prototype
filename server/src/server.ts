@@ -1,5 +1,5 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford } from "./utils/balance";
+import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getRequiredTokenAmount } from "./utils/balance";
 import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./utils/message";
@@ -10,16 +10,17 @@ var fcm = new FCM(serverKey);
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-let sendMessage = async (appToken: string, fiat: number, label: string, location: string) => {
-    console.log("[server] Received card authentication request");
+export async function sendMessage(timeLimit: number, appToken: string, fiat: number, label: string, location: string) {
+    console.log(`\n[server] Received card authentication request for ${appToken.slice(0, 5)}...`);
 
     let userId = 1;
     let paymentStatus: string;
 
-    const amountToken = 0; // TODO - Find required amount of token
+    let cardTokenMint = await getCardTokenMint(userId);
+    const amountToken = await getRequiredTokenAmount(cardTokenMint, fiat);
 
     console.log("[server] Checking if user can afford transaction...");
-    let canAfford = await checkCanAfford(connection, amountToken, userId);
+    let canAfford = await checkCanAfford(connection, cardTokenMint, amountToken, userId);
 
     if (!canAfford) {
         console.log('[server] Insufficient funds for transaction');
@@ -43,7 +44,7 @@ let sendMessage = async (appToken: string, fiat: number, label: string, location
     });
 
     // Create FCM message
-    let fcmMessage = await getFcmMessage(url, userId, appToken);
+    let fcmMessage = await getFcmMessage(url, userId, appToken, timeLimit);
 
     let sendTime = new Date();
 
@@ -59,10 +60,9 @@ let sendMessage = async (appToken: string, fiat: number, label: string, location
         console.log("[server] Notification response: " + response)
     });
 
-    console.log('\n[server] Awaiting transaction confirmation...');
+    console.log('[server] Awaiting transaction confirmation...');
     paymentStatus = 'pending';
 
-    const timeLimit = 15000;
     const refreshInterval = 250;
     let waitTime = 0 - refreshInterval;
     let signature = "";
@@ -78,7 +78,7 @@ let sendMessage = async (appToken: string, fiat: number, label: string, location
      *
      * You can implement a polling strategy to query for the transaction periodically.
      */
-    let awaitSignature = new Promise((resolve, reject) => {
+    await new Promise((resolve, reject) => {
         const interval = setInterval(async () => {
             waitTime += refreshInterval;
 
@@ -96,7 +96,6 @@ let sendMessage = async (appToken: string, fiat: number, label: string, location
                 resolve(signatureInfo.signature);
             } catch (error: any) {
                 if (!(error instanceof FindReferenceError)) {
-                    console.error("[server]" + error);
                     clearInterval(interval);
                     reject(error);
                 }
@@ -106,15 +105,14 @@ let sendMessage = async (appToken: string, fiat: number, label: string, location
         if (typeof sig === 'string') {
             signature = sig;
             console.log('\n[server] Signature found: ', signature);
-        }
+        } else console.error("[server] Error: Invalid signature");
     }).catch((error) => {
         if (paymentStatus === "timeout") console.log("[server] Time limit exceeded");
         else console.error("[server] Error: findReference() failed: " + error);
     });
 
     if (signature === "") {
-        console.error("[server] Error: Invalid signature");
-        console.error('[server] ❌ Decline debit card transaction');
+        console.log('[server] ❌ Decline debit card transaction');
         return;
     }
 
@@ -140,14 +138,4 @@ let sendMessage = async (appToken: string, fiat: number, label: string, location
         console.error('[server] Payment failed: ', error);
         console.error('[server] ❌ Decline debit card transaction');
     }
-}
-
-export async function runDemo(appToken: string, fiat: number, label: string, location: string) {
-    sendMessage(appToken, fiat, label, location).then(
-        () => process.exit(),
-        (err) => {
-            console.error("[server] " + err);
-            process.exit(-1);
-        }
-    );
 }

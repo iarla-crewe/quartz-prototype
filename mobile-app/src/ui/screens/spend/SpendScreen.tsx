@@ -28,7 +28,7 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
     let timeDifference = Number(currentTime) - Number(sentTime);
     const remainingTime = Math.floor((Number(timeLimit) - timeDifference) / 1000) * 1000;
 
-    // TODO - Note: USDC to EUR price is hardcoded for now
+    // TODO - Remove hardcoding of USDC to EUR price
     const usdcPrice = 0.94;
 
     const transactionData = new CardTransactionData({

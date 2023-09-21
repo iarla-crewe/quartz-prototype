@@ -22,16 +22,17 @@ export const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEE
 const DEVNET_USDC_DECIMALS = 6;
 
 export async function getCardTokenMint(userId: number) {
-    //TODO 
-    //use the userId to find the users token prefrence for their card
-    //returns the token mint string or "native_sol"
+    // TODO - Remove hardcoding
     return USDC_MINT_ADDRESS.toBase58();
 }
 
+export async function getRequiredTokenAmount(tokenMint: string, amountFiat: number) {
+    // TODO - Implement
+    return 0;
+}
+
 export async function getWalletAddress(userId:number) {
-    //TODO
-    //use the userId to find the users wallet address stored in our database
-    //return vaultAddress as a string
+    // TODO - Remove hardcoding
     return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";
     
 }
@@ -97,21 +98,15 @@ export async function getSolanaPrice() {
   };
 
 
-export async function checkCanAfford(connection: Connection, amount: number, userId: number) {
+export async function checkCanAfford(connection: Connection, tokenMint: string, amount: number, userId: number) {
     let userBalance;
 
-    let cardTokenMint = await getCardTokenMint(userId);
-    if (cardTokenMint === 'native_sol') {
+    if (tokenMint === 'native_sol') {
         userBalance = await getVaultBalance(connection, userId)
         userBalance = await getSolanaPrice() * userBalance;
     } else { // USDC
         userBalance = await getVaultUsdcBalance(connection, userId)
     }
 
-    if (userBalance > amount) {
-        return true;
-    }
-    else {
-        return false
-    }
+    return (userBalance > amount);
 }

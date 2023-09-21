@@ -11,8 +11,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getFcmMessage = void 0;
 let getAppToken = (userId) => __awaiter(void 0, void 0, void 0, function* () {
-    //TODO
-    //Get the app token for the corresponding userId from our database
+    // TODO - Remove hardcoding
     return 'flJ2SP6tTayIEyF6tupNjh:APA91bGvO9e_QsWrxt5YQw6xNwHZEENioSnRJWxcNn-fQnZ2STUdM1zZvu6HfcPjjBPUtK5fbgZ0__ZAz_ZU1P2kz2fIASR6JaiwFMnOsCAT-uOhfNHdCk9p1pGFRW2tGGmh31hCpU6P';
 });
 const RESPONSE_TIME_LIMIT = 15000;

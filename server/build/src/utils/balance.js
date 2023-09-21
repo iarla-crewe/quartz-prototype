@@ -9,7 +9,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkCanAfford = exports.getSolanaPrice = exports.getVaultUsdcBalance = exports.getVaultAtaBalance = exports.getVaultBalance = exports.getVaultAta = exports.getVault = exports.getWalletAddress = exports.getCardTokenMint = exports.USDC_MINT_ADDRESS = exports.QUARTZ_SPEND_ADDRESS = exports.RPC_ENDPOINT = void 0;
+exports.checkCanAfford = exports.getSolanaPrice = exports.getVaultUsdcBalance = exports.getVaultAtaBalance = exports.getVaultBalance = exports.getVaultAta = exports.getVault = exports.getWalletAddress = exports.getRequiredTokenAmount = exports.getCardTokenMint = exports.USDC_MINT_ADDRESS = exports.QUARTZ_SPEND_ADDRESS = exports.RPC_ENDPOINT = void 0;
 const web3_js_1 = require("@solana/web3.js");
 const bytes_1 = require("@coral-xyz/anchor/dist/cjs/utils/bytes");
 const VAULT_SEED = "vault";
@@ -22,18 +22,21 @@ exports.USDC_MINT_ADDRESS = new web3_js_1.PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3G
 const DEVNET_USDC_DECIMALS = 6;
 function getCardTokenMint(userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        //TODO 
-        //use the userId to find the users token prefrence for their card
-        //returns the token mint string or "native_sol"
+        // TODO - Remove hardcoding
         return exports.USDC_MINT_ADDRESS.toBase58();
     });
 }
 exports.getCardTokenMint = getCardTokenMint;
+function getRequiredTokenAmount(tokenMint, amountFiat) {
+    return __awaiter(this, void 0, void 0, function* () {
+        // TODO - Implement
+        return 0;
+    });
+}
+exports.getRequiredTokenAmount = getRequiredTokenAmount;
 function getWalletAddress(userId) {
     return __awaiter(this, void 0, void 0, function* () {
-        //TODO
-        //use the userId to find the users wallet address stored in our database
-        //return vaultAddress as a string
+        // TODO - Remove hardcoding
         return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";
     });
 }
@@ -96,27 +99,17 @@ function getSolanaPrice() {
 }
 exports.getSolanaPrice = getSolanaPrice;
 ;
-function checkCanAfford(connection, amount, userId) {
+function checkCanAfford(connection, tokenMint, amount, userId) {
     return __awaiter(this, void 0, void 0, function* () {
         let userBalance;
-        console.log("[server] Getting mint...");
-        let cardTokenMint = yield getCardTokenMint(userId);
-        if (cardTokenMint === 'native_sol') {
-            console.log("[server] Getting SOL balance...");
+        if (tokenMint === 'native_sol') {
             userBalance = yield getVaultBalance(connection, userId);
             userBalance = (yield getSolanaPrice()) * userBalance;
         }
-        else {
-            //USDC
-            console.log("[server] Getting USDC balance...");
+        else { // USDC
             userBalance = yield getVaultUsdcBalance(connection, userId);
         }
-        if (userBalance > amount) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return (userBalance > amount);
     });
 }
 exports.checkCanAfford = checkCanAfford;
