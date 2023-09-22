@@ -1,12 +1,7 @@
 import {
     PublicKey,
-    Keypair,
     LAMPORTS_PER_SOL,
-    Connection,
-    clusterApiUrl,
-    ConfirmOptions,
-    Transaction,
-    Signer
+    Connection
 } from '@solana/web3.js';
 import { utf8 } from "@coral-xyz/anchor/dist/cjs/utils/bytes"
 
@@ -22,16 +17,22 @@ export const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEE
 const DEVNET_USDC_DECIMALS = 6;
 
 export async function getCardTokenMint(userId: number) {
-    //TODO 
-    //use the userId to find the users token prefrence for their card
-    //returns the token mint string or "native_sol"
-    return USDC_MINT_ADDRESS.toBase58();
+    // TODO - Remove hardcoding
+
+    // return USDC_MINT_ADDRESS;             // USDC hardcoded
+    return QUARTZ_PROGRAM_ID                 // SOL hardcoded - anything other than USDC will result in SOL
+}
+
+export async function getRequiredTokenAmount(tokenMint: PublicKey, amountFiat: number) {
+    let price;
+    if (tokenMint.toBase58() === USDC_MINT_ADDRESS.toBase58()) price = await getUsdcPrice();
+    else price = await getSolPrice();
+
+    return amountFiat / price;
 }
 
 export async function getWalletAddress(userId:number) {
-    //TODO
-    //use the userId to find the users wallet address stored in our database
-    //return vaultAddress as a string
+    // TODO - Remove hardcoding
     return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";
     
 }
@@ -84,43 +85,38 @@ export async function getVaultUsdcBalance(connection: Connection, userId: number
 
 //coin gecko
 
-export async function getSolanaPrice() {
+export const getSolPrice = async () => {
     const response = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`,
+      `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur`,
       {
         method: "GET",
       }
     );
   
     const data = await response.json();
-    return data.solana.usd;
+    return data.solana.eur;
+  };
+  
+  export const getUsdcPrice = async () => {
+    const response = await fetch(
+      `https://api.coingecko.com/api/v3/simple/price?ids=usd-coin&vs_currencies=eur`,
+      {
+        method: "GET",
+      }
+    );
+  
+    const data = await response.json();
+    return data["usd-coin"].eur;
   };
 
 
-export async function checkCanAfford(connection: Connection, amount: number, userId: number) {
-    let userBalance;
-
-    console.log("[server] Getting mint...")
-    let cardTokenMint = await getCardTokenMint(userId);
-    if (cardTokenMint === 'native_sol') {
-        console.log("[server] Getting SOL balance...")
-        userBalance = await getVaultBalance(connection, userId)
-        userBalance = await getSolanaPrice() * userBalance;
-    } else {
-        //USDC
-        console.log("[server] Getting USDC balance...")
-        try {
-            userBalance = await getVaultUsdcBalance(connection, userId)
-        } catch (e) {
-            console.log("get vault usdc balance error", e);
-        }
-        
+export async function checkCanAfford(connection: Connection, tokenMint: PublicKey, amountToken: number, userId: number) {
+    let balance;
+    if (tokenMint === USDC_MINT_ADDRESS) {
+        balance = await getVaultUsdcBalance(connection, userId)
+    } else { // SOL
+        balance = await getVaultBalance(connection, userId)
     }
 
-    if (userBalance! > amount) {
-        return true;
-    }
-    else {
-        return false
-    }
+    return (balance > amountToken);
 }
