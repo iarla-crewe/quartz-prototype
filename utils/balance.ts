@@ -109,10 +109,15 @@ export async function checkCanAfford(connection: Connection, amount: number, use
     } else {
         //USDC
         console.log("[server] Getting USDC balance...")
-        userBalance = await getVaultUsdcBalance(connection, userId)
+        try {
+            userBalance = await getVaultUsdcBalance(connection, userId)
+        } catch (e) {
+            console.log("get vault usdc balance error", e);
+        }
+        
     }
 
-    if (userBalance > amount) {
+    if (userBalance! > amount) {
         return true;
     }
     else {

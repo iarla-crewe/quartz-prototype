@@ -14,7 +14,7 @@ export async function POST(request: NextRequest, response: NextResponse) {
     }
 
     console.log("[server] Running demo...");
-    runDemo(destination);
+    await runDemo(destination);
 
     return new NextResponse(JSON.stringify({ status: "success"}))
 }

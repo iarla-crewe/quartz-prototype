@@ -8,6 +8,7 @@ var FCM = require('fcm-node');
 var serverKey = process.env.NEXT_PUBLIC_FCM;
 var fcm = new FCM(serverKey);
 
+console.log("Before connection")
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
 let sendMessage = async (appToken: string) => {
