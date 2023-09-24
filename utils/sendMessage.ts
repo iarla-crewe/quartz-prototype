@@ -8,7 +8,11 @@ var FCM = require('fcm-node');
 var serverKey = process.env.NEXT_PUBLIC_FCM;
 var fcm = new FCM(serverKey);
 
+console.log("server key: ", serverKey);
+
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+
+console.log("connection: ", connection);
 
 export const RESPONSE_TIME_LIMIT = 15000;
 export const CONFIRMATION_TIME_BUFFER = 10000;
