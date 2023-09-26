@@ -24,10 +24,10 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
     let paymentStatus = "sending";
 
     let cardTokenMint = await getCardTokenMint(userId);
-    const amountToken = await getRequiredTokenAmount(cardTokenMint, fiat);
+    const amountToken = new BigNumber(await getRequiredTokenAmount(cardTokenMint, fiat));
 
     console.log(`[server] Checking if user can afford transaction... (Required: ${amountToken})`);
-    let canAfford = await checkCanAfford(connection, cardTokenMint, amountToken, userId);
+    let canAfford = await checkCanAfford(connection, cardTokenMint, amountToken.toNumber(), userId);
 
     if (!canAfford) {
         declineTransaction('[server] Insufficient funds for transaction');
@@ -38,10 +38,9 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
     console.log("[server] User has sufficient funds");
     console.log(`[server] Creating payment request link... (reference: ${reference}`);
 
-    const amount = new BigNumber(fiat); // TODO - Fix
     const url = encodeURL({ 
         recipient: QUARTZ_SPEND_ADDRESS, 
-        amount, 
+        amount: amountToken, 
         splToken: cardTokenMint, 
         reference, 
         label, 
@@ -115,7 +114,7 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
             signature, 
             { 
                 recipient: QUARTZ_SPEND_ADDRESS, 
-                amount: amount,
+                amount: amountToken,
                 splToken: splToken
             }
         );
