@@ -11,9 +11,9 @@ var fcm = new FCM(serverKey);
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-let sendMessage = async (appToken: string) => {
+let sendMessage = async (appToken: string, fiat: number, label: string, location: string)  => {
     let userId = 1;
-    let transactionAmount = 0.01
+    let transactionAmount = 0.0001
     let paymentStatus: string;
 
     console.log("[server] Checking if user can afford transaction...")
@@ -29,7 +29,6 @@ let sendMessage = async (appToken: string) => {
     const recipient = QUARTZ_SPEND_ADDRESS
     const amount = new BigNumber(transactionAmount);
     const reference = new Keypair().publicKey
-    const label = 'Impala';
     const message = `Washington street, Cork City, Co.Cork`;
     const splToken = USDC_MINT_ADDRESS;
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
@@ -112,8 +111,8 @@ let sendMessage = async (appToken: string) => {
     }
 }
 
-export async function runDemo(appToken: string) {
-    sendMessage(appToken).then(
+export async function runDemo(appToken: string ,fiat: number, label: string, location: string) {
+    sendMessage(appToken, fiat, label, location).then(
         () => process.exit(),
         (err) => {
             console.error("[server] " + err);

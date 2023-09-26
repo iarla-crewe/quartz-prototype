@@ -1,15 +1,16 @@
 import { runDemo } from "@/utils/sendMessage";
 import { NextRequest, NextResponse } from "next/server";
 
-export async function POST(request: NextRequest, response: NextResponse) {
-    const { destination }: { destination: string } = await request.json();
+export async function POST(req: NextRequest, res: NextResponse) {
+    const { appToken, fiat, label, location }: { appToken: string, fiat: number, label: string, location: string } = await req.json();
 
-    if (!destination) {
-        return new Response(JSON.stringify({ message: "destination is required"}))
-    }
+    if (!appToken) return new Response(JSON.stringify({ message: "appToken is required"}))
+    if (!fiat) return new Response(JSON.stringify({ message: "fiat amount required" }));
+    try { Number(fiat) } catch { return new Response(JSON.stringify({ message: "invalid fiat amount" })); }
+    if (!label) return new Response(JSON.stringify({ message: "label is required" }));
+    if (!location) return new Response(JSON.stringify({ message: "location is required" }));
 
-    console.log("[server] Running demo...");
-    runDemo(destination);
+    runDemo(appToken, fiat, label, location);
 
     return new NextResponse(JSON.stringify({ status: "success"}))
 }
