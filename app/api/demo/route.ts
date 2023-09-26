@@ -1,5 +1,9 @@
-import { runDemo } from "@/utils/sendMessage";
+import { sendMessage } from "@/utils/sendMessage";
 import { NextRequest, NextResponse } from "next/server";
+
+export async function GET(req: NextRequest, res: NextResponse) {
+    return new NextResponse(JSON.stringify({ status: "online"}))
+}
 
 export async function POST(req: NextRequest, res: NextResponse) {
     const { appToken, fiat, label, location }: { appToken: string, fiat: number, label: string, location: string } = await req.json();
@@ -10,7 +14,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     if (!label) return new Response(JSON.stringify({ message: "label is required" }));
     if (!location) return new Response(JSON.stringify({ message: "location is required" }));
 
-    runDemo(appToken, fiat, label, location);
+    await sendMessage(appToken, fiat, label, location);
 
     return new NextResponse(JSON.stringify({ status: "success"}))
 }

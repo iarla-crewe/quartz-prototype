@@ -1,132 +1,139 @@
-import { Connection, Keypair, clusterApiUrl } from "@solana/web3.js";
+import { ConfirmedTransactionMeta, Connection, Finality, Keypair, LAMPORTS_PER_SOL, Message, PublicKey, SystemInstruction, Transaction, TransactionInstruction, TransactionResponse, TransactionSignature, clusterApiUrl } from "@solana/web3.js";
 import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getRequiredTokenAmount } from "./balance";
-import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
+import { encodeURL, createQR, findReference, FindReferenceError, ValidateTransferError, ValidateTransferFields, Recipient, Reference, SPLToken, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./message";
 
 var FCM = require('fcm-node');
-var serverKey = process.env.NEXT_PUBLIC_FCM
+var serverKey = process.env.NEXT_PUBLIC_FCM;
 var fcm = new FCM(serverKey);
+
+console.log("server key: ", serverKey);
+
+let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+
+console.log("connection: ", connection);
 
 export const RESPONSE_TIME_LIMIT = 15000;
 export const CONFIRMATION_TIME_BUFFER = 10000;
 
-let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+export async function sendMessage(appToken: string, fiat: number, label: string, location: string) {
+    console.log(`\n[server] Received card authentication request for ${appToken.slice(0, 5)}...`);
 
-let sendMessage = async (appToken: string, fiatAmount: number, label: string, location: string)  => {
     let userId = 1;
-    let paymentStatus: string;
+    let paymentStatus = "sending";
 
-    console.log("Fiat amount: ", fiatAmount);
     let cardTokenMint = await getCardTokenMint(userId);
-    console.log("Card token mint: ", cardTokenMint);
-    const amountToken = await getRequiredTokenAmount(cardTokenMint, fiatAmount);
-    console.log("Amount token: ", amountToken);
+    const amountToken = await getRequiredTokenAmount(cardTokenMint, fiat);
 
-    console.log("[server] Checking if user can afford transaction...")
+    console.log(`[server] Checking if user can afford transaction... (Required: ${amountToken})`);
     let canAfford = await checkCanAfford(connection, cardTokenMint, amountToken, userId);
 
     if (!canAfford) {
-        console.log("[server] Transaction not accepted: Insufficent funds");
-        console.log('[server] ❌ Decline debit card transaction');
-        return
+        declineTransaction('[server] Insufficient funds for transaction');
+        return;
     }
 
-    //creates a payment link
-    console.log('[server] 💰 Create a payment request link \n');
-    const recipient = QUARTZ_SPEND_ADDRESS
-    const amount = new BigNumber(fiatAmount);
-    const reference = new Keypair().publicKey
-    const message = `${location}`;
-    const splToken = USDC_MINT_ADDRESS;
-    const url = encodeURL({ recipient, amount, splToken, reference, label, message });
+    const reference = new Keypair().publicKey;
+    console.log("[server] User has sufficient funds");
+    console.log(`[server] Creating payment request link... (reference: ${reference}`);
 
-    //creates the fcm message
-    let fcmMessage = await getFcmMessage(url, fiatAmount, userId, appToken, RESPONSE_TIME_LIMIT);
+    const amount = new BigNumber(fiat); // TODO - Fix
+    const url = encodeURL({ 
+        recipient: QUARTZ_SPEND_ADDRESS, 
+        amount, 
+        splToken: cardTokenMint, 
+        reference, 
+        label, 
+        message: location
+    });
 
-    //sends notification with transaction to user to accept a payment
+    // Create FCM message
+    let fcmMessage = await getFcmMessage(url, fiat, userId, appToken, RESPONSE_TIME_LIMIT);
+
+    // Send transaction notification to user for approval
     await fcm.send(fcmMessage, function (err: any, response: any) {
         if (err) {
-            console.log("[server] Something has gone wrong! " + err);
-            console.log("[server] Response: " + response);
-        } else {
-            // showToast("Successfully sent with response");
-            console.log("[server] Successfully sent with response: ", response);
+            declineTransaction("[server] Failed to send app notification: " + err);
+            return;
         }
-
+        else console.log("[server] App notification successfully sent");
     });
-    //update payment status
+    
+    console.log('[server] Awaiting transaction confirmation...');
     paymentStatus = 'pending';
 
-    console.log('\n[server] 5. Find the transaction');
-
     const refreshInterval = 250;
-    let waitTime = 0 - refreshInterval;
-    let sig = "";
+    let waitTime = 0;
 
-
-    let signatureInfo;
-
-
-    const signature = await new Promise<String>((resolve, reject) => {
-
+    const signature = await new Promise<string>((resolve, reject) => {
         const interval = setInterval(async () => {
-            waitTime += refreshInterval;
-
             if (waitTime > RESPONSE_TIME_LIMIT + CONFIRMATION_TIME_BUFFER) {
                 paymentStatus = 'timeout';
                 clearInterval(interval);
-                reject();
+                reject("Time limit exceeded");
             }
-            if (waitTime % 1000 == 0) console.log(`[server] ${waitTime / 1000}s`);
 
-            //console.count('Checking for transaction...');
+            if (waitTime % 1000 == 0) console.log(`[server] ${waitTime / 1000}s`);  
+
+            waitTime += refreshInterval;
+            
             try {
-                signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
-                console.log('\n[server] 🖌  Signature found: ', signatureInfo.signature);
+                const signature = (
+                    await findReference(connection, reference, { finality: 'confirmed' })
+                ).signature;
+
                 clearInterval(interval);
-                resolve(signatureInfo.signature);
+                resolve(signature);
             } catch (error: any) {
                 if (!(error instanceof FindReferenceError)) {
-                    console.error("[server]" + error);
+                    console.error(error);
                     clearInterval(interval);
                     reject(error);
                 }
             }
         }, refreshInterval);
     }).catch((error) => {
-        console.log("[server] Error finding signature: ", error);
+        console.error("[server] Error finding instruction: " + error);
     });
 
     if (typeof signature !== 'string') {
-        console.log("[server] Decline transaction ❌");
-        return
+        declineTransaction();
+        return;
     }
 
-    // Update payment status
     paymentStatus = 'confirmed';
+    console.log("[server] Validating transaction...");
 
-
-    console.log('\n[server] 6. 🔗 Validate transaction \n');
+    let splToken: PublicKey | undefined;
+    if (cardTokenMint !== USDC_MINT_ADDRESS) splToken = undefined;
+    else splToken = cardTokenMint;
 
     try {
-        await validateTransfer(connection, signature, { recipient: QUARTZ_SPEND_ADDRESS, amount, splToken });
+        await validateTransfer(
+            connection, 
+            signature, 
+            { 
+                recipient: QUARTZ_SPEND_ADDRESS, 
+                amount: amount,
+                splToken: splToken
+            }
+        );
 
-        // Update payment status
         paymentStatus = 'validated';
-        console.log('[server] ✅ Payment validated');
-        console.log('[server] 💳 Accept debit card transaction');
-    } catch (error) {
-        console.error('[server] ❌ Payment failed', error);
+        acceptTransaction();
+    } catch (error: any) {
+        paymentStatus = 'invalid';
+        declineTransaction(error.toString());
     }
 }
 
-export async function runDemo(appToken: string ,fiat: number, label: string, location: string) {
-    sendMessage(appToken, fiat, label, location).then(
-        () => process.exit(),
-        (err) => {
-            console.error("[server] " + err);
-            process.exit(-1);
-        }
-    );
+function declineTransaction(message: string = "") {
+    if (message != "") console.log(`[server] ${message}`);
+    console.log('[server] ❌ Decline debit card transaction');
+}
+
+function acceptTransaction() {
+    console.log('\n[server] Payment validated');
+    console.log('[server] ✅ Accept debit card transaction');
 }

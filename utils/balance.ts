@@ -1,13 +1,4 @@
-import {
-    PublicKey,
-    Keypair,
-    LAMPORTS_PER_SOL,
-    Connection,
-    clusterApiUrl,
-    ConfirmOptions,
-    Transaction,
-    Signer
-} from '@solana/web3.js';
+import { PublicKey, LAMPORTS_PER_SOL, Connection } from '@solana/web3.js';
 import { utf8 } from "@coral-xyz/anchor/dist/cjs/utils/bytes"
 
 const VAULT_SEED = "vault"
@@ -22,10 +13,10 @@ export const USDC_MINT_ADDRESS = new PublicKey("4zMMC9srt5Ri5X14GAgXhaHii3GnPAEE
 const DEVNET_USDC_DECIMALS = 6;
 
 export async function getCardTokenMint(userId: number) {
-    //TODO 
-    //use the userId to find the users token prefrence for their card
-    //returns the token mint string or "native_sol"
-    return USDC_MINT_ADDRESS;
+    // TODO - Remove hardcoding
+
+    return USDC_MINT_ADDRESS;             // USDC hardcoded
+    // return QUARTZ_PROGRAM_ID                 // SOL hardcoded - anything other than USDC will result in SOL
 }
 
 export async function getRequiredTokenAmount(tokenMint: PublicKey, amountFiat: number) {
@@ -36,20 +27,18 @@ export async function getRequiredTokenAmount(tokenMint: PublicKey, amountFiat: n
     return amountFiat / price;
 }
 
-export async function getWalletAddress(userId: number) {
-    //TODO
-    //use the userId to find the users wallet address stored in our database
-    //return vaultAddress as a string
+export async function getWalletAddress(userId:number) {
+    // TODO - Remove hardcoding
     return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";
-
+    
 }
 
 export function getVault(userPubkey: PublicKey) {
     return PublicKey.findProgramAddressSync(
-        [utf8.encode(VAULT_SEED), userPubkey.toBuffer()],
-        QUARTZ_PROGRAM_ID
+      [utf8.encode(VAULT_SEED), userPubkey.toBuffer()],
+      QUARTZ_PROGRAM_ID
     )[0];
-}
+  }
 
 export function getVaultAta(userPubkey: PublicKey, tokenAddress: PublicKey) {
     return PublicKey.findProgramAddressSync(
@@ -94,46 +83,36 @@ export async function getVaultUsdcBalance(connection: Connection, userId: number
 
 export const getSolPrice = async () => {
     const response = await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur`,
-        {
-            method: "GET",
-        }
+      `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur`,
+      {
+        method: "GET",
+      }
     );
-
+  
     const data = await response.json();
     return data.solana.eur;
-};
-
-export const getUsdcPrice = async () => {
+  };
+  
+  export const getUsdcPrice = async () => {
     const response = await fetch(
-        `https://api.coingecko.com/api/v3/simple/price?ids=usd-coin&vs_currencies=eur`,
-        {
-            method: "GET",
-        }
+      `https://api.coingecko.com/api/v3/simple/price?ids=usd-coin&vs_currencies=eur`,
+      {
+        method: "GET",
+      }
     );
-
+  
     const data = await response.json();
     return data["usd-coin"].eur;
-};
+  };
 
 
-export async function checkCanAfford(connection: Connection, cardTokenMint: PublicKey, amount: number, userId: number) {
-    let userBalance;
-
-    if (cardTokenMint !==  USDC_MINT_ADDRESS) {
-        console.log("[server] Getting SOL balance...")
-        userBalance = await getVaultBalance(connection, userId)
-        userBalance = await getSolPrice() * userBalance;
-    } else {
-        //USDC
-        console.log("[server] Getting USDC balance...")
-        userBalance = await getVaultUsdcBalance(connection, userId)
+export async function checkCanAfford(connection: Connection, tokenMint: PublicKey, amountToken: number, userId: number) {
+    let balance;
+    if (tokenMint === USDC_MINT_ADDRESS) {
+        balance = await getVaultUsdcBalance(connection, userId)
+    } else { // SOL
+        balance = await getVaultBalance(connection, userId)
     }
 
-    if (userBalance > amount) {
-        return true;
-    }
-    else {
-        return false
-    }
+    return (balance > amountToken);
 }
