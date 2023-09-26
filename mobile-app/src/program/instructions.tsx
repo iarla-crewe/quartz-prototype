@@ -100,7 +100,7 @@ const spendSol = async (connection: Connection, program: Program<QuartzPrototype
 
     try {
         const instruction = await program.methods
-            .spendSpl(new BN(lamports))
+            .spendLamports(new BN(lamports))
             .accounts({
                 vault: vault,
                 receiver: QUARTZ_SPEND_ADDRESS,
