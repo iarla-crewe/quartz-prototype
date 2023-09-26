@@ -28,20 +28,28 @@ export async function getCardTokenMint(userId: number) {
     return USDC_MINT_ADDRESS.toBase58();
 }
 
-export async function getWalletAddress(userId:number) {
+export async function getRequiredTokenAmount(tokenMint: PublicKey, amountFiat: number) {
+    let price;
+    if (tokenMint.toBase58() === USDC_MINT_ADDRESS.toBase58()) price = await getUsdcPrice();
+    else price = await getSolPrice();
+
+    return amountFiat / price;
+}
+
+export async function getWalletAddress(userId: number) {
     //TODO
     //use the userId to find the users wallet address stored in our database
     //return vaultAddress as a string
     return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";
-    
+
 }
 
 export function getVault(userPubkey: PublicKey) {
     return PublicKey.findProgramAddressSync(
-      [utf8.encode(VAULT_SEED), userPubkey.toBuffer()],
-      QUARTZ_PROGRAM_ID
+        [utf8.encode(VAULT_SEED), userPubkey.toBuffer()],
+        QUARTZ_PROGRAM_ID
     )[0];
-  }
+}
 
 export function getVaultAta(userPubkey: PublicKey, tokenAddress: PublicKey) {
     return PublicKey.findProgramAddressSync(
@@ -84,17 +92,29 @@ export async function getVaultUsdcBalance(connection: Connection, userId: number
 
 //coin gecko
 
-export async function getSolanaPrice() {
+export const getSolPrice = async () => {
     const response = await fetch(
-      `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=usd`,
-      {
-        method: "GET",
-      }
+        `https://api.coingecko.com/api/v3/simple/price?ids=solana&vs_currencies=eur`,
+        {
+            method: "GET",
+        }
     );
-  
+
     const data = await response.json();
-    return data.solana.usd;
-  };
+    return data.solana.eur;
+};
+
+export const getUsdcPrice = async () => {
+    const response = await fetch(
+        `https://api.coingecko.com/api/v3/simple/price?ids=usd-coin&vs_currencies=eur`,
+        {
+            method: "GET",
+        }
+    );
+
+    const data = await response.json();
+    return data["usd-coin"].eur;
+};
 
 
 export async function checkCanAfford(connection: Connection, amount: number, userId: number) {
@@ -105,7 +125,7 @@ export async function checkCanAfford(connection: Connection, amount: number, use
     if (cardTokenMint === 'native_sol') {
         console.log("[server] Getting SOL balance...")
         userBalance = await getVaultBalance(connection, userId)
-        userBalance = await getSolanaPrice() * userBalance;
+        userBalance = await getSolPrice() * userBalance;
     } else {
         //USDC
         console.log("[server] Getting USDC balance...")
