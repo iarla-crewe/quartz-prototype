@@ -40,7 +40,7 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
     const transactionData = new CardTransactionData({
         amountFiat: Number(amountFiat),
         fiatCurrency: 'EUR',
-        amountToken: amount!.toNumber(), //This is the number ui amount
+        amountToken: amount!.toNumber(),
         tokenType: tokenType,
         timestamp: new Date(sentTime).toTimeString(),
         vendor: label!,

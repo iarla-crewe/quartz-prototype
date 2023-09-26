@@ -1,7 +1,7 @@
 import { Program, BN, Wallet, web3 } from "@coral-xyz/anchor";
 import { Connection, LAMPORTS_PER_SOL, PublicKey, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import { QuartzPrototypeV2 } from "./quartz_prototype_v2";
-import { DEVNET_USDC_DECIMALS, QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, getVault, getVaultAta } from "./program_utils";
+import { USDC_DECIMALS, QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, getVault, getVaultAta } from "./program_utils";
 import { getAssociatedTokenAddress, createAssociatedTokenAccount } from "@solana/spl-token";
 import { handleError } from "../utils";
 
@@ -50,7 +50,7 @@ const transferSol = async (program: Program<QuartzPrototypeV2>, owner: PublicKey
 }
 
 const transferUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, receiver: PublicKey, amount: number) => {
-    const usdc = amount * (10 ** DEVNET_USDC_DECIMALS);
+    const usdc = amount * (10 ** USDC_DECIMALS);
 
     const vault = getVault(owner.publicKey);
     const vaultAta = getVaultAta(owner.publicKey, USDC_MINT_ADDRESS);
@@ -95,15 +95,17 @@ const transferUsdc = async (connection: Connection, program: Program<QuartzProto
     }
 }
 
-const spendSol = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, lamports: number, reference: PublicKey[] | undefined) => {
+const spendSol = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, amountLamports: number, reference: PublicKey[] | undefined) => {
     const vault = getVault(owner.publicKey);
 
     try {
         const instruction = await program.methods
-            .spendLamports(new BN(lamports))
+            .spendLamports(new BN(amountLamports))
             .accounts({
+                owner: owner.publicKey,
                 vault: vault,
                 receiver: QUARTZ_SPEND_ADDRESS,
+                systemProgram: web3.SystemProgram.programId
             })
             .instruction()
         console.log("Transaction Signature: " + instruction);
@@ -133,8 +135,7 @@ const spendSol = async (connection: Connection, program: Program<QuartzPrototype
     }
 }
 
-const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, amount: number, reference: PublicKey[] | undefined) => {
-    const usdc = amount * (10 ** (DEVNET_USDC_DECIMALS));
+const spendUsdc = async (connection: Connection, program: Program<QuartzPrototypeV2>, owner: Wallet, amountCents: number, reference: PublicKey[] | undefined) => {
     const vault = getVault(owner.publicKey);
     const vaultAta = getVaultAta(owner.publicKey, USDC_MINT_ADDRESS);
 
@@ -163,7 +164,7 @@ const spendUsdc = async (connection: Connection, program: Program<QuartzPrototyp
 
     try {
         const instruction = await program.methods
-            .spendSpl(new BN(usdc))
+            .spendSpl(new BN(amountCents))
             .accounts({
                 vault: vault,
                 vaultAtaUsdc: vaultAta,

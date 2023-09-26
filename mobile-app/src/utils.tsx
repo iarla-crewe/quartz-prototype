@@ -1,9 +1,10 @@
 /* eslint-disable prettier/prettier */
 import messaging from '@react-native-firebase/messaging';
 import NavigationService from './navigation/NavigationService';
-import { PublicKey } from '@solana/web3.js';
+import { LAMPORTS_PER_SOL, PublicKey } from '@solana/web3.js';
 import { ParseURLError, TransferRequestURL } from '@solana/pay';
 import BigNumber from 'bignumber.js';
+import { USDC_DECIMALS, USDC_MINT_ADDRESS } from './program/program_utils';
 
 export function currencyToString(rawAmount: number, decimals: number) {
   return (rawAmount / 10 ** decimals).toFixed(decimals);
@@ -113,6 +114,14 @@ export const getUsdcPrice = async () => {
   const data = await response.json();
   return data["usd-coin"].eur;
 };
+
+export function formatTokenForDisplay(amountToken: number, tokenMint: PublicKey | undefined) {
+  let decimals;
+  if (tokenMint === USDC_MINT_ADDRESS) decimals = USDC_DECIMALS;
+  else decimals = 9;
+
+  return (amountToken / (10 ** decimals)).toFixed(decimals);
+}
 
 export function customParseTransferRequestURL(obj: any): TransferRequestURL {
   let recipient: PublicKey;
