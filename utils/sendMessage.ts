@@ -9,6 +9,8 @@ var FCM = require('fcm-node');
 var serverKey = process.env.NEXT_PUBLIC_FCM
 var fcm = new FCM(serverKey);
 
+export const RESPONSE_TIME_LIMIT = 15000;
+
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
 let sendMessage = async (appToken: string, fiatAmount: number, label: string, location: string)  => {
@@ -40,7 +42,7 @@ let sendMessage = async (appToken: string, fiatAmount: number, label: string, lo
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
 
     //creates the fcm message
-    let fcmMessage = await getFcmMessage(url, userId, appToken);
+    let fcmMessage = await getFcmMessage(url, fiatAmount, userId, appToken, RESPONSE_TIME_LIMIT);
 
     let sendTime = new Date();
 
