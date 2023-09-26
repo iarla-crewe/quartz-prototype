@@ -35,7 +35,7 @@ let sendMessage = async (appToken: string, fiatAmount: number, label: string, lo
     const recipient = QUARTZ_SPEND_ADDRESS
     const amount = new BigNumber(fiatAmount);
     const reference = new Keypair().publicKey
-    const message = `Washington street, Cork City, Co.Cork`;
+    const message = `${location}`;
     const splToken = USDC_MINT_ADDRESS;
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
 
