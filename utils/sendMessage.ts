@@ -1,11 +1,10 @@
-import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
+import { Connection, Keypair, clusterApiUrl } from "@solana/web3.js";
 import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getRequiredTokenAmount } from "./balance";
 import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./message";
 
 var FCM = require('fcm-node');
-//var serverKey = require('../../quartz-prototype-v2-firebase-adminsdk-hynvz-5603bcd21a.json'); // Relative path is from Build directory's javascript
 var serverKey = process.env.NEXT_PUBLIC_FCM
 var fcm = new FCM(serverKey);
 
@@ -107,15 +106,7 @@ let sendMessage = async (appToken: string, fiatAmount: number, label: string, lo
     // Update payment status
     paymentStatus = 'confirmed';
 
-    /**
-     * Validate transaction
-     *
-     * Once the `findTransactionSignature` function returns a signature,
-     * it confirms that a transaction with reference to this order has been recorded on-chain.
-     *
-     * `validateTransactionSignature` allows you to validate that the transaction signature
-     * found matches the transaction that you expected.
-     */
+
     console.log('\n[server] 6. 🔗 Validate transaction \n');
 
     try {
