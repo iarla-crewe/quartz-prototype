@@ -11,13 +11,14 @@ var fcm = new FCM(serverKey);
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
-let sendMessage = async (appToken: string, fiat: number, label: string, location: string)  => {
+let sendMessage = async (appToken: string, fiatAmount: number, label: string, location: string)  => {
     let userId = 1;
-    let transactionAmount = 0.0001
     let paymentStatus: string;
 
+    console.log("fiat amount: ", fiatAmount);
+
     console.log("[server] Checking if user can afford transaction...")
-    let canAfford = await checkCanAfford(connection, transactionAmount, userId);
+    let canAfford = await checkCanAfford(connection, fiatAmount, userId);
 
     if (!canAfford) {
         console.log("[server] Transaction not accepted: Insufficent funds");
@@ -27,11 +28,13 @@ let sendMessage = async (appToken: string, fiat: number, label: string, location
     //creates a payment link
     console.log('[server] 💰 Create a payment request link \n');
     const recipient = QUARTZ_SPEND_ADDRESS
-    const amount = new BigNumber(transactionAmount);
+    const amount = new BigNumber(fiatAmount);
     const reference = new Keypair().publicKey
     const message = `Washington street, Cork City, Co.Cork`;
     const splToken = USDC_MINT_ADDRESS;
     const url = encodeURL({ recipient, amount, splToken, reference, label, message });
+
+    console.log("Solana pay url: ", url);
 
     //creates the fcm message
     let fcmMessage = await getFcmMessage(url, userId, appToken);
