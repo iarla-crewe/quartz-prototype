@@ -10,6 +10,7 @@ var serverKey = process.env.NEXT_PUBLIC_FCM
 var fcm = new FCM(serverKey);
 
 export const RESPONSE_TIME_LIMIT = 15000;
+export const CONFIRMATION_TIME_BUFFER = 10000;
 
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
@@ -44,8 +45,6 @@ let sendMessage = async (appToken: string, fiatAmount: number, label: string, lo
     //creates the fcm message
     let fcmMessage = await getFcmMessage(url, fiatAmount, userId, appToken, RESPONSE_TIME_LIMIT);
 
-    let sendTime = new Date();
-
     //sends notification with transaction to user to accept a payment
     await fcm.send(fcmMessage, function (err: any, response: any) {
         if (err) {
@@ -61,22 +60,27 @@ let sendMessage = async (appToken: string, fiatAmount: number, label: string, lo
     paymentStatus = 'pending';
 
     console.log('\n[server] 5. Find the transaction');
+
+    const refreshInterval = 250;
+    let waitTime = 0 - refreshInterval;
+    let sig = "";
+
+
     let signatureInfo;
 
 
-    const signature: string = await new Promise((resolve, reject) => {
-        /**
-         * Retry until we find the transaction
-         *
-         * If a transaction with the given reference can't be found, the `findTransactionSignature`
-         * function will throw an error. There are a few reasons why this could be a false negative:
-         *
-         * - Transaction is not yet confirmed
-         * - Customer is yet to approve/complete the transaction
-         *
-         * You can implement a polling strategy to query for the transaction periodically.
-         */
+    const signature = await new Promise<String>((resolve, reject) => {
+
         const interval = setInterval(async () => {
+            waitTime += refreshInterval;
+
+            if (waitTime > RESPONSE_TIME_LIMIT + CONFIRMATION_TIME_BUFFER) {
+                paymentStatus = 'timeout';
+                clearInterval(interval);
+                reject();
+            }
+            if (waitTime % 1000 == 0) console.log(`[server] ${waitTime / 1000}s`);
+
             //console.count('Checking for transaction...');
             try {
                 signatureInfo = await findReference(connection, reference, { finality: 'confirmed' });
@@ -90,8 +94,15 @@ let sendMessage = async (appToken: string, fiatAmount: number, label: string, lo
                     reject(error);
                 }
             }
-        }, 250);
+        }, refreshInterval);
+    }).catch((error) => {
+        console.log("[server] Error finding signature: ", error);
     });
+
+    if (typeof signature !== 'string') {
+        console.log("[server] Decline transaction ❌");
+        return
+    }
 
     // Update payment status
     paymentStatus = 'confirmed';
