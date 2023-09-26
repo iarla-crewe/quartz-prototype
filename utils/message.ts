@@ -22,6 +22,8 @@ export let getFcmMessage = async (solanaPayUrl: URL, userId: number, appToken: s
             navigationFlow: 'Send',
             screenToOpen: 'SpendScreen',
             title: 'Payment Authentication',
+            timeLimit: "25000",
+            amountFiat: "0000",
             urlObj: stringUrl
         }
     };
