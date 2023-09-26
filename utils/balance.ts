@@ -25,7 +25,7 @@ export async function getCardTokenMint(userId: number) {
     //TODO 
     //use the userId to find the users token prefrence for their card
     //returns the token mint string or "native_sol"
-    return USDC_MINT_ADDRESS.toBase58();
+    return USDC_MINT_ADDRESS;
 }
 
 export async function getRequiredTokenAmount(tokenMint: PublicKey, amountFiat: number) {
@@ -117,12 +117,10 @@ export const getUsdcPrice = async () => {
 };
 
 
-export async function checkCanAfford(connection: Connection, amount: number, userId: number) {
+export async function checkCanAfford(connection: Connection, cardTokenMint: PublicKey, amount: number, userId: number) {
     let userBalance;
 
-    console.log("[server] Getting mint...")
-    let cardTokenMint = await getCardTokenMint(userId);
-    if (cardTokenMint === 'native_sol') {
+    if (cardTokenMint !==  USDC_MINT_ADDRESS) {
         console.log("[server] Getting SOL balance...")
         userBalance = await getVaultBalance(connection, userId)
         userBalance = await getSolPrice() * userBalance;

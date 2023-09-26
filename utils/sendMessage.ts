@@ -1,5 +1,5 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint } from "./balance";
+import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getRequiredTokenAmount } from "./balance";
 import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./message";
@@ -15,11 +15,14 @@ let sendMessage = async (appToken: string, fiatAmount: number, label: string, lo
     let userId = 1;
     let paymentStatus: string;
 
+    console.log("Fiat amount: ", fiatAmount);
     let cardTokenMint = await getCardTokenMint(userId);
     console.log("Card token mint: ", cardTokenMint);
+    const amountToken = await getRequiredTokenAmount(cardTokenMint, fiatAmount);
+    console.log("Amount token: ", amountToken);
 
     console.log("[server] Checking if user can afford transaction...")
-    let canAfford = await checkCanAfford(connection, fiatAmount, userId);
+    let canAfford = await checkCanAfford(connection, cardTokenMint, amountToken, userId);
 
     if (!canAfford) {
         console.log("[server] Transaction not accepted: Insufficent funds");
