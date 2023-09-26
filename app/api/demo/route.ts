@@ -1,4 +1,4 @@
-import { sendMessage } from "@/utils/sendMessage";
+import { requestAuth } from "@/src/requestAuth";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, res: NextResponse) {
@@ -14,7 +14,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     if (!label) return new Response(JSON.stringify({ message: "label is required" }));
     if (!location) return new Response(JSON.stringify({ message: "location is required" }));
 
-    await sendMessage(appToken, fiat, label, location);
+    await requestAuth(appToken, fiat, label, location);
 
     return new NextResponse(JSON.stringify({ status: "success"}))
 }

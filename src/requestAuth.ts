@@ -1,23 +1,20 @@
-import { ConfirmedTransactionMeta, Connection, Finality, Keypair, LAMPORTS_PER_SOL, Message, PublicKey, SystemInstruction, Transaction, TransactionInstruction, TransactionResponse, TransactionSignature, clusterApiUrl } from "@solana/web3.js";
-import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getRequiredTokenAmount } from "./balance";
-import { encodeURL, createQR, findReference, FindReferenceError, ValidateTransferError, ValidateTransferFields, Recipient, Reference, SPLToken, validateTransfer } from '@solana/pay';
+import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
+import { checkCanAfford, getRequiredTokenAmount } from "./utils/balance";
+import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, getCardTokenMint, formatAmountDecimal, formatAmountFullUnit } from "./utils/utils";
+import { encodeURL, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
-import { getFcmMessage } from "./message";
+import { getFcmMessage } from "./utils/message";
 
 var FCM = require('fcm-node');
 var serverKey = process.env.NEXT_PUBLIC_FCM;
 var fcm = new FCM(serverKey);
 
-console.log("server key: ", serverKey);
-
-let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
-
-console.log("connection: ", connection);
-
 export const RESPONSE_TIME_LIMIT = 15000;
 export const CONFIRMATION_TIME_BUFFER = 10000;
 
-export async function sendMessage(appToken: string, fiat: number, label: string, location: string) {
+let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
+
+export async function requestAuth(appToken: string, fiat: number, label: string, location: string) {
     console.log(`\n[server] Received card authentication request for ${appToken.slice(0, 5)}...`);
 
     let userId = 1;
@@ -34,13 +31,17 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
         return;
     }
 
+    // Format token so validator is checking for correct transaction amount
+    const formatedAmountTokenUnit = formatAmountFullUnit(amountToken.toNumber(), cardTokenMint);
+    const formatedAmountTokenDecimal = formatAmountDecimal(amountToken.toNumber(), cardTokenMint);
+
     const reference = new Keypair().publicKey;
     console.log("[server] User has sufficient funds");
     console.log(`[server] Creating payment request link... (reference: ${reference}`);
 
     const url = encodeURL({ 
         recipient: QUARTZ_SPEND_ADDRESS, 
-        amount: amountToken, 
+        amount: formatedAmountTokenUnit, 
         splToken: cardTokenMint, 
         reference, 
         label, 
@@ -102,6 +103,7 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
     }
 
     paymentStatus = 'confirmed';
+    console.log("[server] Signature found: " + signature);
     console.log("[server] Validating transaction...");
 
     let splToken: PublicKey | undefined;
@@ -114,7 +116,7 @@ export async function sendMessage(appToken: string, fiat: number, label: string,
             signature, 
             { 
                 recipient: QUARTZ_SPEND_ADDRESS, 
-                amount: amountToken,
+                amount: formatedAmountTokenDecimal,
                 splToken: splToken
             }
         );
