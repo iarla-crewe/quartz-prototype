@@ -1,5 +1,5 @@
 import { Connection, Keypair, PublicKey, clusterApiUrl } from "@solana/web3.js";
-import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford } from "./balance";
+import { QUARTZ_SPEND_ADDRESS, USDC_MINT_ADDRESS, checkCanAfford, getCardTokenMint, getRequiredTokenAmount } from "./balance";
 import { encodeURL, createQR, findReference, FindReferenceError, validateTransfer } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { getFcmMessage } from "./message";
@@ -12,9 +12,13 @@ var fcm = new FCM(serverKey);
 let connection = new Connection(clusterApiUrl('devnet'), 'confirmed');
 
 let sendMessage = async (appToken: string, fiat: number, label: string, location: string)  => {
+    console.log(`\n[server] Received card authentication request for ${appToken.slice(0, 5)}...`);
+
     let userId = 1;
-    let transactionAmount = 0.0001
     let paymentStatus: string;
+
+    let cardTokenMint = await getCardTokenMint(userId);
+    const transactionAmount = await getRequiredTokenAmount(cardTokenMint, fiat);
 
     console.log("[server] Checking if user can afford transaction...")
     let canAfford = await checkCanAfford(connection, transactionAmount, userId);
