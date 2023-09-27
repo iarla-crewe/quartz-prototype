@@ -14,7 +14,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     if (!label) return new Response(JSON.stringify({ message: "label is required" }));
     if (!location) return new Response(JSON.stringify({ message: "location is required" }));
 
-    await requestAuth(appToken, fiat, label, location);
+    const success = await requestAuth(appToken, fiat, label, location);
 
-    return new NextResponse(JSON.stringify({ status: "success"}))
+    if (success) return new NextResponse(JSON.stringify({ transaction: "success"}))
+    else return new NextResponse(JSON.stringify({ transaction: "not-verified"}))
 }

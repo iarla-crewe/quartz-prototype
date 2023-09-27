@@ -22,10 +22,10 @@ export default function App() {
       headers: {'Content-Type': 'application/json'},
       body: `
         {
-          "appToken":${APP_TOKEN},
-          "fiat":${FIAT},
-          "label":${LABEL},
-          "location":${LOCATION}
+          "appToken":"${APP_TOKEN}",
+          "fiat":"${FIAT}",
+          "label":"${LABEL}",
+          "location":"${LOCATION}"
         }
       `
     };

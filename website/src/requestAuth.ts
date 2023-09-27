@@ -28,7 +28,7 @@ export async function requestAuth(appToken: string, fiat: number, label: string,
 
     if (!canAfford) {
         declineTransaction('[server] Insufficient funds for transaction');
-        return;
+        return false;
     }
 
     // Format token so validator is checking for correct transaction amount
@@ -55,7 +55,7 @@ export async function requestAuth(appToken: string, fiat: number, label: string,
     await fcm.send(fcmMessage, function (err: any, response: any) {
         if (err) {
             declineTransaction("[server] Failed to send app notification: " + err);
-            return;
+            return false;
         }
         else console.log("[server] App notification successfully sent");
     });
@@ -99,7 +99,7 @@ export async function requestAuth(appToken: string, fiat: number, label: string,
 
     if (typeof signature !== 'string') {
         declineTransaction();
-        return;
+        return false;
     }
 
     paymentStatus = 'confirmed';
@@ -123,9 +123,11 @@ export async function requestAuth(appToken: string, fiat: number, label: string,
 
         paymentStatus = 'validated';
         acceptTransaction();
+        return true;
     } catch (error: any) {
         paymentStatus = 'invalid';
         declineTransaction(error.toString());
+        return false;
     }
 }
 
