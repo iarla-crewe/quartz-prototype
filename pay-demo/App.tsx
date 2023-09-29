@@ -1,21 +1,42 @@
-import { StyleSheet, View, Text } from 'react-native';
+import { StyleSheet, View, Text, Button } from 'react-native';
 import { Image } from 'expo-image';
 import { Audio } from 'expo-av';
 import { useEffect, useState } from 'react';
 
-const APP_TOKEN = "cK9ss8ycS0auoL_x85rl6G:APA91bGZJhSmqTmAxG5pPIlKI-73COlM-U1SHRbKpbbWWrddQQM0iq4wPhjFtIHA7Eh1DT7-HLnbUww_HWM1eHH991EjHb-wJs42SIhbPomtqUVB3IvHPNvmKILRLa5IVdU7Obdb2NrR";
+const SOUND_FILE = "./assets/sounds/beep.mp3";
+
+
+// Iarla's Samsung A13
+// const APP_TOKEN = "cK9ss8ycS0auoL_x85rl6G:APA91bGZJhSmqTmAxG5pPIlKI-73COlM-U1SHRbKpbbWWrddQQM0iq4wPhjFtIHA7Eh1DT7-HLnbUww_HWM1eHH991EjHb-wJs42SIhbPomtqUVB3IvHPNvmKILRLa5IVdU7Obdb2NrR";
+
+// Diego's Samsung S10e
+const APP_TOKEN = "dzSK6r4FTIusRVUgh3f50D:APA91bEPALE-e5QgCS1vegrizdJX3m_oxoK1d-_haXPq7aGlw-1Eq8scVnTINRrWUM4nGUdX_hNau0sEKAKKm-1VAOBWRu0__fhHODuvHy9KuLoJoL1zMY-wqkQPNhz89MhVyQdvVH3g";
+
 const FIAT = "5.50";
 const LABEL = "Impala Bar";
 const LOCATION = "Washington Street, Cork"
 
 export default function App() {
   const [error, setError] = useState("");
+  const [sound, setSound] = useState<Audio.Sound | undefined>();
 
-  const playBeep = async () => {
-    const { sound } = await Audio.Sound.createAsync( require('./assets/beep.mp3'));
+  async function playSound() {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync(require('./assets/beep.mp3'));
+    setSound(sound);
+
+    console.log('Playing Sound');
     await sound.playAsync();
-    sound.unloadAsync();
   }
+
+  useEffect(() => {
+    return sound
+      ? () => {
+          console.log('Unloading Sound');
+          sound.unloadAsync();
+        }
+      : undefined;
+  }, [sound]);
 
   const callAPI = async () => {
     const options = {
@@ -43,12 +64,9 @@ export default function App() {
   }
 
   useEffect(() => {
-    const run = async () => {
-      await playBeep();
-      await callAPI();
-    }
-    run();
-  })
+    playSound();
+    callAPI();
+  }, [])
 
   return (
     <View style={styles.container}>
