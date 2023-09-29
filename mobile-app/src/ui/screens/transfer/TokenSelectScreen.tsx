@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, Image } from "react-native";
 import { SOL, USDC } from '../../../model/data/Tokens'
-import { theme } from "../Styles";
+import { theme } from "../../Styles";
 import BackButton from "../../components/BackButton";
 
 export default function TokenSelectScreen( { navigation } : {navigation: any} ) {

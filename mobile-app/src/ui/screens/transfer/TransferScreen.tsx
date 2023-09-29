@@ -1,7 +1,7 @@
 import { Modal, Text, TextInput, TouchableOpacity, View } from "react-native";
 import { SOL, TokenType, USDC } from "../../../model/data/Tokens";
 import React from "react";
-import { theme, themeColor } from "../Styles";
+import { theme, themeColor } from "../../Styles";
 import BackButton from "../../components/BackButton";
 import { transferSol, transferUsdc } from "../../../program/instructions";
 import { createConnection, getProgram, getProvider, getTestWallet, getVault, getVaultBalance, getVaultUsdcBalance } from "../../../program/program_utils";

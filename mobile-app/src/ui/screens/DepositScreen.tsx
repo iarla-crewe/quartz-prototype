@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity } from "react-native";
 import Clipboard from "@react-native-community/clipboard";
 import { useState, useEffect } from 'react';
-import { theme } from "./Styles";
+import { theme } from "../Styles";
 import { getTestWallet, getVault } from "../../program/program_utils";
 import {useNavigationState} from '@react-navigation/native';
 

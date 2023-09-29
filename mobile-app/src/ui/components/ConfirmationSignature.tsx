@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity, View } from "react-native";
-import { theme } from "../screens/Styles";
+import { theme } from "../Styles";
 
 const ConfirmationSignature = (props: any) => {
     const signature = props.data;

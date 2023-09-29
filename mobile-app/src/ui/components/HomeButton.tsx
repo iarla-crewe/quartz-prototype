@@ -1,5 +1,5 @@
 import { Text, TouchableOpacity } from "react-native";
-import { theme } from "../screens/Styles";
+import { theme } from "../Styles";
 
 const HomeButton = (props: any) => {
     const navigation = props.data;

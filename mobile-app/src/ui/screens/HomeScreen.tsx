@@ -6,7 +6,7 @@ import {
     Image,
     ActivityIndicator
 } from "react-native";
-import { theme, themeColor } from "./Styles";
+import { theme, themeColor } from "../Styles";
 import { 
     USDC_MINT_ADDRESS,
     createConnection,

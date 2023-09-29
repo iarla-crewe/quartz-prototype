@@ -7,7 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import NavigationService from './src/navigation/NavigationService';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { themeColor } from './src/ui/screens/Styles';
+import { themeColor } from './src/ui/Styles';
 
 import HomeScreen from './src/ui/screens/HomeScreen';
 import TransferScreen from './src/ui/screens/transfer/TransferScreen';

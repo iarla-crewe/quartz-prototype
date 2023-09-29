@@ -10,6 +10,7 @@ const LOCATION = "Washington Street, Cork"
 
 export default function App() {
   const [error, setError] = useState("");
+
   const playBeep = async () => {
     const { sound } = await Audio.Sound.createAsync( require('./assets/beep.mp3'));
     await sound.playAsync();
@@ -42,8 +43,11 @@ export default function App() {
   }
 
   useEffect(() => {
-    playBeep();
-    callAPI();
+    const run = async () => {
+      await playBeep();
+      await callAPI();
+    }
+    run();
   })
 
   return (

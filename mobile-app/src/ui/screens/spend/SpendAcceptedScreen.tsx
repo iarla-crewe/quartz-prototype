@@ -3,7 +3,7 @@ import DisplayCardTransaction from "../../components/DisplayCardTransaction";
 import HomeButton from "../../components/HomeButton";
 import { CardTransactionData } from "../../../model/data/CardTransaction";
 import { SOL, USDC } from "../../../model/data/Tokens";
-import { theme } from "../Styles";
+import { theme } from "../../Styles";
 import { useEffect } from "react";
 import { USDC_MINT_ADDRESS, createConnection, getProgram, getProvider, getTestWallet } from "../../../program/program_utils";
 import { spendSol, spendUsdc } from "../../../program/instructions";

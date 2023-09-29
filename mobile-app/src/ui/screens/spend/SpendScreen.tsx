@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CardTransactionData } from '../../../model/data/CardTransaction'
 import { SOL, USDC } from "../../../model/data/Tokens";
 import DisplayCardTransaction from "../../components/DisplayCardTransaction";
-import { theme } from "../Styles";
+import { theme } from "../../Styles";
 import { useState, useRef, useEffect } from "react";
 import { customParseTransferRequestURL } from "../../../utils";
 import { PublicKey } from "@solana/web3.js";
