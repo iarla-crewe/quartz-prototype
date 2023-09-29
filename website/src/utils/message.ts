@@ -1,5 +1,5 @@
 export let getFcmMessage = async (solanaPayUrl: URL, amountFiat: number, userId: number, appToken: string, timeLimit: number) => {
-    
+
     const stringUrl = stringifyURL(solanaPayUrl);
     const fiatString = Number(amountFiat).toFixed(2);
 
@@ -16,8 +16,21 @@ export let getFcmMessage = async (solanaPayUrl: URL, amountFiat: number, userId:
             timeLimit: timeLimit.toString(),
             amountFiat: fiatString,
             urlObj: stringUrl
+        },
+        android: {
+            "priority": "normal"
+        },
+        apns: {
+            "headers": {
+                "apns-priority": "5"
+            }
+        },
+        webpush: {
+            "headers": {
+                "Urgency": "high"
+            }
         }
-    };
+    }
 
     return fcmMessage;
 }
