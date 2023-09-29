@@ -20,6 +20,8 @@ import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
 import DepositScreen from './src/ui/screens/DepositScreen';
 import TokenSelectScreen from './src/ui/screens/transfer/TokenSelectScreen';
 
+import messaging from '@react-native-firebase/messaging';
+
 global.Buffer = require('buffer').Buffer;
 const TextEncodingPolyfill = require('text-encoding');
 Object.assign(global, {
@@ -32,7 +34,7 @@ const Tab = createBottomTabNavigator();
 
 function TransferStackNavigator() {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name='TokenSelect' component={TokenSelectScreen} />
       <Stack.Screen name='Transfer' component={TransferScreen} />
       <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
@@ -55,7 +57,7 @@ function TabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: themeColor.secondary,
         tabBarInactiveTintColor: themeColor.darkGrey,
-        tabBarStyle: {borderTopWidth: 0},
+        tabBarStyle: { borderTopWidth: 0 },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === 'Deposit') iconName = focused ? 'card-plus' : 'card-plus-outline';
@@ -78,6 +80,8 @@ const openSettings = () => {
 };
 
 export default function App(): JSX.Element {
+  const [initialRoute, setInitialRoute] = useState('Home');
+
   useEffect(() => {
     if (Platform.OS == "android") {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then((res) => {
@@ -89,6 +93,21 @@ export default function App(): JSX.Element {
           console.log("Android version is API 31, bypassing permissions...");
           requestUserPermission();
           notificationListeners();
+
+          //NEW
+          // Check whether an initial notification is available
+          messaging()
+            .getInitialNotification()
+            .then(remoteMessage => {
+              if (remoteMessage) {
+                console.log(
+                  'Notification caused app to open from quit state:',
+                  remoteMessage.notification,
+                );
+                // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+              }
+            });
+
         }
       }).catch(error => {
         Alert.alert("Error: ", error);
@@ -99,7 +118,7 @@ export default function App(): JSX.Element {
   })
 
   return (
-    <SafeAreaView style = {{flex: 1, backgroundColor: themeColor.primary}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: themeColor.primary }}>
       <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
         <TabNavigator />
       </NavigationContainer>
