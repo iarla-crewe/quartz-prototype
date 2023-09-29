@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Linking, PermissionsAndroid, Platform, SafeAreaView, StyleSheet } from 'react-native';
 import { Alert } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
@@ -48,7 +48,8 @@ function TransferStackNavigator() {
   )
 }
 
-function TabNavigator() {
+function TabNavigator(props: any) {
+  const initialRouteName = props.
   return (
     <Tab.Navigator
       initialRouteName='Home'
@@ -81,6 +82,7 @@ const openSettings = () => {
 
 export default function App(): JSX.Element {
   const [initialRoute, setInitialRoute] = useState('Home');
+  const [initialRouteData, setInitialRouteData] = useState("");
 
   useEffect(() => {
     if (Platform.OS == "android") {
@@ -95,16 +97,23 @@ export default function App(): JSX.Element {
           notificationListeners();
 
           //NEW
-          // Check whether an initial notification is available
           messaging()
             .getInitialNotification()
             .then(remoteMessage => {
               if (remoteMessage) {
                 console.log(
-                  'Notification caused app to open from quit state:',
-                  remoteMessage.notification,
+                  'Notification caused app to open from quit state, need to open screen without notificaton tap:'
                 );
-                // setInitialRoute(remoteMessage.data.type); // e.g. "Settings"
+                setInitialRoute(remoteMessage.data!.screenToOpen); // e.g. "Settings"
+                //make a object to send through initial route data
+                let routeData = {
+                  solanaPayUrl: remoteMessage.data!.urlObj,
+                  sentTime: remoteMessage.sentTime!,
+                  timeLimit: remoteMessage.data!.timeLimit,
+                  amountFiat: remoteMessage.data!.amountFiat
+                }
+
+                setInitialRouteData(JSON.stringify(routeData))
               }
             });
 
@@ -120,7 +129,7 @@ export default function App(): JSX.Element {
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: themeColor.primary }}>
       <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
-        <TabNavigator />
+        <TabNavigator initialRouteName={initialRoute} initialRouteData={initialRouteData} />
       </NavigationContainer>
     </SafeAreaView>
   );

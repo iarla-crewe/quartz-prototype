@@ -89,24 +89,25 @@ export const notificationListeners = async () => {
 
   //NEW
   // Check whether an initial notification is available
-  messaging()
-    .getInitialNotification()
-    .then(remoteMessage => {
-      if (remoteMessage) {
-        console.log(
-          'Notification caused app to open from quit state, need to open screen without notificaton tap:'
-        );
-        setInitialRoute(remoteMessage.data!.screenToOpen); // e.g. "Settings"
-        setInitialRouteData({
-          params: {
-            solanaPayUrl: remoteMessage.data!.urlObj,
-            sentTime: remoteMessage.sentTime,
-            timeLimit: remoteMessage.data!.timeLimit,
-            amountFiat: remoteMessage.data!.amountFiat
-          }
-        })
-      }
-    });
+  // messaging()
+  //   .getInitialNotification()
+  //   .then(remoteMessage => {
+  //     if (remoteMessage) {
+  //       console.log(
+  //         'Notification caused app to open from quit state, need to open screen without notificaton tap:'
+  //       );
+  //       setInitialRoute(remoteMessage.data!.screenToOpen); // e.g. "Settings"
+  //       //make a object to send through initial route data
+  //       let routeData = {
+  //         solanaPayUrl: remoteMessage.data!.urlObj,
+  //         sentTime: remoteMessage.sentTime!,
+  //         timeLimit: remoteMessage.data!.timeLimit,
+  //         amountFiat: remoteMessage.data!.amountFiat
+  //       }
+
+  //       setInitialRouteData(JSON.stringify(routeData))
+  //     }
+  //   });
 
   return unsubscribe;
 };
