@@ -1,4 +1,5 @@
 import { StyleSheet, useWindowDimensions } from "react-native"
+import { PixelRatio } from "react-native";
 
 export enum themeColor {
     primary = "#f5f2ff",
@@ -8,12 +9,12 @@ export enum themeColor {
     text = "#3c315b"
 }
 
-const { fontScale } = useWindowDimensions();
+const fontScale = PixelRatio.getFontScale();
+const getFontSize = (size: number) => size / fontScale;
 export const theme = StyleSheet.create({
     mainContainer: {
         height: "100%",
         width: "100%",
-        padding: 16,
         backgroundColor: themeColor.primary
     },
     halfPadding: {
@@ -30,33 +31,33 @@ export const theme = StyleSheet.create({
         paddingBottom: 32
     },
     h1: {
-        fontSize: 44 / fontScale,
+        fontSize: getFontSize(44),
         textAlign: "center",
         color: themeColor.text
     },
     h2: {
-        fontSize: 30 / fontScale,
+        fontSize: getFontSize(30),
         textAlign: "center",
         color: themeColor.text
     },
     h2b: {
-        fontSize: 30 / fontScale,
+        fontSize: getFontSize(30),
         textAlign: "center",
         color: themeColor.text,
         fontWeight: 'bold'
     },
     h3: {
-        fontSize: 28 / fontScale,
+        fontSize: getFontSize(28),
         textAlign: "center",
         color: themeColor.text
     },
     p: {
-        fontSize: 24 / fontScale,
+        fontSize: getFontSize(24),
         textAlign: "center",
         color: themeColor.darkGrey
     },
     subP: {
-        fontSize: 24 / fontScale,
+        fontSize: getFontSize(24),
         textAlign: "center",
         color: themeColor.grey
     },
@@ -108,13 +109,13 @@ export const theme = StyleSheet.create({
         alignItems: "center"
     },
     tokenIcon: {
-        width: 30 / fontScale,
-        height: 30 / fontScale,
-        borderRadius: (30/2) / fontScale
+        width: getFontSize(30),
+        height: getFontSize(30),
+        borderRadius: 30/2
     },
     tokenIconBig: {
-        width: 100 / fontScale,
-        height: 100 / fontScale,
-        borderRadius: (100/2) / fontScale
+        width: getFontSize(100),
+        height: getFontSize(100),
+        borderRadius: 100/2
     }
 });
