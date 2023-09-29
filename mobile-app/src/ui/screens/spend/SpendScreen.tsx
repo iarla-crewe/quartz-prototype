@@ -32,11 +32,6 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
     if (splToken instanceof PublicKey && splToken.toBase58() === USDC_MINT_ADDRESS.toBase58()) tokenType = USDC;
     else tokenType = SOL;
 
-    // Get remaining time
-    let currentTime = new Date();
-    let timeDifference = Number(currentTime) - Number(sentTime);
-    const remainingTime = Math.floor((Number(timeLimit) - timeDifference) / 1000) * 1000;
-
     const transactionData = new CardTransactionData({
         amountFiat: Number(amountFiat),
         fiatCurrency: 'EUR',
@@ -47,26 +42,33 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
         location: message!,
         reference: reference!
     });
-    
-    const [timer, setTimer] = useState(remainingTime / 1000);
-    const decreaseTimer = () => setTimer((prev) => prev - 1);
-    useEffect(() => {
-        const interval = setInterval(decreaseTimer, 1000);
 
-        return () => clearInterval(interval);
-    }, []);
-
-    const [isTimerEnd, setIsTimerEnd] = useState(false);
-
-    if (timer <= 0 && !isTimerEnd) {
-        clearInterval(timer);
-        setIsTimerEnd(true);
-
-        navigation.navigate(
-            'SpendDeclined',
-            { reason: "Approval timed out" }
-        )   
+    const getRemainingTime = () => {
+        const timeDifference = Number(new Date()) - Number(sentTime);
+        return Math.floor((Number(timeLimit) - timeDifference) / 1000);
     }
+    
+    const [timer, setTimer] = useState(getRemainingTime());
+    useEffect(() => {
+        const interval = setInterval(() => {
+            const remainingTime = getRemainingTime();
+
+            setTimer(remainingTime);
+            if (remainingTime <= 0) {
+                navigation.reset({
+                    index: 0,
+                    routes: [{
+                        name: 'SpendDeclined', 
+                        params: { reason: "Approval timed out" }
+                    }],
+                });
+            }
+        }, 1000);
+
+        return () => {
+            clearInterval(interval);
+        }
+    }, []);
 
     return (
         <View style={theme.mainContainer}>
@@ -84,37 +86,33 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
             
             <TouchableOpacity 
                 style = {theme.button}
-                onPress={
-                    () => {
-                        clearInterval(timer);
-                        setIsTimerEnd(true);
-                        
-                        navigation.navigate(
-                            'SpendAccepted',
-                            {
+                onPress={() => {
+                    navigation.reset({
+                        index: 0,
+                        routes: [{
+                            name: 'SpendAccepted', 
+                            params: {
                                 transactionDataJSON: transactionData.toJSON(),
                                 sentTime: sentTime
                             }
-                        );
-                    }       
-                }
+                        }],
+                    }); 
+                } }
             >
                 <Text style={theme.buttonText}>Accept</Text>
             </TouchableOpacity>
 
             <TouchableOpacity 
                 style = {theme.button}
-                onPress={
-                    () => {
-                        clearInterval(timer);
-                        setIsTimerEnd(true);
-
-                        navigation.navigate(
-                            'SpendDeclined',
-                            { reason: "You have declined the transaction" }
-                        )     
-                    }   
-                }
+                onPress={() => {
+                    navigation.reset({
+                        index: 0,
+                        routes: [{
+                            name: 'SpendDeclined', 
+                            params: { reason: "You have declined the transaction" }
+                        }],
+                    }); 
+                }}
             >
                 <Text style={theme.buttonText}>Decline</Text>
             </TouchableOpacity>
