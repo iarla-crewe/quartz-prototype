@@ -1,4 +1,5 @@
-import { StyleSheet } from "react-native"
+import { StyleSheet, useWindowDimensions } from "react-native"
+import { PixelRatio } from "react-native";
 
 export enum themeColor {
     primary = "#f5f2ff",
@@ -7,9 +8,13 @@ export enum themeColor {
     grey = "#575757",
     text = "#3c315b"
 }
+
+const fontScale = PixelRatio.getFontScale();
+const getFontSize = (size: number) => size / fontScale;
 export const theme = StyleSheet.create({
     mainContainer: {
         height: "100%",
+        width: "100%",
         backgroundColor: themeColor.primary
     },
     halfPadding: {
@@ -26,33 +31,33 @@ export const theme = StyleSheet.create({
         paddingBottom: 32
     },
     h1: {
-        fontSize: 44,
+        fontSize: getFontSize(44),
         textAlign: "center",
         color: themeColor.text
     },
     h2: {
-        fontSize: 30,
+        fontSize: getFontSize(30),
         textAlign: "center",
         color: themeColor.text
     },
     h2b: {
-        fontSize: 30,
+        fontSize: getFontSize(30),
         textAlign: "center",
         color: themeColor.text,
         fontWeight: 'bold'
     },
     h3: {
-        fontSize: 28,
+        fontSize: getFontSize(28),
         textAlign: "center",
         color: themeColor.text
     },
     p: {
-        fontSize: 24,
+        fontSize: getFontSize(24),
         textAlign: "center",
         color: themeColor.darkGrey
     },
     subP: {
-        fontSize: 24,
+        fontSize: getFontSize(24),
         textAlign: "center",
         color: themeColor.grey
     },
@@ -104,13 +109,13 @@ export const theme = StyleSheet.create({
         alignItems: "center"
     },
     tokenIcon: {
-        width: 30,
-        height: 30,
+        width: getFontSize(30),
+        height: getFontSize(30),
         borderRadius: 30/2
     },
     tokenIconBig: {
-        width: 100,
-        height: 100,
+        width: getFontSize(100),
+        height: getFontSize(100),
         borderRadius: 100/2
     }
 });

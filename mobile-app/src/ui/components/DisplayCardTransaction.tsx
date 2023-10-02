@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from "react-native";
 import { CardTransactionData } from "../../model/data/CardTransaction";
 import { currencyToString, formatTokenForDisplay } from "../../utils";
-import { theme } from "../screens/Styles";
+import { theme } from "../Styles";
 import { USDC } from "../../model/data/Tokens";
 import { USDC_MINT_ADDRESS } from "../../program/program_utils";
 

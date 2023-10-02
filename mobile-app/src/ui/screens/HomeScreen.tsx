@@ -6,7 +6,7 @@ import {
     Image,
     ActivityIndicator
 } from "react-native";
-import { theme, themeColor } from "./Styles";
+import { theme, themeColor } from "../Styles";
 import { 
     USDC_MINT_ADDRESS,
     createConnection,
@@ -77,7 +77,8 @@ export default function HomeScreen() {
             <ScrollView
                 style={{
                     flex: 1, 
-                    height: "100%"
+                    height: "100%",
+                    width: "100%"
                 }}
                 contentContainerStyle={theme.centeredView}
                 refreshControl={

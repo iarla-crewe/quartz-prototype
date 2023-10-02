@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import NavigationService from './src/navigation/NavigationService';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
-import { themeColor } from './src/ui/screens/Styles';
+import { themeColor } from './src/ui/Styles';
 
 import HomeScreen from './src/ui/screens/HomeScreen';
 import TransferScreen from './src/ui/screens/transfer/TransferScreen';
@@ -18,8 +18,6 @@ import SpendConfirmedScreen from './src/ui/screens/spend/SpendConfirmedScreen';
 import TransactionFailedScreen from './src/ui/screens/TransactionFailedScreen';
 import DepositScreen from './src/ui/screens/DepositScreen';
 import TokenSelectScreen from './src/ui/screens/transfer/TokenSelectScreen';
-
-import messaging from '@react-native-firebase/messaging';
 
 global.Buffer = require('buffer').Buffer;
 const TextEncodingPolyfill = require('text-encoding');
