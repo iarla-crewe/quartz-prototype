@@ -1,6 +1,5 @@
-import React, { useEffect } from 'react';
-import { Linking, PermissionsAndroid, Platform, SafeAreaView, StyleSheet } from 'react-native';
-import { Alert } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Linking, PermissionsAndroid, Platform, SafeAreaView, StyleSheet, AppState, Alert } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -32,7 +31,7 @@ const Tab = createBottomTabNavigator();
 
 function TransferStackNavigator() {
   return (
-    <Stack.Navigator screenOptions={{headerShown: false}}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name='TokenSelect' component={TokenSelectScreen} />
       <Stack.Screen name='Transfer' component={TransferScreen} />
       <Stack.Screen name='TransferConfirmed' component={TransferConfirmedScreen} />
@@ -55,7 +54,7 @@ function TabNavigator() {
         headerShown: false,
         tabBarActiveTintColor: themeColor.secondary,
         tabBarInactiveTintColor: themeColor.darkGrey,
-        tabBarStyle: {borderTopWidth: 0},
+        tabBarStyle: { borderTopWidth: 0 },
         tabBarIcon: ({ focused, color, size }) => {
           let iconName;
           if (route.name === 'Deposit') iconName = focused ? 'card-plus' : 'card-plus-outline';
@@ -74,6 +73,9 @@ function TabNavigator() {
 }
 
 export default function App(): JSX.Element {
+  const currentState = useRef(AppState.currentState);
+  const [state, setState] = useState(currentState.current);
+  
   useEffect(() => {
     if (Platform.OS == "android") {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then((res) => {
@@ -95,9 +97,9 @@ export default function App(): JSX.Element {
   }, []);
 
   return (
-    <SafeAreaView style = {{flex: 1, backgroundColor: themeColor.primary}}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: themeColor.primary }}>
       <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
-        <TabNavigator />
+        <TabNavigator/>
       </NavigationContainer>
     </SafeAreaView>
   );

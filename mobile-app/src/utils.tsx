@@ -6,6 +6,9 @@ import { ParseURLError, TransferRequestURL } from '@solana/pay';
 import BigNumber from 'bignumber.js';
 import { USDC_DECIMALS, USDC_MINT_ADDRESS } from './program/program_utils';
 
+import React, { useState, useEffect } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
+
 export function currencyToString(rawAmount: number, decimals: number) {
   return (rawAmount / 10 ** decimals).toFixed(decimals);
 }
@@ -36,17 +39,19 @@ export async function requestUserPermission() {
 }
 
 export const notificationListeners = async () => {
+
+  //notification recieved when app is open
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('A new notification arrived');
-    
+
     NavigationService.navigate(remoteMessage.data!.navigationFlow, {
       screen: remoteMessage.data!.screenToOpen,
       params: {
-        solanaPayUrl: remoteMessage.data!.urlObj, 
+        solanaPayUrl: remoteMessage.data!.urlObj,
         sentTime: remoteMessage.sentTime,
         timeLimit: remoteMessage.data!.timeLimit,
         amountFiat: remoteMessage.data!.amountFiat
-      } 
+      }
     });
   });
 
@@ -56,15 +61,15 @@ export const notificationListeners = async () => {
     NavigationService.navigate(remoteMessage.data!.navigationFlow, {
       screen: remoteMessage.data!.screenToOpen,
       params: {
-        solanaPayUrl: remoteMessage.data!.urlObj, 
+        solanaPayUrl: remoteMessage.data!.urlObj,
         sentTime: remoteMessage.sentTime,
         timeLimit: remoteMessage.data!.timeLimit,
         amountFiat: remoteMessage.data!.amountFiat
-      } 
+      }
     });
   });
 
-  // Check whether an initial notification is available
+  // Check whether an initial notification is available, app opened from a quit state
   messaging()
     .getInitialNotification()
     .then(remoteMessage => {
@@ -73,16 +78,19 @@ export const notificationListeners = async () => {
         NavigationService.navigate(remoteMessage.data!.navigationFlow, {
           screen: remoteMessage.data!.screenToOpen,
           params: {
-            solanaPayUrl: remoteMessage.data!.urlObj, 
+            solanaPayUrl: remoteMessage.data!.urlObj,
             sentTime: remoteMessage.sentTime,
             timeLimit: remoteMessage.data!.timeLimit,
-            amountFiat: remoteMessage.data!.amountFiat 
-          } 
+            amountFiat: remoteMessage.data!.amountFiat
+          }
         });
       }
     });
-
-  return unsubscribe;
+    
+  return () => {
+    unsubscribe();
+    // AppState.removeEventListener('change', handleAppStateChange);
+  } 
 };
 
 export const getToken = async () => {
@@ -126,39 +134,39 @@ export function formatTokenForDisplay(amountToken: number, tokenMint: PublicKey 
 export function customParseTransferRequestURL(obj: any): TransferRequestURL {
   let recipient: PublicKey;
   try {
-      recipient = new PublicKey(obj.pathname);
+    recipient = new PublicKey(obj.pathname);
   } catch (error: any) {
-      throw new ParseURLError('recipient invalid');
+    throw new ParseURLError('recipient invalid');
   }
 
   let amount: BigNumber | undefined;
   const amountParam = obj.searchParams.amount;
   if (amountParam != null) {
-      if (!/^\d+(\.\d+)?$/.test(amountParam)) throw new ParseURLError('amount invalid');
+    if (!/^\d+(\.\d+)?$/.test(amountParam)) throw new ParseURLError('amount invalid');
 
-      amount = new BigNumber(amountParam);
-      if (amount.isNaN()) throw new ParseURLError('amount NaN');
-      if (amount.isNegative()) throw new ParseURLError('amount negative');
+    amount = new BigNumber(amountParam);
+    if (amount.isNaN()) throw new ParseURLError('amount NaN');
+    if (amount.isNegative()) throw new ParseURLError('amount negative');
   }
 
   let splToken: PublicKey | undefined;
   const splTokenParam = obj.searchParams['spl-token'];
   if (splTokenParam != null) {
-      try {
-          splToken = new PublicKey(splTokenParam);
-      } catch (error) {
-          throw new ParseURLError('spl-token invalid');
-      }
+    try {
+      splToken = new PublicKey(splTokenParam);
+    } catch (error) {
+      throw new ParseURLError('spl-token invalid');
+    }
   }
 
   let reference: PublicKey[] | undefined;
   const referenceParam = obj.searchParams.reference;
   if (referenceParam != "") {
-      try {
-          reference = [new PublicKey(referenceParam)];
-      } catch (error) {
-          throw new ParseURLError('reference invalid');
-      }
+    try {
+      reference = [new PublicKey(referenceParam)];
+    } catch (error) {
+      throw new ParseURLError('reference invalid');
+    }
   }
 
   const label = obj.searchParams.label || undefined;
@@ -166,12 +174,12 @@ export function customParseTransferRequestURL(obj: any): TransferRequestURL {
   const memo = obj.searchParams.memo || undefined;
 
   return {
-      recipient,
-      amount,
-      splToken,
-      reference,
-      label,
-      message,
-      memo
+    recipient,
+    amount,
+    splToken,
+    reference,
+    label,
+    message,
+    memo
   };
 }
