@@ -73,10 +73,6 @@ function TabNavigator() {
   )
 }
 
-const openSettings = () => {
-  Linking.openSettings();
-};
-
 export default function App(): JSX.Element {
   useEffect(() => {
     if (Platform.OS == "android") {
@@ -96,7 +92,7 @@ export default function App(): JSX.Element {
     } else {
       console.log("Error: Unsupported OS")
     }
-  })
+  }, []);
 
   return (
     <SafeAreaView style = {{flex: 1, backgroundColor: themeColor.primary}}>

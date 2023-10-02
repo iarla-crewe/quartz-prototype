@@ -22,7 +22,14 @@ import { useState, useEffect } from 'react';
 import { airdropSol, initAccount } from "../../program/instructions";
 import { getSolPrice, getUsdcPrice } from "../../utils";
 
-export default function HomeScreen() {
+export default function HomeScreen({navigation}:{navigation:any}) {
+    useEffect(() => {
+        const unsubscribe = navigation.addListener('focus', () => {
+            console.log("foo");
+        });
+        return unsubscribe;
+    }, [navigation]);
+
     const wallet = getTestWallet();
 
     const [solBalance, setSolBalance] = useState(0);
