@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { Linking, PermissionsAndroid, Platform, SafeAreaView, StyleSheet } from 'react-native';
-import { Alert } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import { Linking, PermissionsAndroid, Platform, SafeAreaView, StyleSheet, AppState, Alert } from 'react-native';
 import { notificationListeners, requestUserPermission } from './src/utils';
 import { NavigationContainer } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -48,8 +47,7 @@ function TransferStackNavigator() {
   )
 }
 
-function TabNavigator(props: any) {
-  const initialRouteName = props.
+function TabNavigator() {
   return (
     <Tab.Navigator
       initialRouteName='Home'
@@ -81,9 +79,9 @@ const openSettings = () => {
 };
 
 export default function App(): JSX.Element {
-  const [initialRoute, setInitialRoute] = useState('Home');
-  const [initialRouteData, setInitialRouteData] = useState("");
-
+  const currentState = useRef(AppState.currentState);
+  const [state, setState] = useState(currentState.current);
+  
   useEffect(() => {
     if (Platform.OS == "android") {
       PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS).then((res) => {
@@ -95,28 +93,6 @@ export default function App(): JSX.Element {
           console.log("Android version is API 31, bypassing permissions...");
           requestUserPermission();
           notificationListeners();
-
-          //NEW
-          messaging()
-            .getInitialNotification()
-            .then(remoteMessage => {
-              if (remoteMessage) {
-                console.log(
-                  'Notification caused app to open from quit state, need to open screen without notificaton tap:'
-                );
-                setInitialRoute(remoteMessage.data!.screenToOpen); // e.g. "Settings"
-                //make a object to send through initial route data
-                let routeData = {
-                  solanaPayUrl: remoteMessage.data!.urlObj,
-                  sentTime: remoteMessage.sentTime!,
-                  timeLimit: remoteMessage.data!.timeLimit,
-                  amountFiat: remoteMessage.data!.amountFiat
-                }
-
-                setInitialRouteData(JSON.stringify(routeData))
-              }
-            });
-
         }
       }).catch(error => {
         Alert.alert("Error: ", error);
@@ -124,12 +100,12 @@ export default function App(): JSX.Element {
     } else {
       console.log("Error: Unsupported OS")
     }
-  })
+  }, [])
 
   return (
     <SafeAreaView style={{ flex: 1, backgroundColor: themeColor.primary }}>
       <NavigationContainer ref={(ref) => NavigationService.setTopLevelNavigator(ref)}>
-        <TabNavigator initialRouteName={initialRoute} initialRouteData={initialRouteData} />
+        <TabNavigator/>
       </NavigationContainer>
     </SafeAreaView>
   );

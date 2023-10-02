@@ -7,6 +7,7 @@ import BigNumber from 'bignumber.js';
 import { USDC_DECIMALS, USDC_MINT_ADDRESS } from './program/program_utils';
 
 import React, { useState, useEffect } from 'react';
+import { AppState, AppStateStatus } from 'react-native';
 
 export function currencyToString(rawAmount: number, decimals: number) {
   return (rawAmount / 10 ** decimals).toFixed(decimals);
@@ -38,9 +39,8 @@ export async function requestUserPermission() {
 }
 
 export const notificationListeners = async () => {
-  const [initialRoute, setInitialRoute] = useState('HomeScreen');
-  const [initialRouteData, setInitialRouteData] = useState('HomeScreen');
 
+  //notification recieved when app is open
   const unsubscribe = messaging().onMessage(async remoteMessage => {
     console.log('A new notification arrived');
 
@@ -69,7 +69,7 @@ export const notificationListeners = async () => {
     });
   });
 
-  // Check whether an initial notification is available
+  // Check whether an initial notification is available, app opened from a quit state
   messaging()
     .getInitialNotification()
     .then(remoteMessage => {
@@ -86,30 +86,11 @@ export const notificationListeners = async () => {
         });
       }
     });
-
-  //NEW
-  // Check whether an initial notification is available
-  // messaging()
-  //   .getInitialNotification()
-  //   .then(remoteMessage => {
-  //     if (remoteMessage) {
-  //       console.log(
-  //         'Notification caused app to open from quit state, need to open screen without notificaton tap:'
-  //       );
-  //       setInitialRoute(remoteMessage.data!.screenToOpen); // e.g. "Settings"
-  //       //make a object to send through initial route data
-  //       let routeData = {
-  //         solanaPayUrl: remoteMessage.data!.urlObj,
-  //         sentTime: remoteMessage.sentTime!,
-  //         timeLimit: remoteMessage.data!.timeLimit,
-  //         amountFiat: remoteMessage.data!.amountFiat
-  //       }
-
-  //       setInitialRouteData(JSON.stringify(routeData))
-  //     }
-  //   });
-
-  return unsubscribe;
+    
+  return () => {
+    unsubscribe();
+    // AppState.removeEventListener('change', handleAppStateChange);
+  } 
 };
 
 export const getToken = async () => {
