@@ -2,8 +2,8 @@ import { StyleSheet, useWindowDimensions } from "react-native"
 import { PixelRatio } from "react-native";
 
 export enum themeColor {
-    primary = "#f5f2ff",
-    secondary = "#153aa1",
+    primary = "#f4f4f4",
+    secondary = "#24fcfe",
     darkGrey = "#3a3a39",
     grey = "#575757",
     text = "#3c315b"
@@ -33,33 +33,39 @@ export const theme = StyleSheet.create({
     h1: {
         fontSize: getFontSize(44),
         textAlign: "center",
-        color: themeColor.text
+        color: themeColor.text,
+        fontFamily: 'IBM Plex Sans Light'
     },
     h2: {
         fontSize: getFontSize(30),
         textAlign: "center",
-        color: themeColor.text
+        color: themeColor.text,
+        fontFamily: 'IBM Plex Sans Light'
     },
     h2b: {
         fontSize: getFontSize(30),
         textAlign: "center",
         color: themeColor.text,
-        fontWeight: 'bold'
+        fontWeight: 'bold',
+        fontFamily: 'IBM Plex Sans Light'
     },
     h3: {
         fontSize: getFontSize(28),
         textAlign: "center",
-        color: themeColor.text
+        color: themeColor.text,
+        fontFamily: 'IBM Plex Sans Light'
     },
     p: {
         fontSize: getFontSize(24),
         textAlign: "center",
-        color: themeColor.darkGrey
+        color: themeColor.darkGrey,
+        fontFamily: 'IBM Plex Sans Light'
     },
     subP: {
         fontSize: getFontSize(24),
         textAlign: "center",
-        color: themeColor.grey
+        color: themeColor.grey,
+        fontFamily: 'IBM Plex Sans Light'
     },
     button: {
         backgroundColor: themeColor.secondary,
@@ -70,13 +76,15 @@ export const theme = StyleSheet.create({
         padding: 16
     },
     buttonText: {
-        color: 'white'
+        color: 'white',
+        fontFamily: 'IBM Plex Sans Light'
     },
     textInput: {
         width: "100%",
         paddingHorizontal: 8,
         backgroundColor: "white",
-        color: themeColor.darkGrey
+        color: themeColor.darkGrey,
+        fontFamily: 'IBM Plex Sans Light'
     },
     centeredView: {
         flex: 1,
