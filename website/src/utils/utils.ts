@@ -18,9 +18,9 @@ export async function getWalletAddress(userId:number) {
     // TODO - Remove hardcoding
     // In full product, this would look up users' public keys from a database, but for now it's just hardcoded as it's not important to the demo
 
-    return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";  // Iarla's Public Key
+    // return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";  // Iarla's Public Key
     // return "3zQf6oXRZ64BcGhFcPPytJVCWQfz9e4Q5ssQyt5FqeE5"; // Diego's Public Key
-    // return "7JxTZe21cKekJvF8cFUDVoeqC12L5FZcjLd7DpUeN5cT"; // Tester's Public Key
+    return "7JxTZe21cKekJvF8cFUDVoeqC12L5FZcjLd7DpUeN5cT"; // Tester's Public Key
 }
 
 export async function getCardTokenMint(userId: number) {
