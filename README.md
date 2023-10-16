@@ -44,7 +44,7 @@ This is a mobile app used to fake a card spend for this demo. When opened, it di
     1. Run mobile-app, by navigating to the folder and running `npm start`
     2. Check the console logs for "Token: ", and copy the token to clipboard
     3. Navigate to pay-demo/App.tsx and paste the token into the empty APP_TOKEN variable
-3. Pay-demo can be run through Expo Go, or built using Expo's build servers.
+3. Run pay-demo through Expo Go, or build using Expo's EAS by running `eas build -p android --profile dev` from the pay-demo directory
 4. Once mobile-app and pay-demo are installed on your device/emulator, you can use all the functionality. To demo a card transaction:
     1. First top up your account, by copying the address in the "Deposit" tab and sending some Devnet SOL/USDC to it.
     2. Open the pay-demo app, to fake using Google/Apple Pay for a card transaction.
