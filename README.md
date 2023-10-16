@@ -9,7 +9,7 @@ For this demo, the debit card is not integrated and some values (such as wallet 
 ---
 
 This repo is split into 4 different sub-repos:  
-- Solana-program
+- solana-program
 - website
 - mobile-app
 - pay-demo
@@ -30,10 +30,9 @@ The website handles card transaction flow (when a POST request is made to https:
 ### Mobile App
 This is the Quartz mobile app that users will interact with. In this demo, seed phrase functionality is not added and the wallet's keys are hardcoded in.  
 With the app, users can view their balance, get their address for deposits, transfer money to other wallets, and accept/decline transactions when they receive a notification.  
-The app uses Coin Gecko's free API for token price info (https://www.coingecko.com/en/api) 
 
 ### Pay Demo
-This is a mobile app used to fake a card spend for this demo. When opened, it displays a tick to mimic Google/Apple Pay and sends an API request to the website for a card transaction to be approved by the user.
+This is a mobile app used to simulate a card spend for this demo. When opened, it displays a tick to mimic Google/Apple Pay and sends an API request to the website for a card transaction to be approved by the user.
 
 ---
 
@@ -42,18 +41,20 @@ This is a mobile app used to fake a card spend for this demo. When opened, it di
 1. Node dependencies need to be installed in each sub-repo, by navigating to each one individually and running `npm install`
 2. For pay-demo to call the correct mobile-app, the mobile-app's app token needs to be added:
     1. Run mobile-app, by navigating to the folder and running `npm start`
-    2. Check the console logs for "Token: ", and copy the token to clipboard
+    2. Once the app is running, check the console logs for "Token: ", and copy the token to clipboard
     3. Navigate to pay-demo/App.tsx and paste the token into the empty APP_TOKEN variable
 3. Run pay-demo through Expo Go, or build using Expo's EAS by running `eas build -p android --profile dev` from the pay-demo directory
 4. Once mobile-app and pay-demo are installed on your device/emulator, you can use all the functionality. To demo a card transaction:
-    1. First top up your account, by copying the address in the "Deposit" tab and sending some Devnet SOL/USDC to it.
-    2. Open the pay-demo app, to fake using Google/Apple Pay for a card transaction.
+    1. First top up your account, by copying the address in the "Deposit" tab and sending some Devnet SOL/USDC to it
+    2. Open the pay-demo app, to simulate using Google/Apple Pay for a card transaction
     3. You will be sent a notification, tap into it to approve or deny the transaction
     4. If approved, your account will be debited and the server will call acceptTransaction(), outputting "Accept debit card transaction" to the Vercel logs
 
 ---
 
 Note: The USDC devnet address is 4zMMC9srt5Ri5X14GAgXhaHii3GnPAEERYPJgZJDncDU  
-Faucets for this can be found online
+Faucets for this can be found online.  
+
+The web API and mobile app use Coin Gecko's free API for token price info (https://www.coingecko.com/en/api).  
 
 Please email iarla@quartzpay.io for any queries.
