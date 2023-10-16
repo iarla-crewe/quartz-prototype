@@ -4,7 +4,8 @@ import {
     ScrollView,
     RefreshControl,
     Image,
-    ActivityIndicator
+    ActivityIndicator,
+    TouchableOpacity
 } from "react-native";
 import { theme, themeColor } from "../Styles";
 import { 
@@ -25,6 +26,9 @@ import { getSolPrice, getUsdcPrice } from "../../utils";
 export default function HomeScreen({navigation}:{navigation:any}) {
 
     const wallet = getTestWallet();
+
+    const provider = getProvider(createConnection(), wallet);
+    const program = getProgram(provider); 
 
     const [solBalance, setSolBalance] = useState(0);
     const [usdcBalance, setUsdcBalance] = useState(0);
@@ -116,11 +120,11 @@ export default function HomeScreen({navigation}:{navigation:any}) {
                         </View>
                     </View>
 
-                    {/*
-                    <TouchableOpacity style = {theme.button} onPress={async () => { initAccount(program) }}
+                    
+                    {/* <TouchableOpacity style = {theme.button} onPress={async () => { initAccount(program) }}>
                         <Text style={theme.buttonText}>DEBUG: init account</Text>
-                    </TouchableOpacity> 
-                    */}
+                    </TouchableOpacity>  */}
+                   
 
                     {/*
                     <TouchableOpacity style = {theme.button} onPress={async () => { airdropSol(connection, wallet.publicKey) }}>
