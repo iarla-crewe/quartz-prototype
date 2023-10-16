@@ -23,12 +23,6 @@ import { airdropSol, initAccount } from "../../program/instructions";
 import { getSolPrice, getUsdcPrice } from "../../utils";
 
 export default function HomeScreen({navigation}:{navigation:any}) {
-    useEffect(() => {
-        const unsubscribe = navigation.addListener('focus', () => {
-            console.log("foo");
-        });
-        return unsubscribe;
-    }, [navigation]);
 
     const wallet = getTestWallet();
 
@@ -92,48 +86,54 @@ export default function HomeScreen({navigation}:{navigation:any}) {
                     <RefreshControl refreshing={refreshing} onRefresh={async () => {await refreshBalance()}} />
                 }
             >
-                <View style={theme.headerPadding}>
-                    <Text style={theme.h1}>€{(solValue + usdcValue).toFixed(2)}</Text>
+                <View style={theme.centeredView}>
+                    <View style={theme.logoPadding}>
+                        <Image source={require("../../../assets/logo.png")} style={theme.quartzLogo} />
+                    </View>
+
+                    <View style={theme.headerPadding}>
+                        <Text style={theme.h1}>€{(solValue + usdcValue).toFixed(2)}</Text>
+                    </View>
+
+                    <View style={theme.balance}>
+                        <Image source={require("../../../assets/sol.png")} style={theme.tokenIcon} />
+                        <View style={theme.standardPadding}>
+                            <Text style={theme.h2}>{solBalance}</Text>
+                        </View>
+                        <View>
+                            <Text style={theme.subP}>€{solValue.toFixed(2)}</Text>
+                        </View>
+                    </View>
+                    
+
+                    <View style={theme.balance}>
+                        <Image source={require("../../../assets/usdc.png")} style={theme.tokenIcon} />
+                        <View style={theme.standardPadding}>
+                            <Text style={theme.h2}>{usdcBalance.toFixed(2)}</Text>
+                        </View>
+                        <View>
+                            <Text style={theme.subP}>€{usdcValue.toFixed(2)}</Text>
+                        </View>
+                    </View>
+
+                    {/*
+                    <TouchableOpacity style = {theme.button} onPress={async () => { initAccount(program) }}
+                        <Text style={theme.buttonText}>DEBUG: init account</Text>
+                    </TouchableOpacity> 
+                    */}
+
+                    {/*
+                    <TouchableOpacity style = {theme.button} onPress={async () => { airdropSol(connection, wallet.publicKey) }}>
+                        <Text style={theme.buttonText}>DEBUG: airdrop sol</Text>
+                    </TouchableOpacity>
+                    */}
+
+                    {/*
+                    <TouchableOpacity style = {theme.button} onPress={() => navigation.navigate('Spend')}>
+                        <Text style={theme.buttonText}>DEBUG: fake card spend</Text>
+                    </TouchableOpacity>
+                    */}
                 </View>
-
-                <View style={theme.balance}>
-                    <Image source={require("../../../assets/sol.png")} style={theme.tokenIcon} />
-                    <View style={theme.standardPadding}>
-                        <Text style={theme.h2}>{solBalance}</Text>
-                    </View>
-                    <View>
-                        <Text style={theme.subP}>€{solValue.toFixed(2)}</Text>
-                    </View>
-                </View>
-                
-
-                <View style={theme.balance}>
-                    <Image source={require("../../../assets/usdc.png")} style={theme.tokenIcon} />
-                    <View style={theme.standardPadding}>
-                        <Text style={theme.h2}>{usdcBalance.toFixed(2)}</Text>
-                    </View>
-                    <View>
-                        <Text style={theme.subP}>€{usdcValue.toFixed(2)}</Text>
-                    </View>
-                </View>
-
-                {/*
-                <TouchableOpacity style = {theme.button} onPress={async () => { initAccount(program) }}
-                    <Text style={theme.buttonText}>DEBUG: init account</Text>
-                </TouchableOpacity> 
-                */}
-
-                {/*
-                <TouchableOpacity style = {theme.button} onPress={async () => { airdropSol(connection, wallet.publicKey) }}>
-                    <Text style={theme.buttonText}>DEBUG: airdrop sol</Text>
-                </TouchableOpacity>
-                */}
-
-                {/*
-                <TouchableOpacity style = {theme.button} onPress={() => navigation.navigate('Spend')}>
-                    <Text style={theme.buttonText}>DEBUG: fake card spend</Text>
-                </TouchableOpacity>
-                */}
             </ScrollView>
         </View>
     );

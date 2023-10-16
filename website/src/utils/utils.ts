@@ -16,12 +16,17 @@ export const USDC_DECIMALS = 6;     // Devnet USDC decimals
 
 export async function getWalletAddress(userId:number) {
     // TODO - Remove hardcoding
+    // In full product, this would look up users' public keys from a database, but for now it's just hardcoded as it's not important to the demo
 
-    return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";
+    // return "AvRWoLJFbNCT2UbszKmMHttxcHJPWXMfR1L5fhxv6LV9";  // Iarla's Public Key
+    // return "3zQf6oXRZ64BcGhFcPPytJVCWQfz9e4Q5ssQyt5FqeE5"; // Diego's Public Key
+    return "7JxTZe21cKekJvF8cFUDVoeqC12L5FZcjLd7DpUeN5cT"; // Tester's Public Key
 }
 
 export async function getCardTokenMint(userId: number) {
     // TODO - Remove hardcoding
+    // In full product, this would look up users' preference for used currency, but for now it's just hardcoded as it's not important to the demo
+    // Either of below can be selected by commenting the other out
 
     // return USDC_MINT_ADDRESS;             // USDC hardcoded
     return QUARTZ_PROGRAM_ID                 // SOL hardcoded - anything other than USDC will result in SOL

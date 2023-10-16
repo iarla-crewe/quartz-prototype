@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet } from "react-native";
 import { CardTransactionData } from '../../../model/data/CardTransaction'
 import { SOL, USDC } from "../../../model/data/Tokens";
 import DisplayCardTransaction from "../../components/DisplayCardTransaction";
-import { theme } from "../../Styles";
+import { theme, themeColor } from "../../Styles";
 import { useState, useRef, useEffect } from "react";
 import { customParseTransferRequestURL } from "../../../utils";
 import { PublicKey } from "@solana/web3.js";
@@ -23,10 +23,6 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
         console.log(`Error: Fiat amount ${amountFiat} is not a number`);
         return;
     }
-
-    // TODO - Remove hardcoding of USDC/SOL to EUR prices
-    const usdcPrice = 0.94;
-    const solPrice = 18.83;
 
     let tokenType;
     if (splToken instanceof PublicKey && splToken.toBase58() === USDC_MINT_ADDRESS.toBase58()) tokenType = USDC;
@@ -72,50 +68,50 @@ export default function SpendScreen( { route , navigation } : {route: any, navig
 
     return (
         <View style={theme.mainContainer}>
-            <View style={theme.standardPadding}>
-                <View style={theme.verticalCenteredView}>
-                    <Text style={theme.h1}>Accept transaction?</Text>
+            <View style={theme.verticalCenteredView}>
+                <View style={{padding: 16, paddingVertical: 32}}>
+                    <Text style={theme.h2b}>Accept transaction?</Text>
                 </View>
+
+                <DisplayCardTransaction data={transactionData} />
+
+                <View style={theme.standardPadding}>
+                    <Text style={theme.h2}>Time Remaining: {timer}</Text>
+                </View>
+                
+                <TouchableOpacity 
+                    style = {[theme.button, {backgroundColor: themeColor.green}]}
+                    onPress={() => {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{
+                                name: 'SpendAccepted', 
+                                params: {
+                                    transactionDataJSON: transactionData.toJSON(),
+                                    sentTime: sentTime
+                                }
+                            }],
+                        }); 
+                    } }
+                >
+                    <Text style={theme.buttonText}>Accept</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity 
+                    style = {[theme.button, {backgroundColor: themeColor.red}]}
+                    onPress={() => {
+                        navigation.reset({
+                            index: 0,
+                            routes: [{
+                                name: 'SpendDeclined', 
+                                params: { reason: "You have declined the transaction" }
+                            }],
+                        }); 
+                    }}
+                >
+                    <Text style={theme.buttonText}>Decline</Text>
+                </TouchableOpacity>
             </View>
-
-            <DisplayCardTransaction data={transactionData} />
-
-            <View style={theme.standardPadding}>
-                <Text style={theme.h2}>Time Remaining: {timer}</Text>
-            </View>
-            
-            <TouchableOpacity 
-                style = {theme.button}
-                onPress={() => {
-                    navigation.reset({
-                        index: 0,
-                        routes: [{
-                            name: 'SpendAccepted', 
-                            params: {
-                                transactionDataJSON: transactionData.toJSON(),
-                                sentTime: sentTime
-                            }
-                        }],
-                    }); 
-                } }
-            >
-                <Text style={theme.buttonText}>Accept</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity 
-                style = {theme.button}
-                onPress={() => {
-                    navigation.reset({
-                        index: 0,
-                        routes: [{
-                            name: 'SpendDeclined', 
-                            params: { reason: "You have declined the transaction" }
-                        }],
-                    }); 
-                }}
-            >
-                <Text style={theme.buttonText}>Decline</Text>
-            </TouchableOpacity>
         </View>
     )
 }

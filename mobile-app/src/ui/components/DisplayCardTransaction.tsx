@@ -33,7 +33,7 @@ const DisplayCardTransaction = (props: any) => {
             </View>
 
             <View style={theme.standardPadding}>
-                <Text>
+                <Text style={theme.smallText}>
                     {transactionData.timestamp}
                 </Text>
             </View>
